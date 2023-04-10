@@ -1,4 +1,4 @@
-package com.example.journeygenius
+package com.example.journeygenius.plan
 
 import android.util.Range
 import androidx.compose.runtime.MutableState

@@ -17,10 +17,11 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 @Composable
 fun MainScreen() {
     val navController = rememberNavController()
+    val windowSize = rememberWindowSize()
     Scaffold(
         bottomBar = { BottomBar(navController = navController)}
     ) {
-        SetupNavGraph(navController = navController)
+        SetupNavGraph(navController = navController, windowSize = windowSize)
     }
 }
 

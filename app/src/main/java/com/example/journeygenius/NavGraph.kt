@@ -6,6 +6,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.example.journeygenius.community.CommunityScreen
+import com.example.journeygenius.plan.PlanScreen
+import com.example.journeygenius.plan.PlanViewModel
 
 @Composable
 fun SetupNavGraph(

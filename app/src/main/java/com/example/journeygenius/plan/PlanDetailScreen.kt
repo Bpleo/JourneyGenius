@@ -1,4 +1,4 @@
-package com.example.journeygenius
+package com.example.journeygenius.plan
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
