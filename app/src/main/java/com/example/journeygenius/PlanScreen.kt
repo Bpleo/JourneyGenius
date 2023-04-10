@@ -139,6 +139,7 @@ fun PlanScreen(
                     text = "What is your budget: ",
                     fontSize = MaterialTheme.typography.headlineLarge.fontSize
                 )
+                Spacer(modifier = Modifier.height(15.dp))
                 TextField(
                     value = budget,
                     onValueChange = {newText ->
