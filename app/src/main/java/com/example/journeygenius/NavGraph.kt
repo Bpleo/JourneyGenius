@@ -1,6 +1,7 @@
 package com.example.journeygenius
 
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
@@ -9,6 +10,7 @@ import androidx.navigation.compose.composable
 fun SetupNavGraph(
     navController: NavHostController
 ) {
+    val planViewModel: PlanViewModel = viewModel()
     NavHost(
         navController = navController,
         startDestination = BottomBar.Plan.route
@@ -16,7 +18,7 @@ fun SetupNavGraph(
         composable(
             route = BottomBar.Plan.route
         ){
-            PlanScreen()
+            PlanScreen(planViewModel)
         }
         composable(
             route = BottomBar.Community.route

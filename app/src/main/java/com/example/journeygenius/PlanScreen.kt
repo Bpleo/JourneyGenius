@@ -1,7 +1,5 @@
 package com.example.journeygenius
 
-import android.graphics.Paint.Style
-import android.util.Range
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -27,18 +25,19 @@ import com.maxkeppeler.sheets.calendar.CalendarDialog
 import com.maxkeppeler.sheets.calendar.models.CalendarConfig
 import com.maxkeppeler.sheets.calendar.models.CalendarSelection
 import com.maxkeppeler.sheets.calendar.models.CalendarStyle
-import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PlanScreen() {
+fun PlanScreen(
+    viewModel: PlanViewModel
+) {
     val selectedDateRange = remember {
-        val value = Range(LocalDate.now().minusDays(3), LocalDate.now())
+        val value = viewModel.dateRange
         mutableStateOf(value)
     }
-    var budget by remember { mutableStateOf(TextFieldValue()) }
+    val budget by remember { mutableStateOf(viewModel.budget) }
     val calenderState = rememberUseCaseState()
     CalendarDialog(
         state = calenderState,
@@ -46,9 +45,9 @@ fun PlanScreen() {
             style = CalendarStyle.MONTH,
         ),
         selection = CalendarSelection.Period(
-            selectedRange = selectedDateRange.value
+            selectedRange = selectedDateRange.component1().value
         ) { startDate, endDate ->
-            selectedDateRange.value = Range(startDate, endDate)
+            viewModel.updateRange(startDate, endDate)
         }
     )
     val sdf = DateTimeFormatter.ofPattern("MM-dd-yyyy")
@@ -87,7 +86,7 @@ fun PlanScreen() {
                          {
                             ClickableText(
                                 text = AnnotatedString(
-                                    selectedDateRange.component1().lower.format(
+                                    selectedDateRange.component1().component1().lower.format (
                                         sdf
                                     ), spanStyle = SpanStyle(fontSize = 34.sp)
                                 ),
@@ -104,7 +103,7 @@ fun PlanScreen() {
                         ) {
                             ClickableText(
                                 text = AnnotatedString(
-                                    selectedDateRange.component1().upper.format(
+                                    selectedDateRange.component1().component1().upper.format(
                                         sdf
                                     ), spanStyle = SpanStyle(fontSize = 34.sp)
                                 ),
@@ -140,9 +139,9 @@ fun PlanScreen() {
                 )
                 Spacer(modifier = Modifier.height(15.dp))
                 TextField(
-                    value = budget,
+                    value = budget.value,
                     onValueChange = {newText ->
-                        budget = newText
+                        viewModel.updateBudget(newText)
                     },
                     placeholder = {
                         Text("Enter your budget")
@@ -172,5 +171,5 @@ fun PlanScreen() {
 @Preview(showBackground = true)
 @Composable
 fun PlanScreenPreview() {
-    PlanScreen()
+    PlanScreen(PlanViewModel())
 }
