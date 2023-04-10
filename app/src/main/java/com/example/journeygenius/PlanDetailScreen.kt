@@ -19,40 +19,51 @@ JourneyGeniusTheme {
         modifier = Modifier.fillMaxSize(),
     ){
         Box(contentAlignment = Alignment.Center,
-        modifier = Modifier.fillMaxWidth()
-            .padding(0.dp,20.dp)){
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(0.dp, 20.dp)){
             Text(text = "Detail",
                 fontSize = MaterialTheme.typography.headlineLarge.fontSize)
         }
         Column(
-            modifier = Modifier.padding(40.dp,90.dp)
+            modifier = Modifier
+                .padding(25.dp, 70.dp)
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.primaryContainer)
         ){
-            Text(text = "Date: ",
-                fontSize = MaterialTheme.typography.titleLarge.fontSize)
-            Spacer(modifier = Modifier.height(75.dp))
-            Text(text = "Destination: ",
-                fontSize = MaterialTheme.typography.titleLarge.fontSize)
-            Spacer(modifier = Modifier.height(75.dp))
-            Text(text = "Interests: ",
-                fontSize = MaterialTheme.typography.titleLarge.fontSize)
-            Spacer(modifier = Modifier.height(75.dp))
-            Text(text = "Budget: ",
-                fontSize = MaterialTheme.typography.titleLarge.fontSize)
-            Spacer(modifier = Modifier.height(75.dp))
-            Text(text = "Hotel: ",
-                fontSize = MaterialTheme.typography.titleLarge.fontSize)
-            Spacer(modifier = Modifier.height(75.dp))
-            Text(text = "Transport Mode: ",
-                fontSize = MaterialTheme.typography.titleLarge.fontSize)
-            Spacer(modifier = Modifier.height(75.dp))
-            Box(modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ){
-                Button(onClick = { /*TODO*/ }, modifier = Modifier
-                    .width(100.dp)
-                ) {
-                    Text(text = "Back")
-                }
+            Column(modifier = Modifier.padding(15.dp,20.dp)) {
+                Text(text = "Date: ",
+                    fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                )
+                Spacer(modifier = Modifier.height(75.dp))
+                Text(text = "Destination: ",
+                    fontSize = MaterialTheme.typography.titleLarge.fontSize)
+                Spacer(modifier = Modifier.height(75.dp))
+                Text(text = "Interests: ",
+                    fontSize = MaterialTheme.typography.titleLarge.fontSize)
+                Spacer(modifier = Modifier.height(75.dp))
+                Text(text = "Budget: ",
+                    fontSize = MaterialTheme.typography.titleLarge.fontSize)
+                Spacer(modifier = Modifier.height(75.dp))
+                Text(text = "Hotel: ",
+                    fontSize = MaterialTheme.typography.titleLarge.fontSize)
+                Spacer(modifier = Modifier.height(75.dp))
+                Text(text = "Transport Mode: ",
+                    fontSize = MaterialTheme.typography.titleLarge.fontSize)
+                Spacer(modifier = Modifier.height(75.dp))
+            }
+
+
+        }
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .padding(bottom = 40.dp),
+            contentAlignment = Alignment.BottomCenter
+        ){
+            Button(onClick = { /*TODO*/ }, modifier = Modifier
+                .width(100.dp)
+            ) {
+                Text(text = "Back")
             }
         }
 
