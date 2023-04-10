@@ -33,8 +33,7 @@ import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PlanScreen(
-) {
+fun PlanScreen() {
     val selectedDateRange = remember {
         val value = Range(LocalDate.now().minusDays(3), LocalDate.now())
         mutableStateOf(value)
@@ -169,7 +168,6 @@ fun PlanScreen(
         }
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable
