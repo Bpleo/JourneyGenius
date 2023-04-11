@@ -199,8 +199,7 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel) {
         }
 
 
-
-    val singapore=LatLng(1.35, 103.87)
+    val singapore=LatLng(42.36, -71.05)
     val cameraPositionState= rememberCameraPositionState{
         position= CameraPosition.fromLatLngZoom(singapore,10f)
     }
