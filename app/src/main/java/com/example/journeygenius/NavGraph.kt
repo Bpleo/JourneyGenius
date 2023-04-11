@@ -6,10 +6,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.example.journeygenius.community.CommunityScreen
+import com.example.journeygenius.plan.PlanScreen
+import com.example.journeygenius.plan.PlanViewModel
 
 @Composable
 fun SetupNavGraph(
-    navController: NavHostController
+    navController: NavHostController,
+    windowSize: WindowSize
 ) {
     val planViewModel: PlanViewModel = viewModel()
     NavHost(
@@ -19,7 +22,7 @@ fun SetupNavGraph(
         composable(
             route = BottomBar.Plan.route
         ){
-            PlanScreen(planViewModel)
+            PlanScreen(planViewModel, windowSize)
         }
         composable(
             route = BottomBar.Community.route
