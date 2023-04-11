@@ -14,11 +14,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.journeygenius.ui.theme.JourneyGeniusTheme
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
-fun PlanList(){
+fun PlanList(viewModel: PlanListViewModel = viewModel()) {
     JourneyGeniusTheme {
-        var items by remember { mutableStateOf(listOf("Plan 1", "Plan 2", "Plan 3")) }
+        val items = viewModel.items
         Box(
             modifier = Modifier.fillMaxSize(),
         ){
@@ -37,7 +38,7 @@ fun PlanList(){
                         /*TODO*/
                         //navController.navigate(Screen.PlanDetailScreen(plan.id))
                     }
-                ) {
+            ) {
                 items(items = items, key = { it }) { it ->
                     Text(
                         modifier = Modifier
@@ -61,8 +62,6 @@ fun PlanList(){
                     Text(text = "Back")
                 }
             }
-
-
         }
     }
 }
