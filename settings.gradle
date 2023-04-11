@@ -5,6 +5,5 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
-
 rootProject.name = "JourneyGenius"
 include ':app'
