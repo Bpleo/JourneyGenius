@@ -24,6 +24,7 @@ import com.google.maps.android.compose.rememberCameraPositionState
 import androidx.compose.material.*
 import android.location.Geocoder
 import androidx.compose.ui.platform.LocalContext
+import com.example.journeygenius.plan.PlanViewModel
 import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
