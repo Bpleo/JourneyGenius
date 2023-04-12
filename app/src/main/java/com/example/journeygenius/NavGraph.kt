@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.example.journeygenius.community.CommunityScreen
+import com.example.journeygenius.personal.PersonalViewModel
 import com.example.journeygenius.plan.PlanScreen
 import com.example.journeygenius.plan.PlanViewModel
 
@@ -33,6 +34,16 @@ fun SetupNavGraph(
             route = BottomBar.Personal.route
         ){
             PersonalScreen()
+        }
+        composable(
+            route = "Login"
+        ){
+            LoginScreen(navController = navController, windowSize = windowSize, viewModel = PersonalViewModel())
+        }
+        composable(
+            route = "SignUp"
+        ){
+            SignUpScreen()
         }
     }
 }
