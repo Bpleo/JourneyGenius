@@ -203,7 +203,7 @@ fun BudgetComponent(budget: MutableState<TextFieldValue>, viewModel: PlanViewMod
         Spacer(modifier = Modifier.height(15.dp))
         TextField(
             value = budget.value,
-            onValueChange = { newText ->
+            onValueChange = {newText ->
                 viewModel.updateBudget(newText)
             },
             placeholder = {

@@ -35,15 +35,5 @@ fun SetupNavGraph(
         ){
             PersonalScreen()
         }
-        composable(
-            route = "Login"
-        ){
-            LoginScreen(navController = navController, windowSize = windowSize, viewModel = PersonalViewModel())
-        }
-        composable(
-            route = "SignUp"
-        ){
-            SignUpScreen()
-        }
     }
 }
