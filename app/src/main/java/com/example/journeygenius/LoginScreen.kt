@@ -83,7 +83,7 @@ fun LoginTextField(email: MutableState<TextFieldValue>, pwd: MutableState<String
                 fontSize = MaterialTheme.typography.bodyLarge.fontSize,
                 color = MaterialTheme.colorScheme.primary,
             )
-            Spacer(modifier = Modifier.height(13.dp))
+            Spacer(modifier = Modifier.height(45.dp))
             Text(
                 text = "Password: ",
                 fontSize = MaterialTheme.typography.bodyLarge.fontSize,

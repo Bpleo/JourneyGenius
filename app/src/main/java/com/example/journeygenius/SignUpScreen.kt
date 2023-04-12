@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,13 +30,13 @@ fun SignUpField(
               fontSize = MaterialTheme.typography.bodyLarge.fontSize,
               color = MaterialTheme.colorScheme.primary,
           )
-          Spacer(modifier = Modifier.height(13.dp))
+          Spacer(modifier = Modifier.height(45.dp))
           Text(
               text = "Password: ",
               fontSize = MaterialTheme.typography.bodyLarge.fontSize,
               color = MaterialTheme.colorScheme.primary,
           )
-          Spacer(modifier = Modifier.height(13.dp))
+          Spacer(modifier = Modifier.height(45.dp))
           Text(
               text = "Verify Password: ",
               fontSize = MaterialTheme.typography.bodyLarge.fontSize,
