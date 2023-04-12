@@ -1,6 +1,9 @@
 package com.example.journeygenius
 
 import android.annotation.SuppressLint
+import android.util.Log
+import android.widget.Toast
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -11,6 +14,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -21,16 +25,38 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.journeygenius.personal.PersonalViewModel
 import com.example.journeygenius.ui.theme.JourneyGeniusTheme
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 @Composable
-fun JourneyGenius() {
+fun JourneyGenius(
+    auth: FirebaseAuth,
+    mainActivity: MainActivity
+) {
     val navController = rememberNavController()
     val windowSize = rememberWindowSize()
     val viewModel: PersonalViewModel = viewModel()
     NavHost(navController = navController, startDestination = "Login") {
-        composable("Login") { LoginScreen(navController, windowSize, viewModel) }
-        composable("SignUp") { SignUpScreen(navController, windowSize, viewModel) }
-        composable("Main"){ MainScreen() }
+        composable("Login") {
+            LoginScreen(
+                navController,
+                windowSize,
+                viewModel,
+                auth,
+                mainActivity
+            )
+        }
+        composable("SignUp") {
+            SignUpScreen(
+                navController,
+                windowSize,
+                viewModel,
+                auth,
+                mainActivity
+            )
+        }
+        composable("Main") { MainScreen() }
         // add more screens here
     }
 }
@@ -47,7 +73,7 @@ fun PasswordTextField(
     OutlinedTextField(
         value = password,
         onValueChange = onPasswordChange,
-        placeholder = { Text(text = placeholder)},
+        placeholder = { Text(text = placeholder) },
         trailingIcon = {
             IconButton(onClick = { passwordVisibility = !passwordVisibility }) {
                 val image = if (passwordVisibility) {
@@ -69,15 +95,20 @@ fun PasswordTextField(
         maxLines = 1,
         keyboardOptions = KeyboardOptions.Default.copy(
             imeAction = ImeAction.Done,
-            keyboardType = KeyboardType.Password)
+            keyboardType = KeyboardType.Password
+        )
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginTextField(email: MutableState<TextFieldValue>, pwd: MutableState<String>, viewModel: PersonalViewModel) {
-    Row{
-        Column{
+fun LoginTextField(
+    email: MutableState<TextFieldValue>,
+    pwd: MutableState<String>,
+    viewModel: PersonalViewModel
+) {
+    Row {
+        Column {
             Text(
                 text = "Email: ",
                 fontSize = MaterialTheme.typography.bodyLarge.fontSize,
@@ -91,14 +122,14 @@ fun LoginTextField(email: MutableState<TextFieldValue>, pwd: MutableState<String
             )
         }
         Spacer(modifier = Modifier.width(20.dp))
-        Column{
+        Column {
             TextField(
                 value = email.value,
-                onValueChange = {newEmail ->
+                onValueChange = { newEmail ->
                     viewModel.updateEmail(newEmail)
-                } ,
+                },
                 label = {
-                        Text("Email: ")
+                    Text("Email: ")
                 },
                 placeholder = {
                     Text(text = "Enter your Email")
@@ -120,7 +151,7 @@ fun LoginTextField(email: MutableState<TextFieldValue>, pwd: MutableState<String
 @SuppressLint("UnrememberedMutableState")
 @Preview(showBackground = true)
 @Composable
-fun LoginTextPreview(){
+fun LoginTextPreview() {
     LoginTextField(
         email = mutableStateOf(TextFieldValue()),
         pwd = mutableStateOf(String()),
@@ -132,14 +163,23 @@ fun LoginTextPreview(){
 fun LoginScreen(
     navController: NavHostController,
     windowSize: WindowSize,
-    viewModel: PersonalViewModel = viewModel()
-){
+    viewModel: PersonalViewModel = viewModel(),
+    auth: FirebaseAuth,
+    mainActivity: ComponentActivity
+) {
     val email by remember {
         mutableStateOf(viewModel.email)
     }
     val pwd by remember {
         mutableStateOf(viewModel.pwd)
     }
+    val currentUser = auth.currentUser
+    if (currentUser != null) {
+        navController.navigate("Main")
+        Log.i("SignIn", "Already Signed In")
+        Firebase.auth.signOut() //TODO finish sign out at personal page
+    }
+    val context = LocalContext.current
     JourneyGeniusTheme {
         Box(
             modifier = Modifier.fillMaxSize(),
@@ -153,7 +193,26 @@ fun LoginScreen(
                     ) {
                         LoginTextField(email = email, pwd = pwd, viewModel)
                         Spacer(modifier = Modifier.height(40.dp))
-                        Button(onClick = {}) {
+                        Button(onClick = {
+                            auth.signInWithEmailAndPassword(
+                                viewModel.email.value.text,
+                                viewModel.pwd.value
+                            )
+                                .addOnCompleteListener(mainActivity) { task ->
+                                    if (task.isSuccessful) {
+                                        navController.navigate("Main") {
+                                            popUpTo(0)
+                                            launchSingleTop = true
+                                        }
+                                    } else {
+                                        Toast.makeText(
+                                            context, "Authentication failed.",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                        navController.navigate("SignUp")
+                                    }
+                                }
+                        }) {
                             Text(text = "Login In")
                         }
                         Spacer(modifier = Modifier.height(40.dp))
@@ -174,7 +233,25 @@ fun LoginScreen(
                         LoginTextField(email = email, pwd = pwd, viewModel)
                         Spacer(modifier = Modifier.width(40.dp))
                         Column {
-                            Button(onClick = {}) {
+                            Button(onClick = {
+                                auth.signInWithEmailAndPassword(
+                                    viewModel.email.value.text,
+                                    viewModel.pwd.value
+                                )
+                                    .addOnCompleteListener(mainActivity) { task ->
+                                        if (task.isSuccessful) {
+                                            navController.navigate("Main") {
+                                                popUpTo(0)
+                                                launchSingleTop = true
+                                            }
+                                        } else {
+                                            Toast.makeText(
+                                                context, "Authentication failed.",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
+                                    }
+                            }) {
                                 Text(text = "Login In")
                             }
                             Spacer(modifier = Modifier.height(40.dp))

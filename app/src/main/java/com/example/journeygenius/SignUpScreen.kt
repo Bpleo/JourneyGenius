@@ -1,6 +1,8 @@
 package com.example.journeygenius
 
+import android.util.Log
 import android.widget.Toast
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
@@ -17,6 +19,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.journeygenius.personal.PersonalViewModel
 import com.example.journeygenius.ui.theme.JourneyGeniusTheme
+import com.google.firebase.auth.FirebaseAuth
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -85,7 +88,9 @@ fun isValidEmail(email: String): Boolean {
 fun SignUpScreen(
     navController: NavHostController,
     windowSize: WindowSize,
-    viewModel: PersonalViewModel
+    viewModel: PersonalViewModel,
+    auth: FirebaseAuth,
+    mainActivity: ComponentActivity
 ){
     val snackBarHostState = remember { SnackbarHostState()}
     val context = LocalContext.current
@@ -126,7 +131,22 @@ fun SignUpScreen(
                                     viewModel.updatePwd("")
                                     viewModel.updateVerifyPwd("")
                                 }else {
-
+                                    val email = viewModel.email.value.text
+                                    val pwd = viewModel.pwd.value
+                                    auth.createUserWithEmailAndPassword(email, pwd)
+                                        .addOnCompleteListener(mainActivity) {task ->
+                                            if (task.isSuccessful){
+                                                Log.i("Auth","Success")
+                                                /*TODO firestore*/
+                                                navController.navigate("Login"){
+                                                    popUpTo(0)
+                                                    launchSingleTop = true
+                                                }
+                                            } else {
+                                                Toast.makeText(context, "Authentication failed.",
+                                                    Toast.LENGTH_SHORT).show()
+                                            }
+                                        }
                                 }
                             }) {
                                 Text(text = "Sign Up")
@@ -142,8 +162,8 @@ fun SignUpScreen(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun SignUpScreenPreview(){
-    SignUpScreen(navController = rememberNavController(), windowSize = rememberWindowSize(), viewModel = PersonalViewModel())
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun SignUpScreenPreview(){
+//    SignUpScreen(navController = rememberNavController(), windowSize = rememberWindowSize(), viewModel = PersonalViewModel())
+//}
