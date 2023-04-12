@@ -161,9 +161,3 @@ fun SignUpScreen(
         }
     }
 }
-
-//@Preview(showBackground = true)
-//@Composable
-//fun SignUpScreenPreview(){
-//    SignUpScreen(navController = rememberNavController(), windowSize = rememberWindowSize(), viewModel = PersonalViewModel())
-//}
