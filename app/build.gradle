@@ -3,6 +3,9 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'com.google.gms.google-services'
     id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
 }
 
 android {
@@ -125,4 +128,17 @@ dependencies {
     //Google Maps SDK+Compose
     implementation 'com.google.maps.android:maps-compose:2.11.0'
     implementation 'com.google.android.gms:play-services-maps:18.1.0'
+
+    // Room components
+    implementation "androidx.room:room-runtime:2.5.1"
+    kapt "androidx.room:room-compiler:2.5.1"
+    implementation "androidx.room:room-ktx:2.5.1"
+
+    // DataStore Preferences
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
+
+    // Dagger - Hilt
+    implementation "com.google.dagger:hilt-android:2.42"
+    kapt "com.google.dagger:hilt-android-compiler:2.42"
+
 }
