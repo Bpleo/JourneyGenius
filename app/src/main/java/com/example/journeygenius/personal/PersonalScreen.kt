@@ -235,5 +235,5 @@ private fun prepareOptionsData() {
 @Preview(showBackground = true)
 @Composable
 fun PersonalScreenPreview(){
-    PersonalScreen()
+    PersonalDetails()
 }
