@@ -26,6 +26,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.journeygenius.personal.PersonalViewModel
 import com.example.journeygenius.ui.theme.JourneyGeniusTheme
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
@@ -184,11 +185,6 @@ fun LoginScreen(
     val pwd by remember {
         mutableStateOf(viewModel.pwd)
     }
-//    val currentUser = auth.currentUser
-//    if (currentUser != null) {
-//        navController.navigate("Main")
-//        Log.i("SignIn", "Already Signed In")
-//    }
     val context = LocalContext.current
     JourneyGeniusTheme {
         Box(
@@ -215,11 +211,29 @@ fun LoginScreen(
                                             launchSingleTop = true
                                         }
                                     } else {
-                                        Toast.makeText(
-                                            context, "Authentication failed.",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                        navController.navigate("SignUp")
+                                        if (task.exception != null) {
+                                            when (val errorCode = (task.exception as FirebaseAuthException).errorCode){
+                                                "ERROR_WRONG_PASSWORD","ERROR_INVALID_EMAIL" -> {
+                                                    Toast.makeText(
+                                                        context,
+                                                        "Wrong Credentials!",
+                                                        Toast.LENGTH_SHORT
+                                                    ).show()
+                                                    viewModel.updateEmail(TextFieldValue(""))
+                                                    viewModel.updatePwd("")
+                                                }
+                                                "ERROR_USER_NOT_FOUND" -> {
+                                                    Toast.makeText(
+                                                        context, "User Not Found. \nPlease Sign Up",
+                                                        Toast.LENGTH_SHORT
+                                                    ).show()
+                                                    navController.navigate("SignUp")
+                                                }
+                                                else -> {
+
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                         }) {
