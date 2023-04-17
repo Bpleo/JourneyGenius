@@ -37,7 +37,18 @@ fun JourneyGenius(
     val navController = rememberNavController()
     val windowSize = rememberWindowSize()
     val viewModel: PersonalViewModel = viewModel()
-    NavHost(navController = navController, startDestination = "Login") {
+    val currentUser = auth.currentUser
+    NavHost(
+        navController = navController,
+        startDestination = when(currentUser){
+            null -> {
+                "Login"
+            }
+            else -> {
+                "Main"
+            }
+        }
+    ) {
         composable("Login") {
             LoginScreen(
                 navController,
@@ -173,12 +184,11 @@ fun LoginScreen(
     val pwd by remember {
         mutableStateOf(viewModel.pwd)
     }
-    val currentUser = auth.currentUser
-    if (currentUser != null) {
-        navController.navigate("Main")
-        Log.i("SignIn", "Already Signed In")
-        Firebase.auth.signOut() //TODO finish sign out at personal page
-    }
+//    val currentUser = auth.currentUser
+//    if (currentUser != null) {
+//        navController.navigate("Main")
+//        Log.i("SignIn", "Already Signed In")
+//    }
     val context = LocalContext.current
     JourneyGeniusTheme {
         Box(

@@ -4,8 +4,6 @@ import android.content.Context
 import android.widget.Toast
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.material.*
@@ -14,10 +12,10 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.outlined.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,6 +31,8 @@ import kotlinx.coroutines.Dispatchers
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.journeygenius.personal.PersonalViewModel
 import com.example.journeygenius.ui.theme.JourneyGeniusTheme
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 @Composable
 fun PersonalScreen() {
@@ -60,15 +60,21 @@ fun PersonalDetails(context: Context = LocalContext.current.applicationContext) 
     }
 
     if (listPrepared) {
-        LazyColumn(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            item {
-                UserDetails(context = context, name = "default name",email = "default@email.com")
-            }
-            // Show the options
-            items(optionsList) { item ->
-                OptionsItemStyle(item = item, context = context)
+        Column {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                item {
+                    UserDetails(
+                        context = context,
+                        name = "default name",
+                        email = "default@email.com"
+                    )
+                }
+                // Show the options
+                items(optionsList) { item ->
+                    OptionsItemStyle(item = item, context = context)
+                }
             }
         }
     }
@@ -139,14 +145,23 @@ private fun UserDetails(context: Context, name: String, email: String) {
 @Composable
 private fun OptionsItemStyle(item: OptionsData, context: Context) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(enabled = true) {
-                Toast
-                    .makeText(context, item.title, Toast.LENGTH_SHORT)
-                    .show()
-            }
-            .padding(all = 16.dp),
+        modifier = if (item.title.equals("Log out")){
+            Modifier
+                .fillMaxWidth()
+                .clickable(enabled = true) {
+                    Firebase.auth.signOut()
+                }
+                .padding(all = 16.dp)
+        } else {
+            Modifier
+                .fillMaxWidth()
+                .clickable(enabled = true) {
+                    Toast
+                        .makeText(context, item.title, Toast.LENGTH_SHORT)
+                        .show()
+                }
+                .padding(all = 16.dp)
+               },
         verticalAlignment = Alignment.CenterVertically
     ) {
 
@@ -228,6 +243,13 @@ private fun prepareOptionsData() {
             subTitle = "App notification settings"
         )
     )
+    optionsList.add(
+        OptionsData(
+            icon = Icons.Default.Logout,
+            title = "Log out",
+            subTitle = ""
+        )
+    )
 }
 
 
@@ -235,5 +257,5 @@ private fun prepareOptionsData() {
 @Preview(showBackground = true)
 @Composable
 fun PersonalScreenPreview(){
-    PersonalScreen()
+    PersonalDetails()
 }
