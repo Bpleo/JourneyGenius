@@ -7,19 +7,20 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
+import com.example.journeygenius.data.models.Personal
 import com.example.journeygenius.personal.PersonalViewModel
 import com.example.journeygenius.ui.theme.JourneyGeniusTheme
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -29,17 +30,23 @@ fun SignUpField(
   Row{
       Column{
           Text(
+              text = "User Name: ",
+              fontSize = MaterialTheme.typography.bodyLarge.fontSize,
+              color = MaterialTheme.colorScheme.primary,
+          )
+          Spacer(modifier = Modifier.height(40.dp))
+          Text(
               text = "Email: ",
               fontSize = MaterialTheme.typography.bodyLarge.fontSize,
               color = MaterialTheme.colorScheme.primary,
           )
-          Spacer(modifier = Modifier.height(45.dp))
+          Spacer(modifier = Modifier.height(40.dp))
           Text(
               text = "Password: ",
               fontSize = MaterialTheme.typography.bodyLarge.fontSize,
               color = MaterialTheme.colorScheme.primary,
           )
-          Spacer(modifier = Modifier.height(45.dp))
+          Spacer(modifier = Modifier.height(40.dp))
           Text(
               text = "Verify Password: ",
               fontSize = MaterialTheme.typography.bodyLarge.fontSize,
@@ -47,6 +54,21 @@ fun SignUpField(
           )
       }
       Column{
+          TextField(
+              value = viewModel.userName.value,
+              onValueChange = {newUserName ->
+                  viewModel.updateUserName(newUserName)
+              } ,
+              label = {
+                  Text("User Name: ")
+              },
+              placeholder = {
+                  Text(text = "Enter your User Name")
+              },
+              maxLines = 1,
+              keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+          )
+          Spacer(modifier = Modifier.height(8.dp))
           TextField(
               value = viewModel.email.value,
               onValueChange = {newEmail ->
@@ -79,6 +101,72 @@ fun SignUpField(
   }
 }
 
+@Composable
+fun SignUpButton(
+    navController: NavHostController,
+    viewModel: PersonalViewModel,
+    auth: FirebaseAuth,
+    mainActivity: ComponentActivity,
+    db: FirebaseFirestore
+){
+    val context = LocalContext.current
+    Row{
+        Button(onClick = {
+            navController.navigate("Login"){
+                popUpTo(0)
+                launchSingleTop = true
+            }
+        }
+        ){
+            Text(text = "Back")
+        }
+        Spacer(modifier = Modifier.width(15.dp))
+        Button(onClick = {
+            if (viewModel.userName.value.text.isEmpty()) {
+                Toast.makeText(context,"Please Enter User Name!", Toast.LENGTH_SHORT).show()
+            } else if (viewModel.email.value.text.isEmpty()){
+                Toast.makeText(context,"Please Enter Email!", Toast.LENGTH_SHORT).show()
+            }else if (!isValidEmail(viewModel.email.value.text)){
+                Toast.makeText(context,"Please Enter Email in Correct Format!", Toast.LENGTH_SHORT).show()
+                viewModel.updateEmail(TextFieldValue(""))
+            }else if (viewModel.pwd.value.isEmpty() || viewModel.verifyPwd.value.isEmpty()) {
+                Toast.makeText(context,"Please Enter Password!", Toast.LENGTH_SHORT).show()
+            }else if (viewModel.pwd.value != viewModel.verifyPwd.value){
+                Toast.makeText(context,"Password doesn't match!", Toast.LENGTH_SHORT).show()
+                viewModel.updatePwd("")
+                viewModel.updateVerifyPwd("")
+            }else {
+                val email = viewModel.email.value.text
+                val pwd = viewModel.pwd.value
+                val name = viewModel.userName.value.text
+                auth.createUserWithEmailAndPassword(email, pwd)
+                    .addOnCompleteListener(mainActivity) {task ->
+                        if (task.isSuccessful){
+                            Log.i("Auth","Success")
+                            /*TODO firestore*/
+                            val user = Personal(name = name, email = email, password = pwd, phone = "")
+                            db.collection("users").add(user)
+                                .addOnSuccessListener {documentReference ->
+                                    Log.d("FIRESTORE", "DocumentSnapshot written with ID: ${documentReference.id}")
+                                }.addOnFailureListener { e ->
+                                    Log.w("FIRESTORE", "Error adding document", e)
+                                }
+                            navController.navigate("Login"){
+                                popUpTo(0)
+                                launchSingleTop = true
+                            }
+                        } else {
+                            Toast.makeText(context, "Authentication failed.",
+                                Toast.LENGTH_SHORT).show()
+                        }
+                    }
+            }
+        }) {
+            Text(text = "Sign Up")
+        }
+    }
+}
+
 fun isValidEmail(email: String): Boolean {
     val pattern = Regex("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}")
     return pattern.matches(email)
@@ -90,10 +178,9 @@ fun SignUpScreen(
     windowSize: WindowSize,
     viewModel: PersonalViewModel,
     auth: FirebaseAuth,
-    mainActivity: ComponentActivity
+    mainActivity: ComponentActivity,
+    db: FirebaseFirestore
 ){
-    val snackBarHostState = remember { SnackbarHostState()}
-    val context = LocalContext.current
     JourneyGeniusTheme{
         Box(
             modifier = Modifier.fillMaxSize(),
@@ -107,55 +194,30 @@ fun SignUpScreen(
                     ) {
                         SignUpField(viewModel = viewModel)
                         Spacer(modifier = Modifier.height(40.dp))
-                        Row{
-                            Button(onClick = {
-                                    navController.navigate("Login"){
-                                        popUpTo(0)
-                                        launchSingleTop = true
-                                    }
-                                }
-                            ){
-                                Text(text = "Back")
-                            }
-                            Spacer(modifier = Modifier.width(15.dp))
-                            Button(onClick = {
-                                if (viewModel.email.value.text.isEmpty()){
-                                    Toast.makeText(context,"Please Enter Email!", Toast.LENGTH_SHORT).show()
-                                }else if (!isValidEmail(viewModel.email.value.text)){
-                                    Toast.makeText(context,"Please Enter Email in Correct Format!", Toast.LENGTH_SHORT).show()
-                                    viewModel.updateEmail(TextFieldValue(""))
-                                }else if (viewModel.pwd.value.isEmpty() || viewModel.verifyPwd.value.isEmpty()) {
-                                    Toast.makeText(context,"Please Enter Password!", Toast.LENGTH_SHORT).show()
-                                }else if (viewModel.pwd.value != viewModel.verifyPwd.value){
-                                    Toast.makeText(context,"Password doesn't match!", Toast.LENGTH_SHORT).show()
-                                    viewModel.updatePwd("")
-                                    viewModel.updateVerifyPwd("")
-                                }else {
-                                    val email = viewModel.email.value.text
-                                    val pwd = viewModel.pwd.value
-                                    auth.createUserWithEmailAndPassword(email, pwd)
-                                        .addOnCompleteListener(mainActivity) {task ->
-                                            if (task.isSuccessful){
-                                                Log.i("Auth","Success")
-                                                /*TODO firestore*/
-                                                navController.navigate("Login"){
-                                                    popUpTo(0)
-                                                    launchSingleTop = true
-                                                }
-                                            } else {
-                                                Toast.makeText(context, "Authentication failed.",
-                                                    Toast.LENGTH_SHORT).show()
-                                            }
-                                        }
-                                }
-                            }) {
-                                Text(text = "Sign Up")
-                            }
-                        }
+                        SignUpButton(
+                            navController = navController,
+                            viewModel = viewModel,
+                            auth = auth,
+                            mainActivity = mainActivity,
+                            db = db
+                        )
                     }
                 }
                 else -> {
-                    SignUpField(viewModel = viewModel)
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(5.dp)
+                    ){
+                        SignUpField(viewModel = viewModel)
+                        Spacer(modifier = Modifier.width(40.dp))
+                        SignUpButton(
+                            navController = navController,
+                            viewModel = viewModel,
+                            auth = auth,
+                            mainActivity = mainActivity,
+                            db = db
+                        )
+                    }
                 }
             }
         }

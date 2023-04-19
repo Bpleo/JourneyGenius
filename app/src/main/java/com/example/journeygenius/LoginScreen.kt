@@ -1,7 +1,6 @@
 package com.example.journeygenius
 
 import android.annotation.SuppressLint
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.clickable
@@ -27,13 +26,13 @@ import com.example.journeygenius.personal.PersonalViewModel
 import com.example.journeygenius.ui.theme.JourneyGeniusTheme
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.firestore.FirebaseFirestore
 
 @Composable
 fun JourneyGenius(
     auth: FirebaseAuth,
-    mainActivity: MainActivity
+    mainActivity: MainActivity,
+    db: FirebaseFirestore
 ) {
     val navController = rememberNavController()
     val windowSize = rememberWindowSize()
@@ -65,7 +64,8 @@ fun JourneyGenius(
                 windowSize,
                 viewModel,
                 auth,
-                mainActivity
+                mainActivity,
+                db
             )
         }
         composable("Main") { MainScreen() }

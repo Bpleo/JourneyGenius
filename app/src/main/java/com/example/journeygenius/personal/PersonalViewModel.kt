@@ -29,6 +29,13 @@ import javax.inject.Inject
 //    }
 //}
 class PersonalViewModel : ViewModel() {
+    private var _userName = mutableStateOf(TextFieldValue())
+    val userName: MutableState<TextFieldValue> = _userName
+
+    fun updateUserName(userName : TextFieldValue) {
+        _userName.value = userName
+    }
+
     private var _email = mutableStateOf(TextFieldValue())
     val email: MutableState<TextFieldValue> = _email
 
