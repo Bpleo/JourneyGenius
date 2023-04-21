@@ -27,6 +27,7 @@ fun MainScreen(
 ) {
     val navController = rememberNavController()
     val windowSize = rememberWindowSize()
+    viewModel.signIn()
     Scaffold(
         bottomBar = { BottomBar(navController = navController)}
     ) {
