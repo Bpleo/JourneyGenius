@@ -23,8 +23,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.journeygenius.WindowSize
 import com.example.journeygenius.WindowType
+import com.example.journeygenius.JourneyGeniusViewModel
 import com.example.journeygenius.rememberWindowSize
 import com.example.journeygenius.ui.theme.JourneyGeniusTheme
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.maxkeppeker.sheets.core.models.base.UseCaseState
 import com.maxkeppeker.sheets.core.models.base.rememberUseCaseState
 import com.maxkeppeler.sheets.calendar.CalendarDialog
@@ -194,7 +198,7 @@ fun TravelTypeComponent(windowSize: WindowSize){
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BudgetComponent(budget: MutableState<TextFieldValue>, viewModel: PlanViewModel){
+fun BudgetComponent(budget: MutableState<TextFieldValue>, viewModel: JourneyGeniusViewModel){
     Column {
         Text(
             text = "What is your budget: ",
@@ -236,7 +240,7 @@ fun DestinationButton() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlanScreen(
-    viewModel: PlanViewModel,
+    viewModel: JourneyGeniusViewModel,
     windowSize: WindowSize
 ) {
     val selectedDateRange = remember {
@@ -302,13 +306,13 @@ fun PlanScreen(
 @Preview(showBackground = true)
 @Composable
 fun PlanScreenPreview() {
-    PlanScreen(PlanViewModel(), rememberWindowSize())
+    PlanScreen(JourneyGeniusViewModel(Firebase.firestore, Firebase.auth), rememberWindowSize())
 }
 
 @Preview@Preview(showBackground = true, device = Devices.AUTOMOTIVE_1024p, heightDp = 320)
 @Composable
 fun PlanScreenLandscapePreview() {
-    val viewModel = PlanViewModel()
+    val viewModel = JourneyGeniusViewModel(Firebase.firestore, Firebase.auth)
     val selectedDateRange = remember {
         val value = viewModel.dateRange
         mutableStateOf(value)

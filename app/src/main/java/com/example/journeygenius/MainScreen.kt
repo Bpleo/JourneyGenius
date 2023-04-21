@@ -11,17 +11,32 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun MainScreen() {
+fun MainScreen(
+    auth: FirebaseAuth,
+    db: FirebaseFirestore,
+    viewModel: JourneyGeniusViewModel
+) {
     val navController = rememberNavController()
     val windowSize = rememberWindowSize()
     Scaffold(
         bottomBar = { BottomBar(navController = navController)}
     ) {
-        SetupNavGraph(navController = navController, windowSize = windowSize)
+        SetupNavGraph(
+            navController = navController,
+            windowSize = windowSize,
+            auth = auth,
+            db = db,
+            viewModel = viewModel
+        )
     }
 }
 
@@ -73,5 +88,5 @@ fun RowScope.AddItem(
 @Preview
 @Composable
 fun MainScreenPreview(){
-    MainScreen()
+    MainScreen(Firebase.auth, Firebase.firestore, JourneyGeniusViewModel(Firebase.firestore, Firebase.auth))
 }

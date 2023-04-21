@@ -15,17 +15,14 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.journeygenius.data.models.Personal
-import com.example.journeygenius.personal.PersonalViewModel
 import com.example.journeygenius.ui.theme.JourneyGeniusTheme
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignUpField(
-    viewModel: PersonalViewModel
+    viewModel: JourneyGeniusViewModel
 ){
   Row{
       Column{
@@ -104,7 +101,7 @@ fun SignUpField(
 @Composable
 fun SignUpButton(
     navController: NavHostController,
-    viewModel: PersonalViewModel,
+    viewModel: JourneyGeniusViewModel,
     auth: FirebaseAuth,
     mainActivity: ComponentActivity,
     db: FirebaseFirestore
@@ -143,11 +140,12 @@ fun SignUpButton(
                     .addOnCompleteListener(mainActivity) {task ->
                         if (task.isSuccessful){
                             Log.i("Auth","Success")
-                            /*TODO firestore*/
-                            val user = Personal(name = name, email = email, password = pwd, phone = "")
-                            db.collection("users").add(user)
-                                .addOnSuccessListener {documentReference ->
-                                    Log.d("FIRESTORE", "DocumentSnapshot written with ID: ${documentReference.id}")
+                            val currentUser = auth.currentUser
+                            val uid = currentUser!!.uid
+                            val user = Personal(name = name, email = email, password = pwd, phone = "", id = uid)
+                            db.collection("users").document(uid).set(user)
+                                .addOnSuccessListener {
+                                    Log.d("FIRESTORE", "DocumentSnapshot written with ID: $uid")
                                 }.addOnFailureListener { e ->
                                     Log.w("FIRESTORE", "Error adding document", e)
                                 }
@@ -176,7 +174,7 @@ fun isValidEmail(email: String): Boolean {
 fun SignUpScreen(
     navController: NavHostController,
     windowSize: WindowSize,
-    viewModel: PersonalViewModel,
+    viewModel: JourneyGeniusViewModel,
     auth: FirebaseAuth,
     mainActivity: ComponentActivity,
     db: FirebaseFirestore

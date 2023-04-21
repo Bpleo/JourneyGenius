@@ -1,18 +1,17 @@
 package com.example.journeygenius.personal
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.material.*
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
@@ -21,36 +20,45 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.journeygenius.JourneyGeniusViewModel
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.Dispatchers
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.journeygenius.personal.PersonalViewModel
+import com.example.journeygenius.data.models.Personal
 import com.example.journeygenius.ui.theme.JourneyGeniusTheme
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 @Composable
-fun PersonalScreen() {
+fun PersonalScreen(
+    db : FirebaseFirestore,
+    uid : String,
+    viewModel: JourneyGeniusViewModel
+) {
     JourneyGeniusTheme {
-        PersonalDetails()
+        PersonalDetails(LocalContext.current,db, uid, viewModel)
     }
 }
 
 private val optionsList: ArrayList<OptionsData> = ArrayList()
 
-
 @Composable
-fun PersonalDetails(context: Context = LocalContext.current.applicationContext) {
-
+fun PersonalDetails(
+    context: Context,
+    db: FirebaseFirestore,
+    uid: String,
+    viewModel: JourneyGeniusViewModel
+) {
+    Log.i("AUTH",uid)
     var listPrepared by remember {
         mutableStateOf(false)
     }
-
+    lateinit var user : Personal
     LaunchedEffect(Unit) {
         withContext(Dispatchers.Default) {
             optionsList.clear()
@@ -58,6 +66,24 @@ fun PersonalDetails(context: Context = LocalContext.current.applicationContext) 
             listPrepared = true
         }
     }
+
+//    db.collection("users").document(uid).get()
+//        .addOnSuccessListener {document ->
+//            if (document != null) {
+//                Log.d("FIRESTORE", "DocumentSnapshot data: ${document.data}")
+//                user = Personal(
+//                    uid,
+//                    document.data!!["name"].toString(),
+//                    document.data!!["email"].toString(),
+//                    document.data!!["password"].toString(),
+//                    document.data!!["phone"].toString()
+//                )
+//            }  else {
+//                Log.d("FIRESTORE", "No such document")
+//            }
+//        }.addOnFailureListener { exception ->
+//            Log.d("FIRESTORE", "get failed with ", exception)
+//        }
 
     if (listPrepared) {
         Column {
@@ -67,8 +93,8 @@ fun PersonalDetails(context: Context = LocalContext.current.applicationContext) 
                 item {
                     UserDetails(
                         context = context,
-                        name = "default name",
-                        email = "default@email.com"
+                        name = viewModel.userName.value.text,
+                        email = viewModel.email.value.text
                     )
                 }
                 // Show the options
@@ -257,5 +283,5 @@ private fun prepareOptionsData() {
 @Preview(showBackground = true)
 @Composable
 fun PersonalScreenPreview(){
-    PersonalDetails()
+    PersonalDetails(LocalContext.current,Firebase.firestore,"", JourneyGeniusViewModel(Firebase.firestore, Firebase.auth))
 }

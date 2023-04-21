@@ -22,11 +22,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.journeygenius.personal.PersonalViewModel
 import com.example.journeygenius.ui.theme.JourneyGeniusTheme
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 @Composable
 fun JourneyGenius(
@@ -36,7 +38,7 @@ fun JourneyGenius(
 ) {
     val navController = rememberNavController()
     val windowSize = rememberWindowSize()
-    val viewModel: PersonalViewModel = viewModel()
+    val viewModel = JourneyGeniusViewModel(db, auth)
     val currentUser = auth.currentUser
     NavHost(
         navController = navController,
@@ -68,7 +70,13 @@ fun JourneyGenius(
                 db
             )
         }
-        composable("Main") { MainScreen() }
+        composable("Main") {
+            MainScreen(
+                auth,
+                db,
+                viewModel
+            )
+        }
         // add more screens here
     }
 }
@@ -117,7 +125,7 @@ fun PasswordTextField(
 fun LoginTextField(
     email: MutableState<TextFieldValue>,
     pwd: MutableState<String>,
-    viewModel: PersonalViewModel
+    viewModel: JourneyGeniusViewModel
 ) {
     Row {
         Column {
@@ -167,7 +175,7 @@ fun LoginTextPreview() {
     LoginTextField(
         email = mutableStateOf(TextFieldValue()),
         pwd = mutableStateOf(String()),
-        viewModel = PersonalViewModel()
+        viewModel = JourneyGeniusViewModel(Firebase.firestore, Firebase.auth)
     )
 }
 
@@ -175,7 +183,7 @@ fun LoginTextPreview() {
 fun LoginScreen(
     navController: NavHostController,
     windowSize: WindowSize,
-    viewModel: PersonalViewModel = viewModel(),
+    viewModel: JourneyGeniusViewModel,
     auth: FirebaseAuth,
     mainActivity: ComponentActivity
 ) {
@@ -212,7 +220,7 @@ fun LoginScreen(
                                         }
                                     } else {
                                         if (task.exception != null) {
-                                            when (val errorCode = (task.exception as FirebaseAuthException).errorCode){
+                                            when ((task.exception as FirebaseAuthException).errorCode){
                                                 "ERROR_WRONG_PASSWORD","ERROR_INVALID_EMAIL" -> {
                                                     Toast.makeText(
                                                         context,

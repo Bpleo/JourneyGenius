@@ -6,8 +6,8 @@ import com.example.journeygenius.ui.util.Constants.DATABASE_TABLE
 
 @Entity(tableName = DATABASE_TABLE)
 data class Personal (
-    @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
+    @PrimaryKey
+    val id: String,
     val name: String,
     val email: String,
     val password: String,
