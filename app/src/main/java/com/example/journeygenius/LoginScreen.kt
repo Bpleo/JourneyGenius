@@ -144,7 +144,7 @@ fun LoginTextField(
         Spacer(modifier = Modifier.width(20.dp))
         Column {
             TextField(
-                value = email.value,
+                value = viewModel.email.value,
                 onValueChange = { newEmail ->
                     viewModel.updateEmail(newEmail)
                 },
@@ -158,7 +158,7 @@ fun LoginTextField(
                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
             )
             PasswordTextField(
-                password = pwd.value,
+                password = viewModel.pwd.value,
                 onPasswordChange = { newPwd ->
                     viewModel.updatePwd(newPwd)
                 },
@@ -214,6 +214,7 @@ fun LoginScreen(
                             )
                                 .addOnCompleteListener(mainActivity) { task ->
                                     if (task.isSuccessful) {
+                                        viewModel.signIn()
                                         navController.navigate("Main") {
                                             popUpTo(0)
                                             launchSingleTop = true

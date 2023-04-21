@@ -29,13 +29,15 @@ class JourneyGeniusViewModel(
     private val db: FirebaseFirestore,
     private val auth : FirebaseAuth
 ) : ViewModel() {
-    private fun getDataFromFireStore(collection: String, document: String, onSuccess: (documentData: Map<String, Any>) -> Unit) {
-        db.collection(collection).document(document).get()
+
+    fun signIn(){
+        db.collection("users").document(auth.currentUser!!.uid).get()
             .addOnSuccessListener {documentSnapshot ->
                 if (documentSnapshot != null) {
                     val data = documentSnapshot.data
                     if (data != null) {
-                        onSuccess(data)
+                        updateUserName(TextFieldValue(data["name"].toString()))
+                        updateEmail(TextFieldValue(data["email"].toString()))
                     } else {
                         Log.d("FIRESTORE", "No data found")
                     }
