@@ -11,7 +11,7 @@ class PersonalRepository @Inject constructor(
 ){
     val getAllProfile: Flow<List<Personal>> = personalDao.getAllProfile()
 
-    fun getSelectedProfile(id: Int): Flow<Personal> {
+    fun getSelectedProfile(id: String): Flow<Personal> {
         return personalDao.getSelectedProfile(id)
     }
 

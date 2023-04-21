@@ -10,7 +10,7 @@ interface PersonalDao {
     fun getAllProfile(): Flow<List<Personal>>
 
     @Query("SELECT * FROM personal_table WHERE id = :personalId")
-    fun getSelectedProfile(personalId: Int): Flow<Personal>
+    fun getSelectedProfile(personalId: String): Flow<Personal>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun addProfile(personal: Personal)
