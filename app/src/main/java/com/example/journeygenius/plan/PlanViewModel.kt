@@ -5,6 +5,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
+import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.currentCameraPositionState
 import com.google.maps.android.compose.rememberCameraPositionState
 import java.time.LocalDate
@@ -60,12 +61,11 @@ class PlanViewModel : ViewModel() {
         _destCity.value=value;
     }
 
-    private var _selectedCityLocation= mutableStateOf<Pair<Double, Double>>(Pair<Double,Double>(42.361145, -71.057083))
-    val selectedCityLocation:MutableState<Pair<Double, Double>> = _selectedCityLocation
-    fun updateSelectedCityLocation(value: Pair<Double, Double>?){
-        if (value != null) {
+    private var _selectedCityLocation= mutableStateOf(LatLng(42.36, -71.05))
+    val selectedCityLocation:MutableState<LatLng> = _selectedCityLocation
+    fun updateSelectedCityLocation(value: LatLng){
             _selectedCityLocation.value=value
-        }
+
     }
 
 

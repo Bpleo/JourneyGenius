@@ -1,4 +1,6 @@
 package com.example.journeygenius
+import android.content.Context
+import android.location.Address
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -17,69 +19,31 @@ import androidx.compose.ui.unit.toSize
 import com.example.journeygenius.ui.theme.JourneyGeniusTheme
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.google.maps.android.compose.GoogleMap
-import com.google.maps.android.compose.Marker
-import com.google.maps.android.compose.MarkerState
-import com.google.maps.android.compose.rememberCameraPositionState
 import androidx.compose.material.*
 import android.location.Geocoder
+import android.os.Build
+import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.ui.platform.LocalContext
 import com.example.journeygenius.plan.PlanViewModel
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.maps.android.compose.*
 import java.util.*
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlanChooseLocScreen(viewModel: PlanViewModel) {
     val countries = listOf("China", "Japan", "Korea", "US", "UK")
-    val usStates = listOf(
-        "AL",
-        "AK",
-        "AZ",
-        "AR",
-        "CA",
-        "CO",
-        "CT",
-        "DE",
-        "FL",
-        "GA",
-        "HI",
-        "ID",
-        "IL",
-        "IN",
-        "IA",
-        "KS",
-        "KY",
-        "LA",
-        "ME",
-        "MD",
-        "MA",
-        "MI",
-        "MN"
-    )
-    val chnStates = listOf(
-        "Guangdong",
-        "Hainan",
-        "Beijing",
-        "Jiangsu",
-        "Jiangxi",
-        "Guangxi",
-        "Sichuan",
-        "Yunan",
-        "Fujian"
-    )
+    val usStates = listOf("AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID",
+        "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN")
+    val chnStates = listOf("Guangdong", "Hainan", "Beijing", "Jiangsu", "Jiangxi", "Guangxi",
+        "Sichuan", "Yunan", "Fujian")
     val jpStates = listOf("Hokkaido", "Aomori", "Iwate", "Miyagi", "Akita", "Yamagata", "Fukushima")
-    val krStates = listOf(
-        "Seoul", "Busan",
-        "Daegu",
-        "Incheon",
-        "Gwangju",
-        "Daejeon",
-        "Ulsan",
-        "Sejong",
-    )
+    val krStates = listOf( "Seoul", "Busan", "Daegu", "Incheon","Gwangju", "Daejeon", "Ulsan", "Sejong",)
     val ukStates = listOf(
-        "England", "Scotland", "Wales", "Northern Ireland"
-    )
+        "England", "Scotland", "Wales", "Northern Ireland")
 
     val countryToStateMap = mapOf(
         "China" to chnStates,
@@ -106,11 +70,13 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel) {
     val bosCities = listOf(
         "Boston", "Worcester", "Springfield", "Lowell"
     )
+    val seoulCities= listOf("Seoul")
     val stateToCityMap = mapOf(
         "England" to engCities,
         "Guangdong" to guangdongCities,
         "Hokkaido" to hokCities,
         "Boston" to bosCities,
+        "Seoul" to seoulCities,
     )
 
 
@@ -150,6 +116,7 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel) {
         mutableStateOf(viewModel.destCity)
     }
     val selectedCityLocation = remember { viewModel.selectedCityLocation }
+
     var textFiledSize by remember {
         mutableStateOf(Size.Zero)
     }
@@ -185,24 +152,40 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel) {
     } else {
         Icons.Filled.KeyboardArrowDown
     }
-    val context = LocalContext.current
-    fun getCityLocation(cityName: String){
+    val context= LocalContext.current
+
+    fun findLocOnMap(maxResult: Int,destCityName:String,context: Context){
+
         val geocoder = Geocoder(context, Locale.getDefault())
-        val results = geocoder.getFromLocationName(cityName, 1)
-        if (results != null) {
+        val geocodeListener = @RequiresApi(33) object : Geocoder.GeocodeListener {
+            override fun onGeocode(results: List<Address>) {
+                // do something with the addresses list
                 val latitude = results[0].latitude
                 val longitude = results[0].longitude
-                viewModel.updateSelectedCityLocation(Pair(latitude, longitude))
-            } else {
-            viewModel.updateSelectedCityLocation(null)
+                viewModel.updateSelectedCityLocation(LatLng(latitude,longitude))
+                Log.d("lat,long", "$latitude $longitude")
+            }
+        }
+        if (Build.VERSION.SDK_INT >= 33) {
+            // declare here the geocodeListener, as it requires Android API 33
+            geocoder.getFromLocationName(destCityName,maxResult,geocodeListener)
+        } else {
+            // For Android SDK < 33, the addresses list will be still obtained from the getFromLocation() method
+            val addresses = geocoder.getFromLocationName(destCityName,maxResult)
+            if(addresses!=null){
+                val latitude =  addresses[0].latitude
+                val longitude =  addresses[0].longitude
+                viewModel.updateSelectedCityLocation(LatLng(latitude,longitude))
+                Log.d("lat,long", "$latitude $longitude")
             }
         }
 
-
-    val singapore=LatLng(42.36, -71.05)
-    val cameraPositionState= rememberCameraPositionState{
-        position= CameraPosition.fromLatLngZoom(singapore,10f)
     }
+
+    val boston=LatLng(42.36, -71.05)
+    val cameraPositionState= CameraPositionState(position= CameraPosition.fromLatLngZoom(selectedCityLocation.value,10f))
+
+
 
     JourneyGeniusTheme {
         Box(
@@ -381,6 +364,7 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel) {
                                 countryToStateMap[destCountry.value]?.forEach { country ->
                                     DropdownMenuItem(text = { Text(country) }, onClick = {
                                         viewModel.updateDestState(country)
+                                        viewModel.updateDestCity("")
                                         destStateExpanded = false
                                     })
                                 }
@@ -409,6 +393,10 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel) {
                                     DropdownMenuItem(text = { Text(country) }, onClick = {
                                         viewModel.updateDestCity(country)
                                         destCityExpanded = false
+
+
+                                        findLocOnMap(1,country, context)
+
                                     })
                                 }
                             }
@@ -436,11 +424,14 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel) {
                     }
                     Spacer(modifier = Modifier.height(5.dp))
                     GoogleMap(modifier = Modifier.fillMaxWidth().height(300.dp),
-                        cameraPositionState = cameraPositionState){
+                        cameraPositionState = cameraPositionState,
+                       onMapLoaded = { /*TODO*/}
+
+                    ){
                         Marker(
-                            state = MarkerState(position = singapore),
-                            title = "Boston",
-                            snippet = "Marker in Boston"
+                            state = MarkerState(position = selectedCityLocation.value),
+                            title = destCity.value,
+                            snippet = "Marker in ${destCity.value}"
                         )
 
                     }
