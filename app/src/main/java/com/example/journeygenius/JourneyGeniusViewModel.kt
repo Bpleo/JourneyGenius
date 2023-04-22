@@ -8,7 +8,9 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDate
+import javax.inject.Inject
 
 //@HiltViewModel
 //class PersonalViewModel @Inject constructor(
@@ -25,10 +27,19 @@ import java.time.LocalDate
 //        }
 //    }
 //}
-class JourneyGeniusViewModel(
+@HiltViewModel
+class JourneyGeniusViewModel @Inject constructor(
     private val db: FirebaseFirestore,
     private val auth : FirebaseAuth
 ) : ViewModel() {
+
+    fun signOut() {
+        auth.signOut()
+        updateUserName(TextFieldValue(""))
+        updateEmail(TextFieldValue(""))
+        updatePwd("")
+        updateVerifyPwd("")
+    }
 
     fun signIn(){
         db.collection("users").document(auth.currentUser!!.uid).get()
@@ -38,6 +49,7 @@ class JourneyGeniusViewModel(
                     if (data != null) {
                         updateUserName(TextFieldValue(data["name"].toString()))
                         updateEmail(TextFieldValue(data["email"].toString()))
+                        updatePwd(data["password"].toString())
                     } else {
                         Log.d("FIRESTORE", "No data found")
                     }
