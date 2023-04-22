@@ -24,6 +24,10 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import com.example.journeygenius.JourneyGeniusViewModel
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.Dispatchers
@@ -40,8 +44,17 @@ fun PersonalScreen(
     uid : String,
     viewModel: JourneyGeniusViewModel
 ) {
-    JourneyGeniusTheme {
-        PersonalDetails(LocalContext.current,db, uid, viewModel)
+    val navController = rememberNavController()
+    NavHost(
+        navController = navController,
+        startDestination = "Personal Detail"
+    ) {
+        composable("Personal Detail") {
+            PersonalDetails(LocalContext.current,db, uid, viewModel, navController)
+        }
+        composable("Personal Settings") {
+            PersonalSettingScreen(navController = navController)
+        }
     }
 }
 
@@ -52,7 +65,8 @@ fun PersonalDetails(
     context: Context,
     db: FirebaseFirestore,
     uid: String,
-    viewModel: JourneyGeniusViewModel
+    viewModel: JourneyGeniusViewModel,
+    navController: NavHostController
 ) {
     Log.i("AUTH",uid)
     var listPrepared by remember {
@@ -99,7 +113,7 @@ fun PersonalDetails(
                 }
                 // Show the options
                 items(optionsList) { item ->
-                    OptionsItemStyle(item = item, context = context)
+                    OptionsItemStyle(item = item, context = context, navController = navController)
                 }
             }
         }
@@ -169,7 +183,7 @@ private fun UserDetails(context: Context, name: String, email: String) {
 }
 
 @Composable
-private fun OptionsItemStyle(item: OptionsData, context: Context) {
+private fun OptionsItemStyle(item: OptionsData, context: Context, navController: NavHostController) {
     Row(
         modifier = if (item.title.equals("Log out")){
             Modifier
@@ -182,9 +196,13 @@ private fun OptionsItemStyle(item: OptionsData, context: Context) {
             Modifier
                 .fillMaxWidth()
                 .clickable(enabled = true) {
-                    Toast
-                        .makeText(context, item.title, Toast.LENGTH_SHORT)
-                        .show()
+                    try {
+                        navController.navigate("Personal " + item.title)
+                    } catch (e: Exception) {
+                        Toast
+                            .makeText(context, item.title, Toast.LENGTH_SHORT)
+                            .show()
+                    }
                 }
                 .padding(all = 16.dp)
                },
@@ -283,5 +301,5 @@ private fun prepareOptionsData() {
 @Preview(showBackground = true)
 @Composable
 fun PersonalScreenPreview(){
-    PersonalDetails(LocalContext.current,Firebase.firestore,"", JourneyGeniusViewModel(Firebase.firestore, Firebase.auth))
+//    PersonalDetails(LocalContext.current,Firebase.firestore,"", JourneyGeniusViewModel(Firebase.firestore, Firebase.auth))
 }
