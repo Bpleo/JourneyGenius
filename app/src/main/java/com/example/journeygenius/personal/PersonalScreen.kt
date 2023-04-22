@@ -25,6 +25,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import com.example.journeygenius.JourneyGeniusViewModel
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.Dispatchers
@@ -40,8 +42,17 @@ fun PersonalScreen(
     viewModel: JourneyGeniusViewModel,
     navController: NavHostController
 ) {
-    JourneyGeniusTheme {
-        PersonalDetails(LocalContext.current, viewModel, navController)
+    val personalNavController = rememberNavController()
+    NavHost(
+        navController = personalNavController,
+        startDestination = "Personal Detail"
+    ) {
+        composable("Personal Detail") {
+            PersonalDetails(LocalContext.current, viewModel, navController, personalNavController)
+        }
+        composable("Personal Settings") {
+            PersonalSettingScreen(navController = personalNavController)
+        }
     }
 }
 
@@ -51,7 +62,8 @@ private val optionsList: ArrayList<OptionsData> = ArrayList()
 fun PersonalDetails(
     context: Context,
     viewModel: JourneyGeniusViewModel,
-    navController: NavHostController
+    navController: NavHostController,
+    personalNavController: NavHostController
 ) {
     var listPrepared by remember {
         mutableStateOf(false)
@@ -77,7 +89,14 @@ fun PersonalDetails(
                 }
                 // Show the options
                 items(optionsList) { item ->
-                    OptionsItemStyle(item = item, context = context, navController)
+                    OptionsItemStyle(item = item, context = context, navController = personalNavController)
+                }
+                item {
+                    OptionsItemStyle(item = OptionsData(
+                        icon = Icons.Default.Logout,
+                        title = "Log out",
+                        subTitle = ""
+                    ), context = context, navController = navController)
                 }
             }
         }
@@ -158,7 +177,7 @@ private fun OptionsItemStyle(
                 .fillMaxWidth()
                 .clickable(enabled = true) {
                     navController.navigate("Login/${logout}") {
-                        popUpTo(0) {inclusive = true}
+                        popUpTo(0) { inclusive = true }
                     }
                 }
                 .padding(all = 16.dp)
@@ -166,9 +185,13 @@ private fun OptionsItemStyle(
             Modifier
                 .fillMaxWidth()
                 .clickable(enabled = true) {
-                    Toast
-                        .makeText(context, item.title, Toast.LENGTH_SHORT)
-                        .show()
+                    try {
+                        navController.navigate("Personal " + item.title)
+                    } catch (e: Exception) {
+                        Toast
+                            .makeText(context, item.title, Toast.LENGTH_SHORT)
+                            .show()
+                    }
                 }
                 .padding(all = 16.dp)
                },
@@ -253,13 +276,6 @@ private fun prepareOptionsData() {
             subTitle = "App notification settings"
         )
     )
-    optionsList.add(
-        OptionsData(
-            icon = Icons.Default.Logout,
-            title = "Log out",
-            subTitle = ""
-        )
-    )
 }
 
 
@@ -267,5 +283,5 @@ private fun prepareOptionsData() {
 @Preview(showBackground = true)
 @Composable
 fun PersonalScreenPreview(){
-    PersonalDetails(LocalContext.current, JourneyGeniusViewModel(Firebase.firestore, Firebase.auth), rememberNavController())
+    PersonalDetails(LocalContext.current, JourneyGeniusViewModel(Firebase.firestore, Firebase.auth), rememberNavController(), rememberNavController())
 }
