@@ -17,10 +17,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.journeygenius.ui.theme.JourneyGeniusTheme
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
@@ -37,7 +40,7 @@ fun JourneyGenius(
 ) {
     val navController = rememberNavController()
     val windowSize = rememberWindowSize()
-    val viewModel = JourneyGeniusViewModel(db, auth)
+    val viewModel : JourneyGeniusViewModel = viewModel(factory = JourneyGeniusViewModelFactory(db, auth))
     val currentUser = auth.currentUser
     NavHost(
         navController = navController,
@@ -50,6 +53,21 @@ fun JourneyGenius(
             }
         }
     ) {
+        composable("Login/{type}",
+            arguments = listOf(navArgument("type"){type = NavType.BoolType}))
+        { backStackEntry ->
+            val signOut = backStackEntry.arguments?.getBoolean("type") ?: false
+            if (signOut) {
+                viewModel.signOut()
+            }
+            LoginScreen(
+                navController,
+                windowSize,
+                viewModel,
+                auth,
+                mainActivity
+            )
+        }
         composable("Login") {
             LoginScreen(
                 navController,
@@ -73,7 +91,8 @@ fun JourneyGenius(
             MainScreen(
                 auth,
                 db,
-                viewModel
+                viewModel,
+                navController
             )
         }
         // add more screens here
@@ -122,8 +141,8 @@ fun PasswordTextField(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginTextField(
-    email: MutableState<TextFieldValue>,
-    pwd: MutableState<String>,
+    email: TextFieldValue,
+    pwd: String,
     viewModel: JourneyGeniusViewModel
 ) {
     Row {
@@ -172,8 +191,8 @@ fun LoginTextField(
 @Composable
 fun LoginTextPreview() {
     LoginTextField(
-        email = mutableStateOf(TextFieldValue()),
-        pwd = mutableStateOf(String()),
+        email = mutableStateOf(TextFieldValue()).value,
+        pwd = mutableStateOf(String()).value,
         viewModel = JourneyGeniusViewModel(Firebase.firestore, Firebase.auth)
     )
 }
@@ -187,10 +206,10 @@ fun LoginScreen(
     mainActivity: ComponentActivity
 ) {
     val email by remember {
-        mutableStateOf(viewModel.email)
+        mutableStateOf(viewModel.email.value)
     }
     val pwd by remember {
-        mutableStateOf(viewModel.pwd)
+        mutableStateOf(viewModel.pwd.value)
     }
     val context = LocalContext.current
     JourneyGeniusTheme {

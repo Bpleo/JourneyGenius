@@ -7,7 +7,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDate
 import javax.inject.Inject
@@ -27,14 +29,13 @@ import javax.inject.Inject
 //        }
 //    }
 //}
-@HiltViewModel
-class JourneyGeniusViewModel @Inject constructor(
+class JourneyGeniusViewModel(
     private val db: FirebaseFirestore,
     private val auth : FirebaseAuth
 ) : ViewModel() {
 
     fun signOut() {
-        auth.signOut()
+        Firebase.auth.signOut()
         updateUserName(TextFieldValue(""))
         updateEmail(TextFieldValue(""))
         updatePwd("")
@@ -42,24 +43,30 @@ class JourneyGeniusViewModel @Inject constructor(
     }
 
     fun signIn(){
-        db.collection("users").document(auth.currentUser!!.uid).get()
-            .addOnSuccessListener {documentSnapshot ->
-                if (documentSnapshot != null) {
-                    val data = documentSnapshot.data
-                    if (data != null) {
-                        updateUserName(TextFieldValue(data["name"].toString()))
-                        updateEmail(TextFieldValue(data["email"].toString()))
-                        updatePwd(data["password"].toString())
+        val user = auth.currentUser
+        if (user != null) {
+            Log.d("USER", user.email.toString())
+            db.collection("users").document(user.uid).get()
+                .addOnSuccessListener {documentSnapshot ->
+                    if (documentSnapshot != null) {
+                        val data = documentSnapshot.data
+                        if (data != null) {
+                            updateUserName(TextFieldValue(data["name"].toString()))
+                            updateEmail(TextFieldValue(data["email"].toString()))
+                            updatePwd(data["password"].toString())
+                        } else {
+                            Log.d("FIRESTORE", "No data found")
+                        }
                     } else {
-                        Log.d("FIRESTORE", "No data found")
+                        Log.d("FIRESTORE", "Document not found")
                     }
-                } else {
-                    Log.d("FIRESTORE", "Document not found")
                 }
-            }
-            .addOnFailureListener { exception ->
-                Log.w("FIRESTORE", "Error getting document", exception)
-            }
+                .addOnFailureListener { exception ->
+                    Log.w("FIRESTORE", "Error getting document", exception)
+                }
+        } else {
+            Log.d("USER", "No User Logged In")
+        }
     }
 
     private var _userName = mutableStateOf(TextFieldValue())

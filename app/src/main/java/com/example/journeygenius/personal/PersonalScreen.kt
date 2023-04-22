@@ -1,7 +1,6 @@
 package com.example.journeygenius.personal
 
 import android.content.Context
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,10 +23,11 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.journeygenius.JourneyGeniusViewModel
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.Dispatchers
-import com.example.journeygenius.data.models.Personal
 import com.example.journeygenius.ui.theme.JourneyGeniusTheme
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -37,11 +37,11 @@ import com.google.firebase.ktx.Firebase
 @Composable
 fun PersonalScreen(
     db : FirebaseFirestore,
-    uid : String,
-    viewModel: JourneyGeniusViewModel
+    viewModel: JourneyGeniusViewModel,
+    navController: NavHostController
 ) {
     JourneyGeniusTheme {
-        PersonalDetails(LocalContext.current,db, uid, viewModel)
+        PersonalDetails(LocalContext.current, viewModel, navController)
     }
 }
 
@@ -50,15 +50,12 @@ private val optionsList: ArrayList<OptionsData> = ArrayList()
 @Composable
 fun PersonalDetails(
     context: Context,
-    db: FirebaseFirestore,
-    uid: String,
-    viewModel: JourneyGeniusViewModel
+    viewModel: JourneyGeniusViewModel,
+    navController: NavHostController
 ) {
-    Log.i("AUTH",uid)
     var listPrepared by remember {
         mutableStateOf(false)
     }
-    lateinit var user : Personal
     LaunchedEffect(Unit) {
         withContext(Dispatchers.Default) {
             optionsList.clear()
@@ -66,25 +63,6 @@ fun PersonalDetails(
             listPrepared = true
         }
     }
-
-//    db.collection("users").document(uid).get()
-//        .addOnSuccessListener {document ->
-//            if (document != null) {
-//                Log.d("FIRESTORE", "DocumentSnapshot data: ${document.data}")
-//                user = Personal(
-//                    uid,
-//                    document.data!!["name"].toString(),
-//                    document.data!!["email"].toString(),
-//                    document.data!!["password"].toString(),
-//                    document.data!!["phone"].toString()
-//                )
-//            }  else {
-//                Log.d("FIRESTORE", "No such document")
-//            }
-//        }.addOnFailureListener { exception ->
-//            Log.d("FIRESTORE", "get failed with ", exception)
-//        }
-
     if (listPrepared) {
         Column {
             LazyColumn(
@@ -99,7 +77,7 @@ fun PersonalDetails(
                 }
                 // Show the options
                 items(optionsList) { item ->
-                    OptionsItemStyle(item = item, context = context)
+                    OptionsItemStyle(item = item, context = context, navController)
                 }
             }
         }
@@ -169,13 +147,19 @@ private fun UserDetails(context: Context, name: String, email: String) {
 }
 
 @Composable
-private fun OptionsItemStyle(item: OptionsData, context: Context) {
+private fun OptionsItemStyle(
+    item: OptionsData,
+    context: Context,
+    navController: NavHostController) {
+    val logout = true
     Row(
-        modifier = if (item.title.equals("Log out")){
+        modifier = if (item.title == "Log out"){
             Modifier
                 .fillMaxWidth()
                 .clickable(enabled = true) {
-                    Firebase.auth.signOut()
+                    navController.navigate("Login/${logout}") {
+                        popUpTo(0) {inclusive = true}
+                    }
                 }
                 .padding(all = 16.dp)
         } else {
@@ -283,5 +267,5 @@ private fun prepareOptionsData() {
 @Preview(showBackground = true)
 @Composable
 fun PersonalScreenPreview(){
-    PersonalDetails(LocalContext.current,Firebase.firestore,"", JourneyGeniusViewModel(Firebase.firestore, Firebase.auth))
+    PersonalDetails(LocalContext.current, JourneyGeniusViewModel(Firebase.firestore, Firebase.auth), rememberNavController())
 }

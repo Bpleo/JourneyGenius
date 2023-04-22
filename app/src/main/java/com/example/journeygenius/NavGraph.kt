@@ -13,20 +13,22 @@ import com.google.firebase.firestore.FirebaseFirestore
 @Composable
 fun SetupNavGraph(
     navController: NavHostController,
+    bottomController: NavHostController,
     windowSize: WindowSize,
-    auth: FirebaseAuth,
     db: FirebaseFirestore,
     viewModel: JourneyGeniusViewModel
 ) {
-    val user = auth.currentUser
     NavHost(
-        navController = navController,
+        navController = bottomController,
         startDestination = BottomBar.Plan.route
     ){
         composable(
             route = BottomBar.Plan.route
         ){
-            PlanScreen(viewModel, windowSize)
+            PlanScreen(
+                viewModel,
+                windowSize
+            )
         }
         composable(
             route = BottomBar.Community.route
@@ -36,7 +38,11 @@ fun SetupNavGraph(
         composable(
             route = BottomBar.Personal.route
         ){
-            PersonalScreen(db,user!!.uid, viewModel)
+            PersonalScreen(
+                db = db,
+                viewModel = viewModel,
+                navController = navController
+            )
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.example.journeygenius
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -23,18 +24,19 @@ import com.google.firebase.ktx.Firebase
 fun MainScreen(
     auth: FirebaseAuth,
     db: FirebaseFirestore,
-    viewModel: JourneyGeniusViewModel
+    viewModel: JourneyGeniusViewModel,
+    navController: NavHostController
 ) {
-    val navController = rememberNavController()
+    val bottomController = rememberNavController()
     val windowSize = rememberWindowSize()
     viewModel.signIn()
     Scaffold(
-        bottomBar = { BottomBar(navController = navController)}
+        bottomBar = { BottomBar(navController = bottomController)}
     ) {
         SetupNavGraph(
             navController = navController,
+            bottomController = bottomController,
             windowSize = windowSize,
-            auth = auth,
             db = db,
             viewModel = viewModel
         )
@@ -89,5 +91,5 @@ fun RowScope.AddItem(
 @Preview
 @Composable
 fun MainScreenPreview(){
-    MainScreen(Firebase.auth, Firebase.firestore, JourneyGeniusViewModel(Firebase.firestore, Firebase.auth))
+    MainScreen(Firebase.auth, Firebase.firestore, JourneyGeniusViewModel(Firebase.firestore, Firebase.auth), rememberNavController())
 }
