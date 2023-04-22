@@ -6,9 +6,12 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
+import com.example.journeygenius.data.repositories.PersonalRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDate
+import javax.inject.Inject
 
 //@HiltViewModel
 //class PersonalViewModel @Inject constructor(
@@ -25,7 +28,9 @@ import java.time.LocalDate
 //        }
 //    }
 //}
-class JourneyGeniusViewModel(
+@HiltViewModel
+class JourneyGeniusViewModel @Inject constructor(
+    //private val personalRepository: PersonalRepository,
     private val db: FirebaseFirestore,
     private val auth : FirebaseAuth
 ) : ViewModel() {

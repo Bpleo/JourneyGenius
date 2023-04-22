@@ -2,7 +2,7 @@ package com.example.journeygenius.community
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
-import com.example.journeygenius.Plan
+import com.example.journeygenius.data.models.Plan
 
 class CommunityViewModel : ViewModel(){
 

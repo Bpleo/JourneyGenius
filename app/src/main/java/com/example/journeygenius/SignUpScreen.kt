@@ -135,14 +135,14 @@ fun SignUpButton(
             }else {
                 val email = viewModel.email.value.text
                 val pwd = viewModel.pwd.value
-                val name = viewModel.userName.value.text
+                val userName = viewModel.userName.value.text
                 auth.createUserWithEmailAndPassword(email, pwd)
                     .addOnCompleteListener(mainActivity) {task ->
                         if (task.isSuccessful){
                             Log.i("Auth","Success")
                             val currentUser = auth.currentUser
                             val uid = currentUser!!.uid
-                            val user = Personal(name = name, email = email, password = pwd, phone = "", id = uid)
+                            val user = Personal(userName = userName, email = email, pwd = pwd, id = uid)
                             db.collection("users").document(uid).set(user)
                                 .addOnSuccessListener {
                                     Log.d("FIRESTORE", "DocumentSnapshot written with ID: $uid")
