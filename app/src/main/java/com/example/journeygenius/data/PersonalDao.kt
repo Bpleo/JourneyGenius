@@ -10,7 +10,7 @@ interface PersonalDao {
     fun getAllProfile(): Flow<List<Personal>>
 
     @Query("SELECT * FROM personal_table WHERE id = :personalId")
-    fun getSelectedProfile(personalId: Int): Flow<Personal>
+    fun getSelectedProfile(personalId: String): Flow<Personal>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun addProfile(personal: Personal)
@@ -24,6 +24,6 @@ interface PersonalDao {
     @Query("DELETE FROM personal_table")
     suspend fun deleteAllProfiles()
 
-    @Query("SELECT * FROM personal_table WHERE name LIKE :searchQuery OR email LIKE :searchQuery")
+    @Query("SELECT * FROM personal_table WHERE userName LIKE :searchQuery OR email LIKE :searchQuery")
     fun searchProfile(searchQuery: String): Flow<List<Personal>>
 }
