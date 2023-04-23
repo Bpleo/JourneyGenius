@@ -20,7 +20,7 @@ class CommunityViewModel : ViewModel(){
                     title = "Test Plan #$number",
                     userId = "0",
                     planId = "$number",
-                    travels = mutableListOf(),
+                    //travels = mutableListOf(),
                     likes = number * 100,
                     description = "This is a test for number $number post."
                 )
@@ -32,7 +32,7 @@ class CommunityViewModel : ViewModel(){
                     title = "Test Plan for a loooooooooooooooooog post #$number",
                     userId = "0",
                     planId = "$number",
-                    travels = mutableListOf(),
+                    //travels = mutableListOf(),
                     likes = number * 100,
                     description = "This is a test for number $number post, it is a really " +
                             "looooooooooooooooooooooooooooooooooooooooooooooooooooooooo" +

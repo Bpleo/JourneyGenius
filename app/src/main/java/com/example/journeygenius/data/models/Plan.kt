@@ -10,7 +10,7 @@ data class Plan(
     val userId: String,
     @PrimaryKey
     val planId: String,
-    var travels: MutableList<Travel>,
+//    var travels: MutableList<Travel>,
     var likes: Int,
     var description: String
 )

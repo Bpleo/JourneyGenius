@@ -27,4 +27,12 @@ object DatabaseModule {
     @Singleton
     @Provides
     fun provideDao(database: PersonalDatabase) = database.personalDao()
+
+    @Singleton
+    @Provides
+    fun providePlanDao(database: PersonalDatabase) = database.planDao()
+
+    @Singleton
+    @Provides
+    fun provideTravelDao(database: PersonalDatabase) = database.travelDao()
 }
