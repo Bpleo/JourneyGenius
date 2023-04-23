@@ -29,17 +29,7 @@ fun PersonalListScreen(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            when (windowSize.height) {
-                WindowType.Medium -> {
-                    Column(
 
-                    ) {
-                    }
-                }
-                else -> {
-
-                }
-            }
         }
     }
 }
