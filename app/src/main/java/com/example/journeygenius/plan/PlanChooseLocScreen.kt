@@ -1,5 +1,6 @@
-package com.example.journeygenius
+package com.example.journeygenius.plan
 import android.content.Context
+import android.graphics.Bitmap
 import android.location.Address
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -17,19 +18,62 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import com.example.journeygenius.ui.theme.JourneyGeniusTheme
-import com.google.android.gms.maps.model.CameraPosition
-import com.google.android.gms.maps.model.LatLng
 import androidx.compose.material.*
 import android.location.Geocoder
 import android.os.Build
 import android.util.Log
+import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi
 import androidx.compose.ui.platform.LocalContext
-import com.example.journeygenius.plan.PlanViewModel
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.viewModelScope
+import com.example.journeygenius.R
+import com.google.android.gms.maps.model.*
 import com.google.maps.android.compose.*
+import com.google.gson.Gson
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+
 import java.util.*
+
+@Composable
+fun MapMarker(
+    context: Context,
+    position: LatLng,
+    title: String,
+    @DrawableRes iconResourceId: Int,
+    onClick:(Marker)->Boolean
+
+) {
+    Marker(
+        state = MarkerState(position = position),
+        title = title,
+        icon = bitmapDescriptorFromVector(
+            context, iconResourceId
+        ),
+        onClick = onClick
+    )
+}
+fun bitmapDescriptorFromVector(
+    context: Context,
+    vectorResId: Int
+): BitmapDescriptor? {
+
+    // retrieve the actual drawable
+    val drawable = ContextCompat.getDrawable(context, vectorResId) ?: return null
+    drawable.setBounds(0, 0, drawable.intrinsicWidth, drawable.intrinsicHeight)
+    val bm = Bitmap.createBitmap(
+        drawable.intrinsicWidth,
+        drawable.intrinsicHeight,
+        Bitmap.Config.ARGB_8888
+    )
+
+    // draw it onto the bitmap
+    val canvas = android.graphics.Canvas(bm)
+    drawable.draw(canvas)
+    return BitmapDescriptorFactory.fromBitmap(bm)
+}
+
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -75,7 +119,7 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel) {
         "England" to engCities,
         "Guangdong" to guangdongCities,
         "Hokkaido" to hokCities,
-        "Boston" to bosCities,
+        "MA" to bosCities,
         "Seoul" to seoulCities,
     )
 
@@ -115,7 +159,14 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel) {
     var destCity by remember {
         mutableStateOf(viewModel.destCity)
     }
-    val selectedCityLocation = remember { viewModel.selectedCityLocation }
+    val selectedCityLocation = remember { viewModel.selectedCityLocation  }
+    val selectedCityLatLng= remember {
+      viewModel.selectedCityLatLng
+    }
+    val attractionsList= remember{viewModel.attractionsList }
+    val selectedAttractionList= remember {
+        mutableStateOf(viewModel.selectedAttractionList)
+    }
 
     var textFiledSize by remember {
         mutableStateOf(Size.Zero)
@@ -153,22 +204,24 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel) {
         Icons.Filled.KeyboardArrowDown
     }
     val context= LocalContext.current
-
-    fun findLocOnMap(maxResult: Int,destCityName:String,context: Context){
-
+fun findLocOnMap(maxResult: Int, destCityName:String, context: Context){
         val geocoder = Geocoder(context, Locale.getDefault())
         val geocodeListener = @RequiresApi(33) object : Geocoder.GeocodeListener {
-            override fun onGeocode(results: List<Address>) {
+            override fun onGeocode(results: List<Address>){
                 // do something with the addresses list
                 val latitude = results[0].latitude
                 val longitude = results[0].longitude
                 viewModel.updateSelectedCityLocation(LatLng(latitude,longitude))
-                Log.d("lat,long", "$latitude $longitude")
+                viewModel.updateSelectedCityLatLng(listOf(latitude,longitude))
+                Log.d("lat,long", viewModel.selectedCityLatLng.value.toString())
+
+
             }
         }
         if (Build.VERSION.SDK_INT >= 33) {
             // declare here the geocodeListener, as it requires Android API 33
             geocoder.getFromLocationName(destCityName,maxResult,geocodeListener)
+
         } else {
             // For Android SDK < 33, the addresses list will be still obtained from the getFromLocation() method
             val addresses = geocoder.getFromLocationName(destCityName,maxResult)
@@ -176,10 +229,20 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel) {
                 val latitude =  addresses[0].latitude
                 val longitude =  addresses[0].longitude
                 viewModel.updateSelectedCityLocation(LatLng(latitude,longitude))
+                viewModel.updateSelectedCityLatLng(listOf(latitude,longitude))
                 Log.d("lat,long", "$latitude $longitude")
+
             }
         }
 
+
+    }
+
+    fun handleMarkerClick(marker: Marker,value:Place): Boolean {
+        Log.d("MapMarker", "Marker clicked: ${marker.title}")
+        viewModel.addSelectedAttraction(value);
+        Log.d("selectedAttractionList: ",viewModel.selectedAttractionList.value.toString())
+        return true
     }
 
     val boston=LatLng(42.36, -71.05)
@@ -393,10 +456,12 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel) {
                                     DropdownMenuItem(text = { Text(country) }, onClick = {
                                         viewModel.updateDestCity(country)
                                         destCityExpanded = false
-
-
                                         findLocOnMap(1,country, context)
-
+                                        viewModel.viewModelScope.launch {
+                                            Log.d("attractionlist: ", selectedCityLatLng.value.toString())
+                                            val location = viewModel.selectedCityLatLng.value ?: return@launch
+                                            viewModel.searchNearbyPlaces(Location(location[0],location[1]), apiKey = PlacesapiKey)
+                                        }
                                     })
                                 }
                             }
@@ -423,7 +488,9 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel) {
                         )
                     }
                     Spacer(modifier = Modifier.height(5.dp))
-                    GoogleMap(modifier = Modifier.fillMaxWidth().height(300.dp),
+                    GoogleMap(modifier = Modifier
+                        .fillMaxWidth()
+                        .height(300.dp),
                         cameraPositionState = cameraPositionState,
                        onMapLoaded = { /*TODO*/}
 
@@ -431,9 +498,27 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel) {
                         Marker(
                             state = MarkerState(position = selectedCityLocation.value),
                             title = destCity.value,
-                            snippet = "Marker in ${destCity.value}"
-                        )
+                            snippet = "Marker in ${destCity.value}",
 
+                        )
+                        if( attractionsList.value.isNotEmpty()){
+                            attractionsList.value.forEach{place ->
+                                Marker(
+                                    state = MarkerState(position = LatLng(place.location.lat,place.location.lng),),
+                                    title = place.name,
+                                    snippet = "Marker in ${place.name}",
+                                    icon = bitmapDescriptorFromVector(
+                                        context, R.drawable.pin
+                                    ),
+                                    onClick = {
+                                        viewModel.addSelectedAttraction(place);
+                                        Log.d("selectedAttractionList: ",viewModel.selectedAttractionList.value.toString())
+                                        return@Marker true
+                                }
+
+                                )
+                            }
+                        }
                     }
                     Box(modifier = Modifier
                         .fillMaxSize()
