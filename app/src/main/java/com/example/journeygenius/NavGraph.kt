@@ -14,10 +14,11 @@ import com.google.firebase.firestore.FirebaseFirestore
 fun SetupNavGraph(
     navController: NavHostController,
     bottomController: NavHostController,
-    windowSize: WindowSize,
     db: FirebaseFirestore,
-    viewModel: JourneyGeniusViewModel
+    viewModel: JourneyGeniusViewModel,
+    auth: FirebaseAuth
 ) {
+    val windowSize = rememberWindowSize()
     NavHost(
         navController = bottomController,
         startDestination = BottomBar.Plan.route
@@ -41,7 +42,8 @@ fun SetupNavGraph(
             PersonalScreen(
                 db = db,
                 viewModel = viewModel,
-                navController = navController
+                navController = navController,
+                auth = auth
             )
         }
     }

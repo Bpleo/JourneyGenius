@@ -24,6 +24,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.journeygenius.personal.PersonalAccountScreen
 import com.example.journeygenius.ui.theme.JourneyGeniusTheme
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
@@ -71,7 +72,7 @@ fun JourneyGenius(
         composable("Login") {
             LoginScreen(
                 navController,
-                windowSize,
+                rememberWindowSize(),
                 viewModel,
                 auth,
                 mainActivity
@@ -95,7 +96,6 @@ fun JourneyGenius(
                 navController
             )
         }
-        // add more screens here
     }
 }
 
