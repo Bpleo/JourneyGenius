@@ -139,7 +139,7 @@ class PlanViewModel : ViewModel() {
     init {
         viewModelScope.launch {
             val location =Location(42.36, -71.05)
-                searchNearbyPlaces(location, apiKey = PlacesapiKey)
+            searchNearbyPlaces(location, apiKey = PlacesapiKey)
         }
     }
 

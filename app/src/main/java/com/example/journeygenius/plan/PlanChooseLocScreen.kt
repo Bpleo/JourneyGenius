@@ -24,7 +24,13 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewModelScope
 import com.example.journeygenius.R
@@ -72,6 +78,25 @@ fun bitmapDescriptorFromVector(
     val canvas = android.graphics.Canvas(bm)
     drawable.draw(canvas)
     return BitmapDescriptorFactory.fromBitmap(bm)
+}
+@Composable
+fun Tag(title: String, onClose: () -> Unit) {
+    Row(
+        Modifier
+            .padding(horizontal = 8.dp, vertical = 4.dp)
+            .background(Color.LightGray, RoundedCornerShape(16.dp))
+            .clickable { onClose() },
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(text = title, Modifier.padding(horizontal = 8.dp))
+        Icon(
+            painter = painterResource(id = R.drawable.ic_close),
+            contentDescription = null,
+            Modifier
+                .padding(end = 8.dp)
+                .clickable { onClose() }
+        )
+    }
 }
 
 
@@ -165,7 +190,7 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel) {
     }
     val attractionsList= remember{viewModel.attractionsList }
     val selectedAttractionList= remember {
-        mutableStateOf(viewModel.selectedAttractionList)
+        viewModel.selectedAttractionList
     }
 
     var textFiledSize by remember {
@@ -462,6 +487,7 @@ fun findLocOnMap(maxResult: Int, destCityName:String, context: Context){
                                             val location = viewModel.selectedCityLatLng.value ?: return@launch
                                             viewModel.searchNearbyPlaces(Location(location[0],location[1]), apiKey = PlacesapiKey)
                                         }
+                                        viewModel.updateSelectedAttractionList(listOf())
                                     })
                                 }
                             }
@@ -473,7 +499,6 @@ fun findLocOnMap(maxResult: Int, destCityName:String, context: Context){
                     }
 
                 }
-                Spacer(modifier = Modifier.height(40.dp))
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -487,10 +512,10 @@ fun findLocOnMap(maxResult: Int, destCityName:String, context: Context){
                             fontSize = MaterialTheme.typography.headlineMedium.fontSize
                         )
                     }
-                    Spacer(modifier = Modifier.height(5.dp))
+
                     GoogleMap(modifier = Modifier
                         .fillMaxWidth()
-                        .height(300.dp),
+                        .height(320.dp),
                         cameraPositionState = cameraPositionState,
                        onMapLoaded = { /*TODO*/}
 
@@ -520,6 +545,23 @@ fun findLocOnMap(maxResult: Int, destCityName:String, context: Context){
                             }
                         }
                     }
+                    Spacer(modifier = Modifier.height(5.dp))
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(100.dp)
+                    ) {
+                        LazyColumn(
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            items(selectedAttractionList.value,key={it.name}){
+                                Tag(title=it.name, onClose = {})
+                            }
+                        }
+                    }
+
+
+
                     Box(modifier = Modifier
                         .fillMaxSize()
                         .padding(bottom = 20.dp),
@@ -590,4 +632,5 @@ fun dropDownMenu() {
 fun PlanChooseLocScreenPreview() {
     PlanChooseLocScreen(PlanViewModel())
     //dropDownMenu()
+    //Tag(title = "Shenzhen", onClose = {})
 }
