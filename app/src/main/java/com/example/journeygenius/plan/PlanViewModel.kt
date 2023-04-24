@@ -132,6 +132,11 @@ class PlanViewModel : ViewModel() {
     fun updateAttractionsList(value:List<Place>){
         _attractionsList.value=value
     }
+    fun addAttractionsList(value:List<Place>){
+        val updatedAttractionsList= _attractionsList.value.toMutableList()
+        updatedAttractionsList.addAll(value);
+        updateAttractionsList(updatedAttractionsList)
+    }
     init {
         viewModelScope.launch {
             val location =Location(42.36, -71.05)
@@ -156,10 +161,23 @@ class PlanViewModel : ViewModel() {
         updateSelectedAttractionList(updatedSelectedAttractionsList)
     }
 
-    private var _markerState= mutableStateOf(MarkerState(position = LatLng(42.36, -71.05)))
-    val markerState:MutableState<MarkerState> = _markerState
-    fun updateMarkerState(value:MarkerState){
-        _markerState.value=value
+    private var _selectedPlacesOnMap = mutableStateOf<HashMap<Pair<Double,Double>,List<Place>>>(
+        HashMap()
+    )
+    val selectedPlacesOnMap:MutableState<HashMap<Pair<Double,Double>,List<Place>>> = _selectedPlacesOnMap
+    fun updateSelectedPlacesOnMap(value: HashMap<Pair<Double,Double>,List<Place>>){
+        _selectedPlacesOnMap.value=value;
+    }
+    fun addSelectedPlacesOnMap(latlng: Pair<Double,Double>,places:List<Place>){
+        val updatedSelectedPlacesOnMap=_selectedPlacesOnMap.value.toMutableMap()
+        updatedSelectedPlacesOnMap[latlng] = places
+        updateSelectedPlacesOnMap(updatedSelectedPlacesOnMap as HashMap<Pair<Double, Double>, List<Place>>)
+    }
+
+    fun delSelectedPlacesOnMap(latlng: Pair<Double,Double>){
+        val updatedSelectedPlacesOnMap=_selectedPlacesOnMap.value.toMutableMap()
+        updatedSelectedPlacesOnMap.remove(latlng)
+        updateSelectedPlacesOnMap(updatedSelectedPlacesOnMap as HashMap<Pair<Double, Double>, List<Place>>)
     }
 
     suspend fun getLatLng(city: String, apiKey: String): Location? = withContext(Dispatchers.IO) {
@@ -175,7 +193,7 @@ class PlanViewModel : ViewModel() {
         val json = url.readText(Charset.defaultCharset())
         val gson = Gson()
         val response = gson.fromJson(json, Response::class.java)
-        updateAttractionsList(response.results.map { result ->
+        addAttractionsList(response.results.map { result ->
             Place(
                 name = result.name,
                 vicinity = result.vicinity,
@@ -185,6 +203,22 @@ class PlanViewModel : ViewModel() {
         Log.d("attractionlist",attractionsList.toString())
     }
 }
+    suspend fun getNearbyPlaces(location: Location, radius: Int = 5000000, apiKey: String): List<Place> {
+        return withContext(Dispatchers.IO) {
+            val url = URL("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${location.lat},${location.lng}&radius=$radius&key=$apiKey&type=tourist_attraction&language=en")
+            val json = url.readText(Charset.defaultCharset())
+            val gson = Gson()
+            val response = gson.fromJson(json, Response::class.java)
+            return@withContext response.results.map { result ->
+                Place(
+                    name = result.name,
+                    vicinity = result.vicinity,
+                    location = Location(result.geometry.location.lat, result.geometry.location.lng)
+                )
+            }
+        }
+    }
+
 
 //    init {
 //        viewModelScope.launch {

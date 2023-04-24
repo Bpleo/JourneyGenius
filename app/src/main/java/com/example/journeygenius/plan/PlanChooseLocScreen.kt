@@ -40,6 +40,8 @@ import com.google.maps.android.compose.*
 import kotlinx.coroutines.launch
 
 import java.util.*
+import kotlin.collections.HashMap
+
 fun bitmapDescriptorFromVector(
     context: Context,
     vectorResId: Int
@@ -177,8 +179,8 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel) {
     var textFiledSize by remember {
         mutableStateOf(Size.Zero)
     }
-    var markerState by remember {
-        viewModel.markerState
+    var selectedPlacesOnMap by remember{
+        viewModel.selectedPlacesOnMap
     }
     val iconDepartCountry = if (departCountryExpanded) {
         Icons.Filled.KeyboardArrowUp
@@ -248,7 +250,10 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel) {
 
     val boston=LatLng(42.36, -71.05)
     val cameraPositionState= CameraPositionState(position= CameraPosition.fromLatLngZoom(selectedCityLocation.value,10f))
-
+    viewModel.viewModelScope.launch {
+        val location = viewModel.selectedCityLatLng.value
+        viewModel.searchNearbyPlaces(Location(location[0],location[1]), apiKey = PlacesapiKey)
+    }
 
 
     JourneyGeniusTheme {
@@ -459,13 +464,9 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel) {
                                         destCityExpanded = false
 //                                        Log.d("marker",selectedCityLocation.value.toString())
                                         findLocOnMap(1,country, context)
-
-//                                        viewModel.viewModelScope.launch {
-//                                            Log.d("attractionlist: ", selectedCityLatLng.value.toString())
-//                                            val location = viewModel.selectedCityLatLng.value
-//                                            viewModel.searchNearbyPlaces(Location(location[0],location[1]), apiKey = PlacesapiKey)
-//                                        }
                                         viewModel.updateSelectedAttractionList(listOf())
+                                        viewModel.updateAttractionsList(listOf())
+                                        viewModel.updateSelectedPlacesOnMap(HashMap())
                                     })
                                 }
                             }
@@ -495,25 +496,59 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel) {
                         .fillMaxWidth()
                         .height(320.dp),
                         cameraPositionState = cameraPositionState,
-                       onMapClick = {
+                        onMapLongClick = {
+                            viewModel.viewModelScope.launch {
+                                val places= viewModel.getNearbyPlaces(Location(it.latitude,it.longitude), apiKey = PlacesapiKey)
+                                viewModel.addSelectedPlacesOnMap(Pair(it.latitude,it.longitude),places)
 
-                       }
+                            }
+                            Log.d("SelectedPlacesOnMap",selectedPlacesOnMap.toString())
+                        }
 
                     ){
 
                         Marker(
-                            state =MarkerState(position = selectedCityLocation.value),
+                            state = MarkerState(position = selectedCityLocation.value),
                             title = destCity.value,
-                            snippet = "Marker in ${destCity.value}",
-                            draggable = true,
+                            snippet = "Marker in ${destCity.value}"
 
                         )
+                        if(selectedPlacesOnMap.isNotEmpty()){
+                            selectedPlacesOnMap.forEach{place->
+                                Marker(
+                                    state=MarkerState(position=LatLng(place.key.first,place.key.second)),
+                                    snippet = "Marker in ($place.key.first},${place.key.second})",
+                                    icon=bitmapDescriptorFromVector(context, R.drawable.pin2),
+                                    onClick = {
+                                        if(selectedPlacesOnMap.containsKey(place.key)){
+                                            viewModel.delSelectedPlacesOnMap(place.key)
+                                        }
+                                        Log.d("selectedplacesOnMap", selectedPlacesOnMap.toString())
+                                        return@Marker true
+                                    }
+                                )
+                                place.value.forEach {attr->
+                                    Marker(
+                                        state = MarkerState(position = LatLng(attr.location.lat,attr.location.lng)),
+                                        title = attr.name,
+                                        snippet = "Marker in ${attr.name}",
+                                        icon = bitmapDescriptorFromVector(
+                                            context, R.drawable.pin
+                                        ),
+                                        onClick = {
+                                            if(!selectedAttractionList.value.contains(attr)){
+                                                viewModel.addSelectedAttraction(attr)
+                                            }
+                                            Log.d("selectedAttractionList: ",viewModel.selectedAttractionList.value.toString())
+                                            return@Marker true
+                                        }
 
-                        viewModel.viewModelScope.launch {
-                            Log.d("attractionlist: ", selectedCityLatLng.value.toString())
-                            val location = viewModel.selectedCityLatLng.value
-                            viewModel.searchNearbyPlaces(Location(location[0],location[1]), apiKey = PlacesapiKey)
+                                    )
+                                }
+
+                            }
                         }
+
                         if( attractionsList.value.isNotEmpty()){
                             attractionsList.value.forEach{place ->
                                 Marker(
