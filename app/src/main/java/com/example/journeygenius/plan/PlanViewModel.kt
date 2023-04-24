@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
 import com.google.gson.Gson
+import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberMarkerState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -155,9 +156,9 @@ class PlanViewModel : ViewModel() {
         updateSelectedAttractionList(updatedSelectedAttractionsList)
     }
 
-    private var _markerState= mutableStateOf(LatLng(42.36, -71.05))
-    val markerState:MutableState<LatLng> = _markerState
-    fun updateMarkerState(value:LatLng){
+    private var _markerState= mutableStateOf(MarkerState(position = LatLng(42.36, -71.05)))
+    val markerState:MutableState<MarkerState> = _markerState
+    fun updateMarkerState(value:MarkerState){
         _markerState.value=value
     }
 

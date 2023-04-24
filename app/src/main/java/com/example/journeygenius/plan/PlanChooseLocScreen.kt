@@ -1,4 +1,5 @@
 package com.example.journeygenius.plan
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.location.Address
@@ -36,8 +37,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.journeygenius.R
 import com.google.android.gms.maps.model.*
 import com.google.maps.android.compose.*
-import com.google.gson.Gson
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 import java.util.*
@@ -82,6 +81,7 @@ fun Tag(title: String, onClose: () -> Unit) {
 
 
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlanChooseLocScreen(viewModel: PlanViewModel) {
@@ -213,7 +213,7 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel) {
         Icons.Filled.KeyboardArrowDown
     }
     val context= LocalContext.current
-fun findLocOnMap(maxResult: Int, destCityName:String, context: Context){
+    fun findLocOnMap(maxResult: Int, destCityName:String, context: Context){
         val geocoder = Geocoder(context, Locale.getDefault())
         val geocodeListener = @RequiresApi(33) object : Geocoder.GeocodeListener {
             override fun onGeocode(results: List<Address>){
@@ -223,10 +223,9 @@ fun findLocOnMap(maxResult: Int, destCityName:String, context: Context){
                 viewModel.updateSelectedCityLocation(LatLng(latitude,longitude))
                 viewModel.updateSelectedCityLatLng(listOf(latitude,longitude))
                 Log.d("lat,long", viewModel.selectedCityLatLng.value.toString())
-
-
             }
         }
+
         if (Build.VERSION.SDK_INT >= 33) {
             // declare here the geocodeListener, as it requires Android API 33
             geocoder.getFromLocationName(destCityName,maxResult,geocodeListener)
@@ -240,12 +239,11 @@ fun findLocOnMap(maxResult: Int, destCityName:String, context: Context){
                 viewModel.updateSelectedCityLocation(LatLng(latitude,longitude))
                 viewModel.updateSelectedCityLatLng(listOf(latitude,longitude))
                 Log.d("lat,long", "$latitude $longitude")
-
+                Pair(latitude, longitude)
             }
         }
-
-
     }
+
 
 
     val boston=LatLng(42.36, -71.05)
@@ -459,12 +457,14 @@ fun findLocOnMap(maxResult: Int, destCityName:String, context: Context){
                                     DropdownMenuItem(text = { Text(country) }, onClick = {
                                         viewModel.updateDestCity(country)
                                         destCityExpanded = false
+//                                        Log.d("marker",selectedCityLocation.value.toString())
                                         findLocOnMap(1,country, context)
-                                        viewModel.viewModelScope.launch {
-                                            Log.d("attractionlist: ", selectedCityLatLng.value.toString())
-                                            val location = viewModel.selectedCityLatLng.value
-                                            viewModel.searchNearbyPlaces(Location(location[0],location[1]), apiKey = PlacesapiKey)
-                                        }
+
+//                                        viewModel.viewModelScope.launch {
+//                                            Log.d("attractionlist: ", selectedCityLatLng.value.toString())
+//                                            val location = viewModel.selectedCityLatLng.value
+//                                            viewModel.searchNearbyPlaces(Location(location[0],location[1]), apiKey = PlacesapiKey)
+//                                        }
                                         viewModel.updateSelectedAttractionList(listOf())
                                     })
                                 }
@@ -500,13 +500,20 @@ fun findLocOnMap(maxResult: Int, destCityName:String, context: Context){
                        }
 
                     ){
+
                         Marker(
-                            state = MarkerState(position = selectedCityLocation.value),
+                            state =MarkerState(position = selectedCityLocation.value),
                             title = destCity.value,
                             snippet = "Marker in ${destCity.value}",
                             draggable = true,
 
                         )
+
+                        viewModel.viewModelScope.launch {
+                            Log.d("attractionlist: ", selectedCityLatLng.value.toString())
+                            val location = viewModel.selectedCityLatLng.value
+                            viewModel.searchNearbyPlaces(Location(location[0],location[1]), apiKey = PlacesapiKey)
+                        }
                         if( attractionsList.value.isNotEmpty()){
                             attractionsList.value.forEach{place ->
                                 Marker(
