@@ -22,7 +22,7 @@ object DatabaseModule {
         context,
         PersonalDatabase::class.java,
         DATABASE_NAME
-    ).build()
+    ).createFromAsset("database/personal.db").fallbackToDestructiveMigration().build()
 
     @Singleton
     @Provides

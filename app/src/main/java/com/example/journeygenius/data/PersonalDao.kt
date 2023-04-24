@@ -6,10 +6,10 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface PersonalDao {
-    @Query("SELECT * FROM personal_table ORDER BY id ASC")
+    @Query("SELECT * FROM users ORDER BY id ASC")
     fun getAllProfile(): Flow<List<Personal>>
 
-    @Query("SELECT * FROM personal_table WHERE id = :personalId")
+    @Query("SELECT * FROM users WHERE id = :personalId")
     fun getSelectedProfile(personalId: String): Flow<Personal>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
@@ -21,9 +21,9 @@ interface PersonalDao {
     @Delete
     suspend fun deleteProfile(personal: Personal)
 
-    @Query("DELETE FROM personal_table")
+    @Query("DELETE FROM users")
     suspend fun deleteAllProfiles()
 
-    @Query("SELECT * FROM personal_table WHERE userName LIKE :searchQuery OR email LIKE :searchQuery")
+    @Query("SELECT * FROM users WHERE userName LIKE :searchQuery OR email LIKE :searchQuery")
     fun searchProfile(searchQuery: String): Flow<List<Personal>>
 }
