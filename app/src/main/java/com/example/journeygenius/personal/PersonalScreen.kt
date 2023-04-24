@@ -2,10 +2,6 @@ package com.example.journeygenius.personal
 
 import android.content.Context
 import android.widget.Toast
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,34 +9,40 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.outlined.*
-import androidx.compose.material3.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.journeygenius.JourneyGeniusViewModel
-import kotlinx.coroutines.withContext
-import kotlinx.coroutines.Dispatchers
-import com.example.journeygenius.ui.theme.JourneyGeniusTheme
+import com.example.journeygenius.rememberWindowSize
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 @Composable
 fun PersonalScreen(
-    db : FirebaseFirestore,
+    db: FirebaseFirestore,
     viewModel: JourneyGeniusViewModel,
-    navController: NavHostController
+    navController: NavHostController,
+    auth: FirebaseAuth
 ) {
     val personalNavController = rememberNavController()
     NavHost(
@@ -52,6 +54,21 @@ fun PersonalScreen(
         }
         composable("Personal Settings") {
             PersonalSettingScreen(navController = personalNavController)
+        }
+        composable("Personal Account") {
+            PersonalAccountScreen(
+                viewModel = viewModel,
+                db = db,
+                auth = auth,
+                navController = personalNavController,
+                windowSize = rememberWindowSize()
+            )
+        }
+        composable("Personal Save List"){
+            PersonalListScreen(
+                viewModel = viewModel,
+                db = db,
+                navController = personalNavController)
         }
     }
 }
@@ -89,14 +106,20 @@ fun PersonalDetails(
                 }
                 // Show the options
                 items(optionsList) { item ->
-                    OptionsItemStyle(item = item, context = context, navController = personalNavController)
+                    OptionsItemStyle(
+                        item = item,
+                        context = context,
+                        navController = personalNavController
+                    )
                 }
                 item {
-                    OptionsItemStyle(item = OptionsData(
-                        icon = Icons.Default.Logout,
-                        title = "Log out",
-                        subTitle = ""
-                    ), context = context, navController = navController)
+                    OptionsItemStyle(
+                        item = OptionsData(
+                            icon = Icons.Default.Logout,
+                            title = "Log out",
+                            subTitle = ""
+                        ), context = context, navController = navController
+                    )
                 }
             }
         }
@@ -153,7 +176,7 @@ private fun UserDetails(context: Context, name: String, email: String) {
                 onClick = {
                     Toast.makeText(context, "Edit Button", Toast.LENGTH_SHORT).show()
                 }
-                ) {
+            ) {
                 Icon(
                     modifier = Modifier.size(24.dp),
                     imageVector = Icons.Outlined.Edit,
@@ -169,32 +192,30 @@ private fun UserDetails(context: Context, name: String, email: String) {
 private fun OptionsItemStyle(
     item: OptionsData,
     context: Context,
-    navController: NavHostController) {
+    navController: NavHostController
+) {
     val logout = true
     Row(
-        modifier = if (item.title == "Log out"){
-            Modifier
-                .fillMaxWidth()
-                .clickable(enabled = true) {
-                    navController.navigate("Login/${logout}") {
-                        popUpTo(0) { inclusive = true }
+        modifier = when (item.title) {
+            "Log out" -> {
+                Modifier
+                    .fillMaxWidth()
+                    .clickable(enabled = true) {
+                        navController.navigate("Login/${logout}") {
+                            popUpTo(0) { inclusive = true }
+                        }
                     }
-                }
-                .padding(all = 16.dp)
-        } else {
-            Modifier
-                .fillMaxWidth()
-                .clickable(enabled = true) {
-                    try {
-                        navController.navigate("Personal " + item.title)
-                    } catch (e: Exception) {
-                        Toast
-                            .makeText(context, item.title, Toast.LENGTH_SHORT)
-                            .show()
+                    .padding(all = 16.dp)
+            }
+            else -> {
+                Modifier
+                    .fillMaxWidth()
+                    .clickable(enabled = true) {
+                        navController.navigate("Personal " + item.title) {}
                     }
-                }
-                .padding(all = 16.dp)
-               },
+                    .padding(all = 16.dp)
+            }
+        },
         verticalAlignment = Alignment.CenterVertically
     ) {
 
@@ -279,9 +300,13 @@ private fun prepareOptionsData() {
 }
 
 
-
 @Preview(showBackground = true)
 @Composable
-fun PersonalScreenPreview(){
-    PersonalDetails(LocalContext.current, JourneyGeniusViewModel(Firebase.firestore, Firebase.auth), rememberNavController(), rememberNavController())
+fun PersonalScreenPreview() {
+    PersonalDetails(
+        LocalContext.current,
+        JourneyGeniusViewModel(Firebase.firestore, Firebase.auth),
+        rememberNavController(),
+        rememberNavController()
+    )
 }

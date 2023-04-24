@@ -265,7 +265,7 @@ fun findLocOnMap(maxResult: Int, destCityName:String, context: Context){
 
     fun handleMarkerClick(marker: Marker,value:Place): Boolean {
         Log.d("MapMarker", "Marker clicked: ${marker.title}")
-        viewModel.addSelectedAttraction(value);
+        viewModel.addSelectedAttraction(value)
         Log.d("selectedAttractionList: ",viewModel.selectedAttractionList.value.toString())
         return true
     }
@@ -279,7 +279,7 @@ fun findLocOnMap(maxResult: Int, destCityName:String, context: Context){
         Box(
             modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter
         ) {
-            Column() {
+            Column {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -294,7 +294,7 @@ fun findLocOnMap(maxResult: Int, destCityName:String, context: Context){
                             fontSize = MaterialTheme.typography.titleLarge.fontSize,
                         )
                         Spacer(modifier = Modifier.height(10.dp))
-                        Column() {
+                        Column {
 
                             //Departure Country
                             OutlinedTextField(value = departCountry.value,
@@ -395,8 +395,8 @@ fun findLocOnMap(maxResult: Int, destCityName:String, context: Context){
                             fontSize = MaterialTheme.typography.titleLarge.fontSize,
                         )
                         Spacer(modifier = Modifier.height(10.dp))
-                        Column() {
-                            Box() {
+                        Column {
+                            Box {
 
 
                                 //Destination Country
@@ -484,7 +484,7 @@ fun findLocOnMap(maxResult: Int, destCityName:String, context: Context){
                                         findLocOnMap(1,country, context)
                                         viewModel.viewModelScope.launch {
                                             Log.d("attractionlist: ", selectedCityLatLng.value.toString())
-                                            val location = viewModel.selectedCityLatLng.value ?: return@launch
+                                            val location = viewModel.selectedCityLatLng.value
                                             viewModel.searchNearbyPlaces(Location(location[0],location[1]), apiKey = PlacesapiKey)
                                         }
                                         viewModel.updateSelectedAttractionList(listOf())
@@ -536,7 +536,7 @@ fun findLocOnMap(maxResult: Int, destCityName:String, context: Context){
                                         context, R.drawable.pin
                                     ),
                                     onClick = {
-                                        viewModel.addSelectedAttraction(place);
+                                        viewModel.addSelectedAttraction(place)
                                         Log.d("selectedAttractionList: ",viewModel.selectedAttractionList.value.toString())
                                         return@Marker true
                                 }

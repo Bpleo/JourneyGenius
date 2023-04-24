@@ -1,5 +1,6 @@
 package com.example.journeygenius.plan
 
+import android.annotation.SuppressLint
 import android.util.Log
 import android.util.Range
 import androidx.compose.runtime.LaunchedEffect
@@ -57,6 +58,7 @@ data class GeocodeResult(
 )
 
 
+@SuppressLint("SuspiciousIndentation")
 class PlanViewModel : ViewModel() {
     private var _dateRange = mutableStateOf(Range(LocalDate.now().minusDays(3), LocalDate.now()))
     val dateRange: MutableState<Range<LocalDate>> = _dateRange
@@ -72,40 +74,40 @@ class PlanViewModel : ViewModel() {
         _budget.value = value
     }
 
-    private var _departCountry= mutableStateOf("US");
+    private var _departCountry= mutableStateOf("US")
     val departCountry:MutableState<String> = _departCountry
     fun updateDepartCountry(value: String){
-        _departCountry.value=value;
+        _departCountry.value=value
     }
 
     private var _departState= mutableStateOf("MA")
     val departState:MutableState<String> =_departState
     fun updateDepartState(value:String){
-        _departState.value=value;
+        _departState.value=value
     }
 
     private var _departCity= mutableStateOf("Boston")
     val departCity:MutableState<String> =_departCity
     fun updateDepartCity(value:String){
-        _departCity.value=value;
+        _departCity.value=value
     }
 
-    private var _destCountry= mutableStateOf("");
+    private var _destCountry= mutableStateOf("")
     val destCountry:MutableState<String> = _destCountry
     fun updateDestCountry(value: String){
-        _destCountry.value=value;
+        _destCountry.value=value
     }
 
     private var _destState= mutableStateOf("")
     val destState:MutableState<String> =_destState
     fun updateDestState(value:String){
-        _destState.value=value;
+        _destState.value=value
     }
 
     private var _destCity= mutableStateOf("")
     val destCity:MutableState<String> =_destCity
     fun updateDestCity(value:String){
-        _destCity.value=value;
+        _destCity.value=value
 //        viewModelScope.launch {
 //            val location = getLatLng(value, geoCodingApiKey)
 //            if (location!=null){
@@ -127,14 +129,14 @@ class PlanViewModel : ViewModel() {
     private var _selectedCityLatLng= mutableStateOf(listOf(42.36, -71.05))
     val selectedCityLatLng:MutableState<List<Double>> = _selectedCityLatLng
     fun updateSelectedCityLatLng(value:List<Double>){
-        _selectedCityLatLng.value=value;
+        _selectedCityLatLng.value=value
     }
 
 
     private var _attractionsList = mutableStateOf<List<Place>>(listOf())
     val attractionsList:MutableState<List<Place>> = _attractionsList
     fun updateAttractionsList(value:List<Place>){
-        _attractionsList.value=value;
+        _attractionsList.value=value
     }
     init {
         viewModelScope.launch {
@@ -146,11 +148,11 @@ class PlanViewModel : ViewModel() {
     private var _selectedAttractionList = mutableStateOf<List<Place>>(listOf())
     val selectedAttractionList:MutableState<List<Place>> = _selectedAttractionList
     fun updateSelectedAttractionList(value:List<Place>){
-        _selectedAttractionList.value=value;
+        _selectedAttractionList.value=value
     }
     fun addSelectedAttraction(value:Place){
-        val updatedSelectedAttractionsList=_selectedAttractionList.value.toMutableList();
-        updatedSelectedAttractionsList.add(value);
+        val updatedSelectedAttractionsList=_selectedAttractionList.value.toMutableList()
+        updatedSelectedAttractionsList.add(value)
         updateSelectedAttractionList(updatedSelectedAttractionsList)
     }
 

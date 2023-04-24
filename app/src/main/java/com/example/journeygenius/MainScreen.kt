@@ -28,7 +28,6 @@ fun MainScreen(
     navController: NavHostController
 ) {
     val bottomController = rememberNavController()
-    val windowSize = rememberWindowSize()
     viewModel.signIn()
     Scaffold(
         bottomBar = { BottomBar(navController = bottomController)}
@@ -36,9 +35,9 @@ fun MainScreen(
         SetupNavGraph(
             navController = navController,
             bottomController = bottomController,
-            windowSize = windowSize,
             db = db,
-            viewModel = viewModel
+            viewModel = viewModel,
+            auth = auth
         )
     }
 }

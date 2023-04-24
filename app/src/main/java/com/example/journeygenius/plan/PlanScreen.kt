@@ -320,7 +320,7 @@ fun PlanScreenLandscapePreview() {
     val budget by remember { mutableStateOf(viewModel.budget) }
     val calenderState = rememberUseCaseState()
     JourneyGeniusTheme {
-        Box() {
+        Box {
             Row(
                 modifier = Modifier.padding(64.dp, 32.dp)
             ) {
