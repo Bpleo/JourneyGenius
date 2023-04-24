@@ -264,7 +264,7 @@ fun LoginScreen(
                                     }
                                 }
                         }) {
-                            Text(text = "Login In")
+                            Text(text = "Login")
                         }
                         Spacer(modifier = Modifier.height(40.dp))
                         Text(
@@ -303,7 +303,7 @@ fun LoginScreen(
                                         }
                                     }
                             }) {
-                                Text(text = "Login In")
+                                Text(text = "Login")
                             }
                             Spacer(modifier = Modifier.height(40.dp))
                             Text(
