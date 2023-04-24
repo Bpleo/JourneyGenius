@@ -41,25 +41,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 import java.util.*
-
-@Composable
-fun MapMarker(
-    context: Context,
-    position: LatLng,
-    title: String,
-    @DrawableRes iconResourceId: Int,
-    onClick:(Marker)->Boolean
-
-) {
-    Marker(
-        state = MarkerState(position = position),
-        title = title,
-        icon = bitmapDescriptorFromVector(
-            context, iconResourceId
-        ),
-        onClick = onClick
-    )
-}
 fun bitmapDescriptorFromVector(
     context: Context,
     vectorResId: Int
@@ -196,6 +177,9 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel) {
     var textFiledSize by remember {
         mutableStateOf(Size.Zero)
     }
+    var markerState by remember {
+        viewModel.markerState
+    }
     val iconDepartCountry = if (departCountryExpanded) {
         Icons.Filled.KeyboardArrowUp
     } else {
@@ -263,12 +247,6 @@ fun findLocOnMap(maxResult: Int, destCityName:String, context: Context){
 
     }
 
-    fun handleMarkerClick(marker: Marker,value:Place): Boolean {
-        Log.d("MapMarker", "Marker clicked: ${marker.title}")
-        viewModel.addSelectedAttraction(value)
-        Log.d("selectedAttractionList: ",viewModel.selectedAttractionList.value.toString())
-        return true
-    }
 
     val boston=LatLng(42.36, -71.05)
     val cameraPositionState= CameraPositionState(position= CameraPosition.fromLatLngZoom(selectedCityLocation.value,10f))
@@ -517,13 +495,16 @@ fun findLocOnMap(maxResult: Int, destCityName:String, context: Context){
                         .fillMaxWidth()
                         .height(320.dp),
                         cameraPositionState = cameraPositionState,
-                       onMapLoaded = { /*TODO*/}
+                       onMapClick = {
+
+                       }
 
                     ){
                         Marker(
                             state = MarkerState(position = selectedCityLocation.value),
                             title = destCity.value,
                             snippet = "Marker in ${destCity.value}",
+                            draggable = true,
 
                         )
                         if( attractionsList.value.isNotEmpty()){
@@ -536,7 +517,9 @@ fun findLocOnMap(maxResult: Int, destCityName:String, context: Context){
                                         context, R.drawable.pin
                                     ),
                                     onClick = {
-                                        viewModel.addSelectedAttraction(place)
+                                        if(!selectedAttractionList.value.contains(place)){
+                                            viewModel.addSelectedAttraction(place)
+                                        }
                                         Log.d("selectedAttractionList: ",viewModel.selectedAttractionList.value.toString())
                                         return@Marker true
                                 }
@@ -555,7 +538,10 @@ fun findLocOnMap(maxResult: Int, destCityName:String, context: Context){
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             items(selectedAttractionList.value,key={it.name}){
-                                Tag(title=it.name, onClose = {})
+                                Tag(title=it.name, onClose = {
+                                    viewModel.delSelectedAttraction(it)
+                                    Log.d("selectedAttractionList: ",viewModel.selectedAttractionList.value.toString())
+                                })
                             }
                         }
                     }

@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
 import com.google.gson.Gson
+import com.google.maps.android.compose.rememberMarkerState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -108,14 +109,6 @@ class PlanViewModel : ViewModel() {
     val destCity:MutableState<String> =_destCity
     fun updateDestCity(value:String){
         _destCity.value=value
-//        viewModelScope.launch {
-//            val location = getLatLng(value, geoCodingApiKey)
-//            if (location!=null){
-//                updateSelectedCityLatLng(listOf(location.lat,location.lng))
-//                updateSelectedCityLocation(LatLng(location.lat,location.lng))
-//                //searchNearbyPlaces(location, apiKey = PlacesapiKey)
-//            }
-//        }
     }
 
     private var _selectedCityLocation= mutableStateOf(LatLng(42.36, -71.05))
@@ -156,6 +149,18 @@ class PlanViewModel : ViewModel() {
         updateSelectedAttractionList(updatedSelectedAttractionsList)
     }
 
+    fun delSelectedAttraction(value:Place){
+        val updatedSelectedAttractionsList=_selectedAttractionList.value.toMutableList()
+        updatedSelectedAttractionsList.remove(value)
+        updateSelectedAttractionList(updatedSelectedAttractionsList)
+    }
+
+    private var _markerState= mutableStateOf(LatLng(42.36, -71.05))
+    val markerState:MutableState<LatLng> = _markerState
+    fun updateMarkerState(value:LatLng){
+        _markerState.value=value
+    }
+
     suspend fun getLatLng(city: String, apiKey: String): Location? = withContext(Dispatchers.IO) {
     val url = URL("https://maps.googleapis.com/maps/api/geocode/json?address=$city&key=$apiKey")
     val json = url.readText(Charset.defaultCharset())
@@ -163,7 +168,7 @@ class PlanViewModel : ViewModel() {
     val response = gson.fromJson(json, GeocodeResponse::class.java)
     response.results.firstOrNull()?.geometry?.location
 }
-    suspend fun searchNearbyPlaces(location: Location, radius: Int = 100000, apiKey: String) {
+    suspend fun searchNearbyPlaces(location: Location, radius: Int = 5000000, apiKey: String) {
     withContext(Dispatchers.IO) {
         val url = URL("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${location.lat},${location.lng}&radius=$radius&key=$apiKey&type=tourist_attraction&language=en")
         val json = url.readText(Charset.defaultCharset())
