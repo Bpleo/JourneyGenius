@@ -47,7 +47,7 @@ fun JourneyGenius(
         navController = navController,
         startDestination = when(currentUser){
             null -> {
-                "Login"
+                "Main"
             }
             else -> {
                 "Main"
