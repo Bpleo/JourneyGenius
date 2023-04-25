@@ -21,8 +21,8 @@ import com.example.journeygenius.ui.theme.JourneyGeniusTheme
 
 @Composable
 fun PlanDetail(navController: NavController,viewModel: PlanViewModel){
-    val planGroup= remember {
-        viewModel.planGroup
+    val planOnDetail= remember{
+        viewModel.planOnDetail
     }
 JourneyGeniusTheme {
     Box(
@@ -46,24 +46,26 @@ JourneyGeniusTheme {
                     fontSize = MaterialTheme.typography.titleLarge.fontSize,
                 )
                 Spacer(modifier = Modifier.height(10.dp))
-                Text(text = planGroup.value.plans[0].date,
+                Text(text =planOnDetail.value.date,
                     fontSize = MaterialTheme.typography.titleLarge.fontSize
                 )
                 Spacer(modifier = Modifier.height(25.dp))
                 Text(text = "Destination: ",
                     fontSize = MaterialTheme.typography.titleLarge.fontSize)
                 Spacer(modifier = Modifier.height(10.dp))
-                Text(text = planGroup.value.plans[0].destination,
+                Text(text =planOnDetail.value.destination,
                     fontSize = MaterialTheme.typography.titleLarge.fontSize
                 )
                 Spacer(modifier = Modifier.height(25.dp))
                 Text(text = "Attractions: ",
                     fontSize = MaterialTheme.typography.titleLarge.fontSize)
                 Spacer(modifier = Modifier.height(10.dp))
-                Box(modifier = Modifier.fillMaxWidth().height(90.dp)){
+                Box(modifier = Modifier
+                    .fillMaxWidth()
+                    .height(90.dp)){
                     LazyColumn(modifier = Modifier.fillMaxWidth())
                     {
-                        items(planGroup.value.plans[0].attractions,key={it.name}){
+                        items(planOnDetail.value.attractions,key={it.name}){
                             Text(text = it.name,
                                 fontSize = MaterialTheme.typography.titleLarge.fontSize
                             )
@@ -75,21 +77,21 @@ JourneyGeniusTheme {
                 Text(text = "Budget: ",
                     fontSize = MaterialTheme.typography.titleLarge.fontSize)
                 Spacer(modifier = Modifier.height(10.dp))
-                Text(text = planGroup.value.plans[0].budget,
+                Text(text = planOnDetail.value.budget,
                     fontSize = MaterialTheme.typography.titleLarge.fontSize
                 )
                 Spacer(modifier = Modifier.height(35.dp))
                 Text(text = "Hotel: ",
                     fontSize = MaterialTheme.typography.titleLarge.fontSize)
                 Spacer(modifier = Modifier.height(10.dp))
-                Text(text = planGroup.value.plans[0].hotel.toString(),
+                Text(text = planOnDetail.value.hotel.toString(),
                     fontSize = MaterialTheme.typography.titleLarge.fontSize
                 )
                 Spacer(modifier = Modifier.height(35.dp))
                 Text(text = "Transport Mode: ",
                     fontSize = MaterialTheme.typography.titleLarge.fontSize)
                 Spacer(modifier = Modifier.height(10.dp))
-                Text(text = planGroup.value.plans[0].trans_mode,
+                Text(text = planOnDetail.value.trans_mode,
                     fontSize = MaterialTheme.typography.titleLarge.fontSize
                 )
                 Spacer(modifier = Modifier.height(75.dp))
@@ -113,9 +115,9 @@ JourneyGeniusTheme {
     }
 }
 }
-@Preview(showBackground = true)
-@Composable
-fun PlanDetailPreview(){
-    val viewModel=  PlanViewModel()
-    PlanDetail(rememberNavController(),viewModel)
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun PlanDetailPreview(){
+//    val viewModel=  PlanViewModel()
+//    PlanDetail(rememberNavController(),viewModel)
+//}

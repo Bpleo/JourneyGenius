@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -85,22 +86,23 @@ fun PlanList(navController: NavController,planViewModel: PlanViewModel) {
                     keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
                 )
             }
-            LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp),
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(10.dp),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(30.dp, 300.dp)
-                    .clickable {
-                        navController.navigate("Plan Detail")
-                        //navController.navigate(Screen.PlanDetailScreen(plan.id))
-                    }
+                    .padding(30.dp, 300.dp).fillMaxHeight()
             ) {
-                items(planList.value , key = { it.attractions }) { it ->
+                itemsIndexed(planList.value) { _, plan ->
                     Text(
                         modifier = Modifier
                             .fillMaxWidth()
                             .background(MaterialTheme.colorScheme.primaryContainer)
-                            .padding(24.dp),
-                        text = "Trip to  ${it.destination}",
+                            .padding(24.dp)
+                            .clickable {
+                                planViewModel.updatePlanOnDetail(plan)
+                                navController.navigate("Plan Detail")
+                            },
+                        text = "Trip to  ${plan.destination}",
                         fontSize = MaterialTheme.typography.titleLarge.fontSize,
                         fontWeight = MaterialTheme.typography.titleLarge.fontWeight,
                     )
@@ -112,6 +114,7 @@ fun PlanList(navController: NavController,planViewModel: PlanViewModel) {
                 contentAlignment = Alignment.BottomCenter
             ){
                 Button(onClick = { navController.navigate("Plan Menu")
+                    planViewModel.updateSelectedAttractionList(listOf())
                                  }, modifier = Modifier
                     .width(100.dp)
                 ) {
