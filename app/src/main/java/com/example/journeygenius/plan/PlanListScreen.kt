@@ -44,10 +44,7 @@ fun PlanList(viewModel: PlanListViewModel = viewModel(),navController: NavContro
                     value = viewModel.titleState.value,
                     onValueChange = { viewModel.titleState.value = it },
                     label = {
-                        Text("User Name: ")
-                    },
-                    placeholder = {
-                        Text(text = "Enter your User Name")
+                        Text("Ttile: ")
                     },
                     maxLines = 1,
                     keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
@@ -64,10 +61,7 @@ fun PlanList(viewModel: PlanListViewModel = viewModel(),navController: NavContro
                     value = viewModel.descriptionState.value,
                     onValueChange = { viewModel.descriptionState.value = it },
                     label = {
-                        Text("User Name: ")
-                    },
-                    placeholder = {
-                        Text(text = "Enter your User Name")
+                        Text("Description: ")
                     },
                     maxLines = 1,
                     keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
