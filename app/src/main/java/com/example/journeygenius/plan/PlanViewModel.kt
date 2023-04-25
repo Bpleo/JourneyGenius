@@ -237,6 +237,32 @@ class PlanViewModel : ViewModel() {
         _planGroup.value=value
     }
 
+    private var _planTitle= mutableStateOf("")
+    val planTitle: MutableState<String> = _planTitle
+    fun updatePlanTitle(value: String){
+        _planTitle.value = value
+        updatePlanTitleToPlanGroup()
+    }
+    private fun updatePlanTitleToPlanGroup(){
+        val description= planGroup.value.description
+        val planList=planGroup.value.plans
+        updatePlanGroup(Plans(planTitle.value,description,planList))
+        Log.d("updatePlanGroup",planGroup.value.toString())
+    }
+
+    private var _planDescription = mutableStateOf("")
+    val planDescription: MutableState<String> = _planDescription
+    fun updatePlanDescription(value:String){
+        _planDescription.value=value
+        updatePlanDescripToPlanGroup()
+    }
+    private fun updatePlanDescripToPlanGroup(){
+        val title= planGroup.value.title
+        val planList=planGroup.value.plans
+        updatePlanGroup(Plans(title,planDescription.value,planList))
+        Log.d("updatePlanGroup",planGroup.value.toString())
+    }
+
     suspend fun getLatLng(city: String, apiKey: String): Location? = withContext(Dispatchers.IO) {
     val url = URL("https://maps.googleapis.com/maps/api/geocode/json?address=$city&key=$apiKey")
     val json = url.readText(Charset.defaultCharset())

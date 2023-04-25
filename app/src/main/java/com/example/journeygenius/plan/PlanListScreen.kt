@@ -21,6 +21,12 @@ import androidx.navigation.compose.rememberNavController
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlanList(viewModel: PlanListViewModel = viewModel(),navController: NavController,planViewModel: PlanViewModel) {
+    val planTitle =remember{
+        planViewModel.planTitle
+    }
+    val planDescription=remember{
+        planViewModel.planDescription
+    }
     JourneyGeniusTheme {
         val items = viewModel.items
         Box(
@@ -36,30 +42,43 @@ fun PlanList(viewModel: PlanListViewModel = viewModel(),navController: NavContro
             Column(
                 modifier = Modifier.padding(30.dp,100.dp)
             ) {
-                Text(
-                    text = planViewModel.planGroup.value.title,
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontSize = MaterialTheme.typography.headlineMedium.fontSize
+                TextField(
+                    value = planTitle.value,
+                    onValueChange = {
+                                    planViewModel.updatePlanTitle(it)
+                                    },
+                    label = {
+                        Text("Title: ")
+                    },
+                    maxLines = 1,
+                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
                 )
+//                Text(
+//                    text = planViewModel.planGroup.value.title,
+//                    style = MaterialTheme.typography.bodyLarge,
+//                    fontSize = MaterialTheme.typography.headlineMedium.fontSize
+//                )
 
             }
             Column(
                 modifier = Modifier.padding(30.dp,200.dp)
             ) {
-                Text(
-                    text = planViewModel.planGroup.value.description,
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontSize = MaterialTheme.typography.headlineMedium.fontSize
-                )
-//                TextField(
-//                    value = viewModel.descriptionState.value,
-//                    onValueChange = { viewModel.descriptionState.value = it },
-//                    label = {
-//                        Text("Description: ")
-//                    },
-//                    maxLines = 1,
-//                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+//                Text(
+//                    text = planViewModel.planGroup.value.description,
+//                    style = MaterialTheme.typography.bodyLarge,
+//                    fontSize = MaterialTheme.typography.headlineMedium.fontSize
 //                )
+                TextField(
+                    value = planDescription.value,
+                    onValueChange = {
+                                    planViewModel.updatePlanDescription(it)
+                                    },
+                    label = {
+                        Text("Description: ")
+                    },
+                    maxLines = 1,
+                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+                )
             }
             LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp),
                 modifier = Modifier

@@ -623,7 +623,7 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel,navController: NavController,jo
                                          ))
                                          viewModel.addSinglePlan(singlePlan)
 
-                                         viewModel.updatePlanGroup(Plans("Best Plan to ${destCity.value}","Here are plans for you!",planList))
+                                         viewModel.updatePlanGroup(Plans("","",planList))
 
                                          navController.navigate("Plan List")
                                          Log.d("Plan",planGroup.toString())
