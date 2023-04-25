@@ -47,7 +47,7 @@ fun JourneyGenius(
         navController = navController,
         startDestination = when(currentUser){
             null -> {
-                "Main"
+                "Login"
             }
             else -> {
                 "Main"
@@ -273,6 +273,19 @@ fun LoginScreen(
                             style = MaterialTheme.typography.bodyMedium,
                             modifier = Modifier.clickable {
                                 navController.navigate("SignUp")
+                            }
+                        )
+                        Text(
+                            text = "Forget Password? Reset",
+                            color = MaterialTheme.colorScheme.primary,
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.clickable {
+                                if (viewModel.email.value.text.isEmpty()) {
+                                    Toast.makeText(context, "Please Enter Email!", Toast.LENGTH_SHORT).show()
+                                } else {
+                                    Toast.makeText(context, "Reset Email is sent to entered email", Toast.LENGTH_SHORT).show()
+                                    viewModel.resetPwd()
+                                }
                             }
                         )
                     }

@@ -54,6 +54,7 @@ class JourneyGeniusViewModel(
                             updateUserName(TextFieldValue(data["name"].toString()))
                             updateEmail(TextFieldValue(data["email"].toString()))
                             updatePwd(data["password"].toString())
+                            updateOldEmail(TextFieldValue(data["email"].toString()))
                         } else {
                             Log.d("FIRESTORE", "No data found")
                         }
@@ -76,11 +77,45 @@ class JourneyGeniusViewModel(
         _userName.value = userName
     }
 
+    fun resetUserName(userName: TextFieldValue) {
+        val user = auth.currentUser
+        if (user != null){
+            db.collection("users").document(user.uid).update("name",userName.text)
+        }
+    }
+
     private var _email = mutableStateOf(TextFieldValue())
     val email: MutableState<TextFieldValue> = _email
+    private var oldEmail  = TextFieldValue()
 
     fun updateEmail(email : TextFieldValue) {
         _email.value = email
+    }
+
+    private fun updateOldEmail(email: TextFieldValue) {
+        oldEmail = email
+    }
+
+    fun resetEmail(newEmail : TextFieldValue) {
+        Log.i("USER","oldemail: $oldEmail")
+        auth.signOut()
+        auth.signInWithEmailAndPassword(oldEmail.text, pwd.value).addOnSuccessListener {
+            val user = auth.currentUser
+            if (user != null) {
+                db.collection("users").document(user.uid)
+                    .update("email", newEmail.text)
+                    .addOnSuccessListener {
+                        user.updateEmail(newEmail.text).addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                Log.d("USER", "${newEmail.text} updated successfully")
+                                updateOldEmail(newEmail)
+                            } else {
+                                Log.w("USER", "${newEmail.text} update failed", task.exception)
+                            }
+                        }
+                    }
+            }
+        }
     }
 
     private var _pwd = mutableStateOf(String())
@@ -88,6 +123,20 @@ class JourneyGeniusViewModel(
 
     fun updatePwd(pwd : String) {
         _pwd.value = pwd
+    }
+
+    fun resetPwd(){
+        val newPwd = _pwd.value
+        auth.sendPasswordResetEmail(_email.value.text)
+            .addOnCompleteListener{task ->
+                if (task.isSuccessful) {
+                    db.collection("users").document(auth.currentUser!!.uid)
+                        .update("password", newPwd)
+                    Log.d("USER", "password updated successfully")
+                } else {
+                    Log.w("USER", "password update failed", task.exception)
+                }
+            }
     }
 
     private var _verifyPwd = mutableStateOf(String())
