@@ -23,7 +23,6 @@ import androidx.compose.material.*
 import android.location.Geocoder
 import android.os.Build
 import android.util.Log
-import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.lazy.LazyColumn
@@ -36,8 +35,12 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.journeygenius.JourneyGeniusViewModel
 import com.example.journeygenius.R
 import com.google.android.gms.maps.model.*
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.google.maps.android.compose.*
 import kotlinx.coroutines.launch
 
@@ -88,7 +91,7 @@ fun Tag(title: String, onClose: () -> Unit) {
 @SuppressLint("CoroutineCreationDuringComposition")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PlanChooseLocScreen(viewModel: PlanViewModel,navController: NavController) {
+fun PlanChooseLocScreen(viewModel: PlanViewModel,navController: NavController,journeyGeniusViewModel: JourneyGeniusViewModel) {
     val countries = listOf("China", "Japan", "Korea", "US", "UK")
     val usStates = listOf("AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID",
         "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN")
@@ -150,23 +153,23 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel,navController: NavController) {
     var destCityExpanded by remember {
         mutableStateOf(false)
     }
-    var departCountry by remember {
+    val departCountry by remember {
         mutableStateOf(viewModel.departCountry)
     }
-    var departSate by remember {
+    val departSate by remember {
         mutableStateOf(viewModel.departState)
     }
-    var departCity by remember {
+    val departCity by remember {
         mutableStateOf(viewModel.departCity)
     }
 
-    var destCountry by remember {
+    val destCountry by remember {
         mutableStateOf(viewModel.destCountry)
     }
-    var destState by remember {
+    val destState by remember {
         mutableStateOf(viewModel.destState)
     }
-    var destCity by remember {
+    val destCity by remember {
         mutableStateOf(viewModel.destCity)
     }
     val selectedCityLocation = remember { viewModel.selectedCityLocation  }
@@ -181,9 +184,19 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel,navController: NavController) {
     var textFiledSize by remember {
         mutableStateOf(Size.Zero)
     }
-    var selectedPlacesOnMap by remember{
+    val selectedPlacesOnMap by remember{
         viewModel.selectedPlacesOnMap
     }
+    val singlePlan by remember {
+        viewModel.singlePlan
+    }
+    val planGroup by remember {
+        viewModel.planGroup
+    }
+    val planList by remember {
+        viewModel.planList
+    }
+
     val iconDepartCountry = if (departCountryExpanded) {
         Icons.Filled.KeyboardArrowUp
     } else {
@@ -598,7 +611,22 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel,navController: NavController) {
                         contentAlignment = Alignment.BottomCenter
                     ){
                         Button(onClick = {
+
+                                         viewModel.updateSinglePlan(singlePlan(
+                                             "${journeyGeniusViewModel.dateRange.value.lower} - ${journeyGeniusViewModel.dateRange.value.upper}",
+                                             "${destCountry.value}  ${destState.value}  ${destCity.value}",
+                                             selectedAttractionList.value,
+                                             journeyGeniusViewModel.budget.value.text,
+                                             listOf(),
+                                             journeyGeniusViewModel.travelType.value
+
+                                         ))
+                                         viewModel.addSinglePlan(singlePlan)
+
+                                         viewModel.updatePlanGroup(Plans("Best Plan to ${destCity.value}","Here are plans for you!",planList))
+
                                          navController.navigate("Plan List")
+                                         Log.d("Plan",planGroup.toString())
                         }, modifier = Modifier
                             .width(130.dp)
                         ) {
@@ -662,7 +690,7 @@ fun dropDownMenu() {
 @Preview(showBackground = true)
 @Composable
 fun PlanChooseLocScreenPreview() {
-    PlanChooseLocScreen(PlanViewModel(), rememberNavController())
+    //PlanChooseLocScreen(PlanViewModel(), rememberNavController())
     //dropDownMenu()
     //Tag(title = "Shenzhen", onClose = {})
 }

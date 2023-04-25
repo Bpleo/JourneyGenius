@@ -12,7 +12,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.input.ImeAction
@@ -35,7 +34,6 @@ import com.example.journeygenius.ui.theme.JourneyGeniusTheme
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.ktx.initialize
 import com.maxkeppeker.sheets.core.models.base.UseCaseState
 import com.maxkeppeker.sheets.core.models.base.rememberUseCaseState
 import com.maxkeppeler.sheets.calendar.CalendarDialog
@@ -59,13 +57,13 @@ fun PlanScreenGraph(
             PlanScreen(viewModel,windowSize,planNavController)
         }
         composable("Plan Map"){
-            PlanChooseLocScreen(viewModel = planViewModel,planNavController)
+            PlanChooseLocScreen(viewModel = planViewModel,planNavController,viewModel)
         }
         composable("Plan List"){
-            PlanList(navController = planNavController)
+            PlanList(navController = planNavController, planViewModel = planViewModel)
         }
         composable("Plan Detail"){
-            PlanDetail(planNavController)
+            PlanDetail(planNavController,planViewModel)
         }
     }
 }
@@ -194,7 +192,7 @@ fun TravelDateComponent(
 }
 
 @Composable
-fun TravelTypeComponent(windowSize: WindowSize){
+fun TravelTypeComponent(windowSize: WindowSize,viewModel: JourneyGeniusViewModel){
     Column {
         when(windowSize.height){
             WindowType.Medium -> {
@@ -212,15 +210,15 @@ fun TravelTypeComponent(windowSize: WindowSize){
         }
         Spacer(modifier = Modifier.height(40.dp))
         Row {
-            Button(onClick = {}) {
+            Button(onClick = {viewModel.updateTravelType("SINGLE") }) {
                 Text(text = "SINGLE")
             }
             Spacer(modifier = Modifier.width(10.dp))
-            Button(onClick = {}) {
+            Button(onClick = {viewModel.updateTravelType("FAMILY") }) {
                 Text(text = "FAMILY")
             }
             Spacer(modifier = Modifier.width(10.dp))
-            Button(onClick = {}) {
+            Button(onClick = {viewModel.updateTravelType("BUSINESS") }) {
                 Text(text = "BUSINESS")
             }
         }
@@ -283,6 +281,9 @@ fun PlanScreen(
         mutableStateOf(value)
     }
     val budget by remember { mutableStateOf(viewModel.budget) }
+    val travelType by remember {
+        mutableStateOf(viewModel.travelType)
+    }
     val calenderState = rememberUseCaseState()
     CalendarDialog(
         state = calenderState,
@@ -309,7 +310,7 @@ fun PlanScreen(
                     ) {
                         TravelDateComponent(selectedDateRange, calenderState, windowSize)
                         Spacer(modifier = Modifier.height(60.dp))
-                        TravelTypeComponent(windowSize)
+                        TravelTypeComponent(windowSize,viewModel)
                         Spacer(modifier = Modifier.height(60.dp))
                         BudgetComponent(budget = budget, viewModel = viewModel)
                         Spacer(modifier = Modifier.height(60.dp))
@@ -322,7 +323,7 @@ fun PlanScreen(
                     ){
                         Column {
                             TravelDateComponent(selectedDateRange, calenderState, windowSize)
-                            TravelTypeComponent(windowSize)
+                            TravelTypeComponent(windowSize,viewModel)
                         }
                         Spacer(modifier = Modifier.width(60.dp))
                         Column{
@@ -362,7 +363,7 @@ fun PlanScreenLandscapePreview() {
             ) {
                 Column {
                     TravelDateComponent(selectedDateRange, calenderState, rememberWindowSize())
-                    TravelTypeComponent(rememberWindowSize())
+                    TravelTypeComponent(rememberWindowSize(),viewModel)
                 }
                 Spacer(modifier = Modifier.width(60.dp))
                 Column{

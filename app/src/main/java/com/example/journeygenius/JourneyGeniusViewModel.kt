@@ -160,6 +160,12 @@ class JourneyGeniusViewModel(
         _budget.value = value
     }
 
+    private var _travelType = mutableStateOf("SINGLE")
+    val travelType:MutableState<String> =_travelType
+    fun updateTravelType(value:String){
+        _travelType.value=value
+    }
+
     private var _departCountry= mutableStateOf("US")
     val departCountry:MutableState<String> = _departCountry
     fun updateDepartCountry(value: String){

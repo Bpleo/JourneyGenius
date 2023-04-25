@@ -20,7 +20,7 @@ import androidx.navigation.compose.rememberNavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PlanList(viewModel: PlanListViewModel = viewModel(),navController: NavController) {
+fun PlanList(viewModel: PlanListViewModel = viewModel(),navController: NavController,planViewModel: PlanViewModel) {
     JourneyGeniusTheme {
         val items = viewModel.items
         Box(
@@ -36,36 +36,30 @@ fun PlanList(viewModel: PlanListViewModel = viewModel(),navController: NavContro
             Column(
                 modifier = Modifier.padding(30.dp,100.dp)
             ) {
-//                Text(
-//                    text = "Enter some text",
-//                    style = MaterialTheme.typography.bodyLarge
-//                )
-                TextField(
-                    value = viewModel.titleState.value,
-                    onValueChange = { viewModel.titleState.value = it },
-                    label = {
-                        Text("Ttile: ")
-                    },
-                    maxLines = 1,
-                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+                Text(
+                    text = planViewModel.planGroup.value.title,
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontSize = MaterialTheme.typography.headlineMedium.fontSize
                 )
+
             }
             Column(
                 modifier = Modifier.padding(30.dp,200.dp)
             ) {
-//                Text(
-//                    text = "Enter some text",
-//                    style = MaterialTheme.typography.bodyLarge
-//                )
-                TextField(
-                    value = viewModel.descriptionState.value,
-                    onValueChange = { viewModel.descriptionState.value = it },
-                    label = {
-                        Text("Description: ")
-                    },
-                    maxLines = 1,
-                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+                Text(
+                    text = planViewModel.planGroup.value.description,
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontSize = MaterialTheme.typography.headlineMedium.fontSize
                 )
+//                TextField(
+//                    value = viewModel.descriptionState.value,
+//                    onValueChange = { viewModel.descriptionState.value = it },
+//                    label = {
+//                        Text("Description: ")
+//                    },
+//                    maxLines = 1,
+//                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+//                )
             }
             LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp),
                 modifier = Modifier
@@ -96,7 +90,7 @@ fun PlanList(viewModel: PlanListViewModel = viewModel(),navController: NavContro
                 Button(onClick = { navController.navigate("Plan Menu")}, modifier = Modifier
                     .width(100.dp)
                 ) {
-                    Text(text = "Back")
+                    Text(text = "ADD")
                 }
             }
         }
@@ -107,5 +101,5 @@ fun PlanList(viewModel: PlanListViewModel = viewModel(),navController: NavContro
 @Preview(showBackground = true)
 @Composable
 fun PlanListPreview(){
-    PlanList(navController = rememberNavController())
+    PlanList(navController = rememberNavController(), planViewModel = PlanViewModel())
 }

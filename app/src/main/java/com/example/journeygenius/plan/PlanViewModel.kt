@@ -59,6 +59,21 @@ data class GeocodeResult(
     val geometry: Geometry
 )
 
+data class singlePlan(
+    val date:String,
+    val destination:String,
+    val attractions:List<Place>,
+    val budget:String,
+    val hotel: List<String>,
+    val trans_mode: String
+
+)
+
+data class Plans(
+    val title:String,
+    val description:String,
+    val plans: List<singlePlan>
+)
 
 @SuppressLint("SuspiciousIndentation")
 class PlanViewModel : ViewModel() {
@@ -157,8 +172,11 @@ class PlanViewModel : ViewModel() {
 
     fun delSelectedAttraction(value:Place){
         val updatedSelectedAttractionsList=_selectedAttractionList.value.toMutableList()
-        updatedSelectedAttractionsList.remove(value)
-        updateSelectedAttractionList(updatedSelectedAttractionsList)
+        if(updatedSelectedAttractionsList.contains(value)){
+            updatedSelectedAttractionsList.remove(value)
+            updateSelectedAttractionList(updatedSelectedAttractionsList)
+        }
+
     }
 
     private var _selectedPlacesOnMap = mutableStateOf<HashMap<Pair<Double,Double>,List<Place>>>(
@@ -170,14 +188,53 @@ class PlanViewModel : ViewModel() {
     }
     fun addSelectedPlacesOnMap(latlng: Pair<Double,Double>,places:List<Place>){
         val updatedSelectedPlacesOnMap=_selectedPlacesOnMap.value.toMutableMap()
-        updatedSelectedPlacesOnMap[latlng] = places
-        updateSelectedPlacesOnMap(updatedSelectedPlacesOnMap as HashMap<Pair<Double, Double>, List<Place>>)
+        if(!updatedSelectedPlacesOnMap.containsKey(latlng)){
+            updatedSelectedPlacesOnMap[latlng] = places
+            updateSelectedPlacesOnMap(updatedSelectedPlacesOnMap as HashMap<Pair<Double, Double>, List<Place>>)
+        }
+
     }
 
     fun delSelectedPlacesOnMap(latlng: Pair<Double,Double>){
         val updatedSelectedPlacesOnMap=_selectedPlacesOnMap.value.toMutableMap()
-        updatedSelectedPlacesOnMap.remove(latlng)
-        updateSelectedPlacesOnMap(updatedSelectedPlacesOnMap as HashMap<Pair<Double, Double>, List<Place>>)
+        if(updatedSelectedPlacesOnMap.containsKey(latlng)){
+            updatedSelectedPlacesOnMap.remove(latlng)
+            updateSelectedPlacesOnMap(updatedSelectedPlacesOnMap as HashMap<Pair<Double, Double>, List<Place>>)
+        }
+
+    }
+
+    private var _singlePlan= mutableStateOf(singlePlan("","", listOf(),"", listOf(),""))
+    val singlePlan: MutableState<singlePlan> = _singlePlan
+    fun updateSinglePlan(value:singlePlan){
+        _singlePlan.value=value
+    }
+
+    private var _planList= mutableStateOf(listOf<singlePlan>())
+    val planList:MutableState<List<singlePlan>> = _planList
+    fun updatePlanList(value: List<singlePlan>){
+        _planList.value=value
+    }
+    fun addSinglePlan(value: singlePlan){
+        val updatedPlanList=_planList.value.toMutableList()
+        if(!updatedPlanList.contains(value)){
+            updatedPlanList.add(value)
+            updatePlanList(updatedPlanList)
+        }
+    }
+
+    fun delSinglePlan(value: singlePlan){
+        val updatedPlanList=_planList.value.toMutableList()
+        if(updatedPlanList.contains(value)){
+            updatedPlanList.remove(value)
+            updatePlanList(updatedPlanList)
+        }
+    }
+
+    private var _planGroup= mutableStateOf(Plans("","", listOf()))
+    val planGroup: MutableState<Plans> = _planGroup
+    fun updatePlanGroup(value:Plans){
+        _planGroup.value=value
     }
 
     suspend fun getLatLng(city: String, apiKey: String): Location? = withContext(Dispatchers.IO) {
@@ -219,11 +276,5 @@ class PlanViewModel : ViewModel() {
         }
     }
 
-
-//    init {
-//        viewModelScope.launch {
-//            searchNearbyPlaces(Location(selectedCityLatLng.value[0], selectedCityLatLng.value[1]), apiKey = PlacesapiKey)
-//        }
-//    }
 
 }
