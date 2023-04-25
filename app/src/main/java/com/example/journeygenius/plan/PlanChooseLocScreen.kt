@@ -34,6 +34,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.journeygenius.R
 import com.google.android.gms.maps.model.*
 import com.google.maps.android.compose.*
@@ -86,7 +88,7 @@ fun Tag(title: String, onClose: () -> Unit) {
 @SuppressLint("CoroutineCreationDuringComposition")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PlanChooseLocScreen(viewModel: PlanViewModel) {
+fun PlanChooseLocScreen(viewModel: PlanViewModel,navController: NavController) {
     val countries = listOf("China", "Japan", "Korea", "US", "UK")
     val usStates = listOf("AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID",
         "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN")
@@ -592,10 +594,12 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel) {
 
                     Box(modifier = Modifier
                         .fillMaxSize()
-                        .padding(bottom = 20.dp),
+                        .padding(bottom = 85.dp),
                         contentAlignment = Alignment.BottomCenter
                     ){
-                        Button(onClick = { /*TODO*/ }, modifier = Modifier
+                        Button(onClick = {
+                                         navController.navigate("Plan List")
+                        }, modifier = Modifier
                             .width(130.dp)
                         ) {
                             Text(text = "Generate")
@@ -658,7 +662,7 @@ fun dropDownMenu() {
 @Preview(showBackground = true)
 @Composable
 fun PlanChooseLocScreenPreview() {
-    PlanChooseLocScreen(PlanViewModel())
+    PlanChooseLocScreen(PlanViewModel(), rememberNavController())
     //dropDownMenu()
     //Tag(title = "Shenzhen", onClose = {})
 }

@@ -25,6 +25,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.journeygenius.personal.PersonalAccountScreen
+import com.example.journeygenius.plan.PlanViewModel
 import com.example.journeygenius.ui.theme.JourneyGeniusTheme
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
@@ -37,7 +38,8 @@ import com.google.firebase.ktx.Firebase
 fun JourneyGenius(
     auth: FirebaseAuth,
     mainActivity: MainActivity,
-    db: FirebaseFirestore
+    db: FirebaseFirestore,
+    planViewModel: PlanViewModel
 ) {
     val navController = rememberNavController()
     val windowSize = rememberWindowSize()
@@ -93,7 +95,8 @@ fun JourneyGenius(
                 auth,
                 db,
                 viewModel,
-                navController
+                navController,
+                planViewModel
             )
         }
     }

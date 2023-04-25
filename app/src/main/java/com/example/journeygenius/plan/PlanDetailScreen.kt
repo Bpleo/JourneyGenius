@@ -10,10 +10,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.journeygenius.ui.theme.JourneyGeniusTheme
 
 @Composable
-fun PlanDetail(){
+fun PlanDetail(navController: NavController){
 JourneyGeniusTheme {
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -57,10 +59,10 @@ JourneyGeniusTheme {
         }
         Box(modifier = Modifier
             .fillMaxSize()
-            .padding(bottom = 40.dp),
+            .padding(bottom = 80.dp),
             contentAlignment = Alignment.BottomCenter
         ){
-            Button(onClick = { /*TODO*/ }, modifier = Modifier
+            Button(onClick = { navController.navigate("Plan List") }, modifier = Modifier
                 .width(100.dp)
             ) {
                 Text(text = "Back")
@@ -74,5 +76,5 @@ JourneyGeniusTheme {
 @Preview(showBackground = true)
 @Composable
 fun PlanDetailPreview(){
-    PlanDetail()
+    PlanDetail(rememberNavController())
 }

@@ -15,9 +15,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.journeygenius.ui.theme.JourneyGeniusTheme
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 
 @Composable
-fun PlanList(viewModel: PlanListViewModel = viewModel()) {
+fun PlanList(viewModel: PlanListViewModel = viewModel(),navController: NavController) {
     JourneyGeniusTheme {
         val items = viewModel.items
         Box(
@@ -35,7 +37,7 @@ fun PlanList(viewModel: PlanListViewModel = viewModel()) {
                     .fillMaxWidth()
                     .padding(30.dp, 80.dp)
                     .clickable {
-                        /*TODO*/
+                        navController.navigate("Plan Detail")
                         //navController.navigate(Screen.PlanDetailScreen(plan.id))
                     }
             ) {
@@ -53,10 +55,10 @@ fun PlanList(viewModel: PlanListViewModel = viewModel()) {
             }
             Box(modifier = Modifier
                 .fillMaxSize()
-                .padding(bottom = 40.dp),
+                .padding(bottom = 90.dp),
                 contentAlignment = Alignment.BottomCenter
             ){
-                Button(onClick = { /*TODO*/ }, modifier = Modifier
+                Button(onClick = { navController.navigate("Plan Menu")}, modifier = Modifier
                     .width(100.dp)
                 ) {
                     Text(text = "Back")
@@ -70,5 +72,5 @@ fun PlanList(viewModel: PlanListViewModel = viewModel()) {
 @Preview(showBackground = true)
 @Composable
 fun PlanListPreview(){
-    PlanList()
+    PlanList(navController = rememberNavController())
 }
