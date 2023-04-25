@@ -95,7 +95,7 @@ fun PersonalMenu(
     if (listPrepared) {
         Column {
             LazyColumn(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.padding(bottom = 75.dp)
             ) {
                 item {
                     UserDetails(
