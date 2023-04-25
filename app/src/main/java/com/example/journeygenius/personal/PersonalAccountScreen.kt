@@ -40,11 +40,13 @@ fun PersonalAccountScreen(
         PersonalTopBar(context = LocalContext.current.applicationContext, title = "Details", navController = navController)
         Box(
             modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.TopCenter
         ) {
             when (windowSize.height) {
                 WindowType.Medium -> {
-                    Column {
+                    Column(
+                        modifier = Modifier.padding(horizontal = 8.dp)
+                    ) {
                         UserNameField(
                             viewModel, db, auth
                         )
