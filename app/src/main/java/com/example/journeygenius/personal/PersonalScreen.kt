@@ -168,22 +168,6 @@ private fun UserDetails(context: Context, name: String, email: String) {
                     overflow = TextOverflow.Ellipsis
                 )
             }
-
-            // Edit button
-            IconButton(
-                modifier = Modifier
-                    .weight(weight = 1f, fill = false),
-                onClick = {
-                    Toast.makeText(context, "Edit Button", Toast.LENGTH_SHORT).show()
-                }
-            ) {
-                Icon(
-                    modifier = Modifier.size(24.dp),
-                    imageVector = Icons.Outlined.Edit,
-                    contentDescription = "Edit Details",
-                )
-            }
-
         }
     }
 }
