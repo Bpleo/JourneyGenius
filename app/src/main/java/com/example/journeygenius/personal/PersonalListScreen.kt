@@ -33,7 +33,7 @@ fun PersonalListScreen(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ){
-        PersonalTopBar(context = LocalContext.current.applicationContext, title = "Plan List", navController = navController)
+        PersonalTopBar(context = LocalContext.current.applicationContext, title = "My Plan List", navController = navController)
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center

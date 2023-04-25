@@ -64,7 +64,7 @@ fun PersonalScreen(
                 windowSize = rememberWindowSize()
             )
         }
-        composable("Personal Save List"){
+        composable("Personal Plan List"){
             PersonalListScreen(
                 viewModel = viewModel,
                 db = db,
@@ -286,8 +286,8 @@ private fun prepareOptionsData() {
     optionsList.add(
         OptionsData(
             icon = appIcons.FavoriteBorder,
-            title = "Save List",
-            subTitle = "Items you saved"
+            title = "Plan List",
+            subTitle = "My plans"
         )
     )
     optionsList.add(
