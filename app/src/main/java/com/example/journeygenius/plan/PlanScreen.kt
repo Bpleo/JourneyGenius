@@ -22,6 +22,11 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.journeygenius.WindowSize
 import com.example.journeygenius.WindowType
 import com.example.journeygenius.JourneyGeniusViewModel
@@ -40,6 +45,30 @@ import com.maxkeppeler.sheets.calendar.models.CalendarStyle
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
+
+@Composable
+fun PlanScreenGraph(
+    viewModel: JourneyGeniusViewModel,
+    windowSize: WindowSize,
+    planViewModel: PlanViewModel
+){
+    val planNavController= rememberNavController()
+    NavHost(navController = planNavController,
+        startDestination = "Plan Menu"){
+        composable("Plan Menu"){
+            PlanScreen(viewModel,windowSize,planNavController)
+        }
+        composable("Plan Map"){
+            PlanChooseLocScreen(viewModel = planViewModel,planNavController)
+        }
+        composable("Plan List"){
+            PlanList(navController = planNavController)
+        }
+        composable("Plan Detail"){
+            PlanDetail(planNavController)
+        }
+    }
+}
 
 @Composable
 fun TravelDateComponent(
@@ -225,12 +254,14 @@ fun BudgetComponent(budget: MutableState<TextFieldValue>, viewModel: JourneyGeni
 }
 
 @Composable
-fun DestinationButton() {
+fun DestinationButton(navController: NavController) {
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
         Button(
-            onClick = { /*TODO*/ }, modifier = Modifier
+            onClick = {
+                navController.navigate("Plan Map")
+            }, modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.CenterHorizontally)
         ) {
@@ -243,8 +274,10 @@ fun DestinationButton() {
 @Composable
 fun PlanScreen(
     viewModel: JourneyGeniusViewModel,
-    windowSize: WindowSize
+    windowSize: WindowSize,
+    navController: NavController
 ) {
+
     val selectedDateRange = remember {
         val value = viewModel.dateRange
         mutableStateOf(value)
@@ -280,7 +313,7 @@ fun PlanScreen(
                         Spacer(modifier = Modifier.height(60.dp))
                         BudgetComponent(budget = budget, viewModel = viewModel)
                         Spacer(modifier = Modifier.height(60.dp))
-                        DestinationButton()
+                        DestinationButton(navController)
                     }
                 }
                 else -> {
@@ -295,7 +328,7 @@ fun PlanScreen(
                         Column{
                             BudgetComponent(budget = budget, viewModel = viewModel)
                             Spacer(modifier = Modifier.height(60.dp))
-                            DestinationButton()
+                            DestinationButton(navController)
                         }
                     }
                 }
@@ -308,7 +341,8 @@ fun PlanScreen(
 @Preview(showBackground = true)
 @Composable
 fun PlanScreenPreview() {
-    PlanScreen(JourneyGeniusViewModel(Firebase.firestore, Firebase.auth), rememberWindowSize())
+    PlanScreen(JourneyGeniusViewModel(Firebase.firestore, Firebase.auth), rememberWindowSize(),
+        rememberNavController())
 }
 
 @Preview@Preview(showBackground = true, device = Devices.AUTOMOTIVE_1024p, heightDp = 320)
@@ -334,7 +368,7 @@ fun PlanScreenLandscapePreview() {
                 Column{
                     BudgetComponent(budget = budget, viewModel = viewModel)
                     Spacer(modifier = Modifier.height(60.dp))
-                    DestinationButton()
+                    DestinationButton(rememberNavController())
                 }
             }
         }

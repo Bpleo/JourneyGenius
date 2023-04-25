@@ -7,6 +7,8 @@ import androidx.navigation.compose.composable
 import com.example.journeygenius.community.CommunityScreen
 import com.example.journeygenius.personal.PersonalScreen
 import com.example.journeygenius.plan.PlanScreen
+import com.example.journeygenius.plan.PlanScreenGraph
+import com.example.journeygenius.plan.PlanViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -16,7 +18,8 @@ fun SetupNavGraph(
     bottomController: NavHostController,
     db: FirebaseFirestore,
     viewModel: JourneyGeniusViewModel,
-    auth: FirebaseAuth
+    auth: FirebaseAuth,
+    planViewModel: PlanViewModel
 ) {
     val windowSize = rememberWindowSize()
     NavHost(
@@ -26,10 +29,10 @@ fun SetupNavGraph(
         composable(
             route = BottomBar.Plan.route
         ){
-            PlanScreen(
-                viewModel,
-                windowSize
-            )
+            PlanScreenGraph(
+                viewModel = viewModel,
+                windowSize = windowSize,
+                planViewModel = planViewModel)
         }
         composable(
             route = BottomBar.Community.route

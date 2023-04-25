@@ -13,6 +13,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import com.example.journeygenius.plan.PlanViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -25,6 +26,7 @@ class MainActivity : ComponentActivity() {
     private lateinit var auth : FirebaseAuth
     private lateinit var db : FirebaseFirestore
     private val mainViewModel: MainViewModel by viewModels()
+    private val planViewModel:PlanViewModel by viewModels()
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,7 +36,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             JourneyGeniusTheme {
                 Scaffold{
-                    JourneyGenius(auth, this, db)
+                    JourneyGenius(auth, this, db,planViewModel)
                 }
             }
         }
