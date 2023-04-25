@@ -47,10 +47,10 @@ fun PersonalScreen(
     val personalNavController = rememberNavController()
     NavHost(
         navController = personalNavController,
-        startDestination = "Personal Detail"
+        startDestination = "Personal Menu"
     ) {
-        composable("Personal Detail") {
-            PersonalDetails(LocalContext.current, viewModel, navController, personalNavController)
+        composable("Personal Menu") {
+            PersonalMenu(LocalContext.current, viewModel, navController, personalNavController)
         }
         composable("Personal Settings") {
             PersonalSettingScreen(navController = personalNavController)
@@ -76,7 +76,7 @@ fun PersonalScreen(
 private val optionsList: ArrayList<OptionsData> = ArrayList()
 
 @Composable
-fun PersonalDetails(
+fun PersonalMenu(
     context: Context,
     viewModel: JourneyGeniusViewModel,
     navController: NavHostController,
@@ -303,7 +303,7 @@ private fun prepareOptionsData() {
 @Preview(showBackground = true)
 @Composable
 fun PersonalScreenPreview() {
-    PersonalDetails(
+    PersonalMenu(
         LocalContext.current,
         JourneyGeniusViewModel(Firebase.firestore, Firebase.auth),
         rememberNavController(),

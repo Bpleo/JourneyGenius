@@ -25,7 +25,7 @@ fun PersonalTopBar(context: Context, title: String, navController: NavHostContro
         },
         navigationIcon = {
             IconButton(onClick = {
-                navController.navigate("Personal Detail")
+                navController.navigate("Personal Menu")
             }) {
                 Icon(
                     Icons.Filled.ArrowBack,
