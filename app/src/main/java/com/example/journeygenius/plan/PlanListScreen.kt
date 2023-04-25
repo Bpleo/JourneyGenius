@@ -5,12 +5,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.journeygenius.ui.theme.JourneyGeniusTheme
@@ -18,6 +18,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlanList(viewModel: PlanListViewModel = viewModel(),navController: NavController) {
     JourneyGeniusTheme {
@@ -32,10 +33,50 @@ fun PlanList(viewModel: PlanListViewModel = viewModel(),navController: NavContro
                 Text(text = "Plan List",
                     fontSize = MaterialTheme.typography.headlineLarge.fontSize)
             }
+            Column(
+                modifier = Modifier.padding(30.dp,100.dp)
+            ) {
+//                Text(
+//                    text = "Enter some text",
+//                    style = MaterialTheme.typography.bodyLarge
+//                )
+                TextField(
+                    value = viewModel.titleState.value,
+                    onValueChange = { viewModel.titleState.value = it },
+                    label = {
+                        Text("User Name: ")
+                    },
+                    placeholder = {
+                        Text(text = "Enter your User Name")
+                    },
+                    maxLines = 1,
+                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+                )
+            }
+            Column(
+                modifier = Modifier.padding(30.dp,200.dp)
+            ) {
+//                Text(
+//                    text = "Enter some text",
+//                    style = MaterialTheme.typography.bodyLarge
+//                )
+                TextField(
+                    value = viewModel.descriptionState.value,
+                    onValueChange = { viewModel.descriptionState.value = it },
+                    label = {
+                        Text("User Name: ")
+                    },
+                    placeholder = {
+                        Text(text = "Enter your User Name")
+                    },
+                    maxLines = 1,
+                    keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+                )
+            }
             LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(30.dp, 80.dp)
+                    .padding(30.dp, 300.dp)
                     .clickable {
                         navController.navigate("Plan Detail")
                         //navController.navigate(Screen.PlanDetailScreen(plan.id))
