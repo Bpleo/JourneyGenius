@@ -20,15 +20,20 @@ import androidx.navigation.compose.rememberNavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PlanList(viewModel: PlanListViewModel = viewModel(),navController: NavController,planViewModel: PlanViewModel) {
+fun PlanList(navController: NavController,planViewModel: PlanViewModel) {
     val planTitle =remember{
         planViewModel.planTitle
     }
     val planDescription=remember{
         planViewModel.planDescription
     }
+    val planList = remember{
+        planViewModel.planList
+    }
+    val planGroup=remember{
+        planViewModel.planGroup
+    }
     JourneyGeniusTheme {
-        val items = viewModel.items
         Box(
             modifier = Modifier.fillMaxSize(),
         ){
@@ -89,13 +94,13 @@ fun PlanList(viewModel: PlanListViewModel = viewModel(),navController: NavContro
                         //navController.navigate(Screen.PlanDetailScreen(plan.id))
                     }
             ) {
-                items(items = items, key = { it }) { it ->
+                items(planList.value , key = { it.attractions }) { it ->
                     Text(
                         modifier = Modifier
                             .fillMaxWidth()
                             .background(MaterialTheme.colorScheme.primaryContainer)
                             .padding(24.dp),
-                        text = "$it",
+                        text = "Trip to  ${it.destination}",
                         fontSize = MaterialTheme.typography.titleLarge.fontSize,
                         fontWeight = MaterialTheme.typography.titleLarge.fontWeight,
                     )
@@ -106,7 +111,8 @@ fun PlanList(viewModel: PlanListViewModel = viewModel(),navController: NavContro
                 .padding(bottom = 90.dp),
                 contentAlignment = Alignment.BottomCenter
             ){
-                Button(onClick = { navController.navigate("Plan Menu")}, modifier = Modifier
+                Button(onClick = { navController.navigate("Plan Menu")
+                                 }, modifier = Modifier
                     .width(100.dp)
                 ) {
                     Text(text = "ADD")
