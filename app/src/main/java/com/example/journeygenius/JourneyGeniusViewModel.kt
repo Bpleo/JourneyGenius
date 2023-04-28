@@ -5,6 +5,8 @@ import android.util.Range
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -208,5 +210,12 @@ class JourneyGeniusViewModel(
         if (value != null) {
             _selectedCityLocation.value=value
         }
+    }
+
+    private val _sliderValue = MutableLiveData(0)
+    val sliderValue: LiveData<Int> = _sliderValue
+
+    fun onSliderValueChanged(newValue: Int) {
+        _sliderValue.value = newValue
     }
 }

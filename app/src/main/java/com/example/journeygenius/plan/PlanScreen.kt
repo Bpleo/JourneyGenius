@@ -21,7 +21,9 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -191,62 +193,23 @@ fun TravelDateComponent(
     }
 }
 
-@Composable
-fun TravelTypeComponent(windowSize: WindowSize,viewModel: JourneyGeniusViewModel){
-    Column {
-        when(windowSize.height){
-            WindowType.Medium -> {
-                Text(
-                    text = "Travel Type: ",
-                    fontSize = MaterialTheme.typography.headlineLarge.fontSize
-                )
-            }
-            else -> {
-                Text(
-                    text = "Travel Type: ",
-                    fontSize = MaterialTheme.typography.headlineMedium.fontSize
-                )
-            }
-        }
-        Spacer(modifier = Modifier.height(40.dp))
-        Row {
-            Button(onClick = {viewModel.updateTravelType("SINGLE") }) {
-                Text(text = "SINGLE")
-            }
-            Spacer(modifier = Modifier.width(10.dp))
-            Button(onClick = {viewModel.updateTravelType("FAMILY") }) {
-                Text(text = "FAMILY")
-            }
-            Spacer(modifier = Modifier.width(10.dp))
-            Button(onClick = {viewModel.updateTravelType("BUSINESS") }) {
-                Text(text = "BUSINESS")
-            }
-        }
-    }
-}
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BudgetComponent(budget: MutableState<TextFieldValue>, viewModel: JourneyGeniusViewModel){
+fun BudgetComponent(viewModel: JourneyGeniusViewModel){
     Column {
         Text(
             text = "What is your budget: ",
             fontSize = MaterialTheme.typography.headlineLarge.fontSize
         )
         Spacer(modifier = Modifier.height(15.dp))
-        TextField(
-            value = budget.value,
-            onValueChange = {newText ->
-                viewModel.updateBudget(newText)
-            },
-            placeholder = {
-                Text("Enter your budget")
-            },
-            maxLines = 1,
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Number,
-                imeAction = ImeAction.Done
-            )
+        val sliderValue: Int by viewModel.sliderValue.observeAsState(0)
+
+        Slider(
+            value = sliderValue.toFloat(),
+            onValueChange = { viewModel.onSliderValueChanged(it.toInt()) },
+            valueRange = 0f..5f,
+            steps = 5,
+            modifier = Modifier.width(200.dp)
         )
     }
 }
@@ -310,9 +273,7 @@ fun PlanScreen(
                     ) {
                         TravelDateComponent(selectedDateRange, calenderState, windowSize)
                         Spacer(modifier = Modifier.height(60.dp))
-                        TravelTypeComponent(windowSize,viewModel)
-                        Spacer(modifier = Modifier.height(60.dp))
-                        BudgetComponent(budget = budget, viewModel = viewModel)
+                        BudgetComponent(viewModel = viewModel)
                         Spacer(modifier = Modifier.height(60.dp))
                         DestinationButton(navController)
                     }
@@ -323,11 +284,10 @@ fun PlanScreen(
                     ){
                         Column {
                             TravelDateComponent(selectedDateRange, calenderState, windowSize)
-                            TravelTypeComponent(windowSize,viewModel)
                         }
                         Spacer(modifier = Modifier.width(60.dp))
                         Column{
-                            BudgetComponent(budget = budget, viewModel = viewModel)
+                            BudgetComponent(viewModel = viewModel)
                             Spacer(modifier = Modifier.height(60.dp))
                             DestinationButton(navController)
                         }
@@ -363,11 +323,10 @@ fun PlanScreenLandscapePreview() {
             ) {
                 Column {
                     TravelDateComponent(selectedDateRange, calenderState, rememberWindowSize())
-                    TravelTypeComponent(rememberWindowSize(),viewModel)
                 }
                 Spacer(modifier = Modifier.width(60.dp))
                 Column{
-                    BudgetComponent(budget = budget, viewModel = viewModel)
+                    BudgetComponent(viewModel = viewModel)
                     Spacer(modifier = Modifier.height(60.dp))
                     DestinationButton(rememberNavController())
                 }
