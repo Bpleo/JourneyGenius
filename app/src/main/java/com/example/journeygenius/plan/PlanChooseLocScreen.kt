@@ -375,7 +375,7 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel,navController: NavController,jo
 
                     GoogleMap(modifier = Modifier
                         .fillMaxWidth()
-                        .height(320.dp),
+                        .height(400.dp),
                         cameraPositionState = cameraPositionState,
                         onMapLongClick = {
                             viewModel.viewModelScope.launch {
