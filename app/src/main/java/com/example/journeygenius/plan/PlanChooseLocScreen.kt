@@ -161,6 +161,7 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel,navController: NavController,jo
     val startAttraction by remember {
         mutableStateOf(viewModel.startAttraction)
     }
+
     val endAttraction by remember {
         mutableStateOf(viewModel.endAttraction)
     }
@@ -181,13 +182,14 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel,navController: NavController,jo
         mutableStateOf(viewModel.destCity)
     }
     val selectedCityLocation = remember { viewModel.selectedCityLocation  }
-    val selectedCityLatLng= remember {
-      viewModel.selectedCityLatLng
+    val selectedCityLatLng = remember {
+        viewModel.selectedCityLatLng
     }
-    val attractionsList= remember{viewModel.attractionsList }
-    val selectedAttractionList= remember {
+    val attractionsList = remember{viewModel.attractionsList }
+    val selectedAttractionList = remember {
         viewModel.selectedAttractionList
     }
+    val nameList: List<String> = selectedAttractionList.value.map { place -> place.name }
 
     var textFiledSize by remember {
         mutableStateOf(Size.Zero)
@@ -279,30 +281,32 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel,navController: NavController,jo
                         Column {
 
                             //Departure Sight
-//                            OutlinedTextField(value = startAttraction.value,
-//                                onValueChange = { viewModel.updateStartAttraction(it) },
-//
-//                                label = { Text(text = "Choose") },
-//                                trailingIcon = {
-//                                    Icon(
-//                                        iconDepartCountry,
-//                                        contentDescription = "",
-//                                        Modifier.clickable {
-//                                            startAttractionExpanded = !startAttractionExpanded
-//                                        })
-//                                })
+                            OutlinedTextField(value = startAttraction.value.name,
+                                onValueChange = {
+                                    val updatedPlace = Place(it, startAttraction.value.vicinity, startAttraction.value.location)
+                                    viewModel.updateStartAttraction(updatedPlace)
+                                },
+
+                                label = { Text(text = "Choose") },
+                                trailingIcon = {
+                                    Icon(
+                                        iconStartAttraction,
+                                        contentDescription = "",
+                                        Modifier.clickable {
+                                            startAttractionExpanded = !startAttractionExpanded
+                                        })
+                                })
                             DropdownMenu(
                                 expanded = startAttractionExpanded,
                                 onDismissRequest = { startAttractionExpanded = false },
                                 modifier = Modifier.width(170.dp),
 //                            modifier = Modifier.width(with(LocalDensity.current) { textFiledSize.width.toDp() })
                             ) {
-                                countries.forEach { country ->
-                                    DropdownMenuItem(text = { Text(country) }, onClick = {
-                                        viewModel.updateDepartCountry(country)
-                                        viewModel.updateDepartState("")
-                                        viewModel.updateDepartCity("")
-                                        departCountryExpanded = false
+                                nameList.forEach { attraction ->
+                                    DropdownMenuItem(text = { Text(attraction) }, onClick = {
+                                        val updatedPlace = Place(attraction, startAttraction.value.vicinity, startAttraction.value.location)
+                                        viewModel.updateStartAttraction(updatedPlace)
+                                        startAttractionExpanded = false
                                     })
 
                                 }
@@ -321,37 +325,35 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel,navController: NavController,jo
                         )
                         Spacer(modifier = Modifier.height(10.dp))
                         Column {
-                            Box {
 
+                            //Departure Sight
+                            OutlinedTextField(value = endAttraction.value.name,
+                                onValueChange = {
+                                    val updatedPlace = Place(it, endAttraction.value.vicinity, endAttraction.value.location)
+                                    viewModel.updateEndAttraction(updatedPlace)
+                                },
 
-                                //Destination Sight
-                                OutlinedTextField(value = destCountry.value,
-                                    onValueChange = { viewModel.updateDestCountry(it) },
-                                    modifier = Modifier.width(200.dp),
-                                    label = { Text(text = "Choose") },
-                                    trailingIcon = {
-                                        Icon(
-                                            iconDestinCountry,
-                                            contentDescription = "",
-                                            Modifier.clickable {
-                                                destCountryExpanded = !destCountryExpanded
-                                            })
-                                    })
-                                DropdownMenu(
-                                    expanded = destCountryExpanded,
-                                    onDismissRequest = { destCountryExpanded = false },
-                                    modifier = Modifier.width(170.dp),
-//                            modifier = Modifier.width(with(LocalDensity.current) { textFiledSize.width.toDp() })
-                                ) {
-                                    countries.forEach { country ->
-                                        DropdownMenuItem(text = { Text(country) }, onClick = {
-                                            viewModel.updateDestCountry(country)
-                                            viewModel.updateDestState("")
-                                            viewModel.updateDestCity("")
-                                            destCountryExpanded = false
+                                label = { Text(text = "Choose") },
+                                trailingIcon = {
+                                    Icon(
+                                        iconEndAttraction,
+                                        contentDescription = "",
+                                        Modifier.clickable {
+                                            endAttractionExpanded = !endAttractionExpanded
                                         })
-
-                                    }
+                                })
+                            DropdownMenu(
+                                expanded = endAttractionExpanded,
+                                onDismissRequest = { endAttractionExpanded = false },
+                                modifier = Modifier.width(170.dp),
+//                            modifier = Modifier.width(with(LocalDensity.current) { textFiledSize.width.toDp() })
+                            ) {
+                                nameList.forEach { attraction ->
+                                    DropdownMenuItem(text = { Text(attraction) }, onClick = {
+                                        val updatedPlace = Place(attraction, endAttraction.value.vicinity, endAttraction.value.location)
+                                        viewModel.updateEndAttraction(updatedPlace)
+                                        endAttractionExpanded = false
+                                    })
                                 }
                             }
                         }
@@ -443,7 +445,7 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel,navController: NavController,jo
                                         }
                                         Log.d("selectedAttractionList: ",viewModel.selectedAttractionList.value.toString())
                                         return@Marker true
-                                }
+                                    }
 
                                 )
                             }
@@ -476,15 +478,15 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel,navController: NavController,jo
                     ){
                         Button(onClick = {
 
-                                         viewModel.updateSinglePlan(singlePlan(
-                                             "${journeyGeniusViewModel.dateRange.value.lower} - ${journeyGeniusViewModel.dateRange.value.upper}",
-                                             "${destCountry.value}  ${destState.value}  ${destCity.value}",
-                                             selectedAttractionList.value,
-                                             journeyGeniusViewModel.budget.value.text,
-                                             listOf(),
-                                             journeyGeniusViewModel.travelType.value
+                            viewModel.updateSinglePlan(singlePlan(
+                                "${journeyGeniusViewModel.dateRange.value.lower} - ${journeyGeniusViewModel.dateRange.value.upper}",
+                                "${destCountry.value}  ${destState.value}  ${destCity.value}",
+                                selectedAttractionList.value,
+                                journeyGeniusViewModel.budget.value.text,
+                                listOf(),
+                                journeyGeniusViewModel.travelType.value
 
-                                         ))
+                            ))
                             if (selectedAttractionList.value.isNotEmpty()) {
                                 viewModel.updateStartAttraction(selectedAttractionList.value[0])
                                 viewModel.updateEndAttraction(selectedAttractionList.value[selectedAttractionList.value.size - 1])
@@ -492,8 +494,8 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel,navController: NavController,jo
 //                                         viewModel.addSinglePlan(singlePlan)
 //
 //                                         viewModel.updatePlanGroup(Plans(viewModel.planGroup.value.title,viewModel.planGroup.value.description,planList))
-                                         navController.navigate("Plan Hotel")
-                                         Log.d("Plan",planGroup.toString())
+                            navController.navigate("Plan Hotel")
+                            Log.d("Plan",planGroup.toString())
                         }, modifier = Modifier
                             .width(130.dp)
                         ) {
