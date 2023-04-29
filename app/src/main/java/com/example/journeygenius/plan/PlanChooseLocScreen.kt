@@ -136,6 +136,8 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel,navController: NavController,jo
         "Seoul" to seoulCities,
     )
 
+    var startAttractionExpanded by remember { mutableStateOf(false) }
+    var endAttractionExpanded by remember { mutableStateOf(false) }
 
     var departCountryExpanded by remember { mutableStateOf(false) }
     var departStateExpanded by remember {
@@ -155,6 +157,12 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel,navController: NavController,jo
     }
     val departCountry by remember {
         mutableStateOf(viewModel.departCountry)
+    }
+    val startAttraction by remember {
+        mutableStateOf(viewModel.startAttraction)
+    }
+    val endAttraction by remember {
+        mutableStateOf(viewModel.endAttraction)
     }
     val departSate by remember {
         mutableStateOf(viewModel.departState)
@@ -197,6 +205,16 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel,navController: NavController,jo
         viewModel.planList
     }
 
+    val iconStartAttraction = if (startAttractionExpanded) {
+        Icons.Filled.KeyboardArrowUp
+    } else {
+        Icons.Filled.KeyboardArrowDown
+    }
+    val iconEndAttraction = if (endAttractionExpanded) {
+        Icons.Filled.KeyboardArrowUp
+    } else {
+        Icons.Filled.KeyboardArrowDown
+    }
     val iconDepartCountry = if (departCountryExpanded) {
         Icons.Filled.KeyboardArrowUp
     } else {
@@ -292,22 +310,22 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel,navController: NavController,jo
                         Spacer(modifier = Modifier.height(10.dp))
                         Column {
 
-                            //Departure Country
-                            OutlinedTextField(value = departCountry.value,
-                                onValueChange = { viewModel.updateDepartCountry(it) },
-
-                                label = { Text(text = "Country") },
-                                trailingIcon = {
-                                    Icon(
-                                        iconDepartCountry,
-                                        contentDescription = "",
-                                        Modifier.clickable {
-                                            departCountryExpanded = !departCountryExpanded
-                                        })
-                                })
+                            //Departure Sight
+//                            OutlinedTextField(value = startAttraction.value,
+//                                onValueChange = { viewModel.updateStartAttraction(it) },
+//
+//                                label = { Text(text = "Choose") },
+//                                trailingIcon = {
+//                                    Icon(
+//                                        iconDepartCountry,
+//                                        contentDescription = "",
+//                                        Modifier.clickable {
+//                                            startAttractionExpanded = !startAttractionExpanded
+//                                        })
+//                                })
                             DropdownMenu(
-                                expanded = departCountryExpanded,
-                                onDismissRequest = { departCountryExpanded = false },
+                                expanded = startAttractionExpanded,
+                                onDismissRequest = { startAttractionExpanded = false },
                                 modifier = Modifier.width(170.dp),
 //                            modifier = Modifier.width(with(LocalDensity.current) { textFiledSize.width.toDp() })
                             ) {
@@ -395,11 +413,11 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel,navController: NavController,jo
                             Box {
 
 
-                                //Destination Country
+                                //Destination Sight
                                 OutlinedTextField(value = destCountry.value,
                                     onValueChange = { viewModel.updateDestCountry(it) },
                                     modifier = Modifier.width(200.dp),
-                                    label = { Text(text = "Country") },
+                                    label = { Text(text = "Choose") },
                                     trailingIcon = {
                                         Icon(
                                             iconDestinCountry,
