@@ -319,9 +319,9 @@ class PlanViewModel : ViewModel() {
         _sliderValue.value = newValue
         _sliderLabel.value = when (newValue) {
             0 -> "cheap"
-            10 -> "medium"
-            20 -> "expensive"
-            30 -> "luxury"
+            1 -> "medium"
+            2 -> "expensive"
+            3 -> "luxury"
             else -> ""
         }
     }
