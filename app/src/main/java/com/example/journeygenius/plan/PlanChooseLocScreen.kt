@@ -326,7 +326,7 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel,navController: NavController,jo
                         Spacer(modifier = Modifier.height(10.dp))
                         Column {
 
-                            //Departure Sight
+                            //Destination Sight
                             OutlinedTextField(value = endAttraction.value.name,
                                 onValueChange = {
                                     val updatedPlace = Place(it, endAttraction.value.vicinity, endAttraction.value.location)
@@ -348,7 +348,7 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel,navController: NavController,jo
                                 modifier = Modifier.width(170.dp),
 //                            modifier = Modifier.width(with(LocalDensity.current) { textFiledSize.width.toDp() })
                             ) {
-                                nameList.forEach { attraction ->
+                                nameList.filter { it != startAttraction.value.name }.forEach { attraction ->
                                     DropdownMenuItem(text = { Text(attraction) }, onClick = {
                                         val updatedPlace = Place(attraction, endAttraction.value.vicinity, endAttraction.value.location)
                                         viewModel.updateEndAttraction(updatedPlace)
