@@ -344,7 +344,7 @@ fun ChooseDropdownMenu(viewModel: PlanViewModel) {
     ) {
         //Departure
         Column(
-            modifier = Modifier.width(170.dp)
+            modifier = Modifier.width(150.dp)
         ) {
             Text(
                 text = "Departure",
@@ -369,7 +369,7 @@ fun ChooseDropdownMenu(viewModel: PlanViewModel) {
                 DropdownMenu(
                     expanded = departCountryExpanded,
                     onDismissRequest = { departCountryExpanded = false },
-                    modifier = Modifier.width(170.dp),
+                    modifier = Modifier.width(150.dp),
 //                            modifier = Modifier.width(with(LocalDensity.current) { textFiledSize.width.toDp() })
                 ) {
                     countries.forEach { country ->
@@ -399,7 +399,7 @@ fun ChooseDropdownMenu(viewModel: PlanViewModel) {
                 DropdownMenu(
                     expanded = departStateExpanded,
                     onDismissRequest = { departStateExpanded = false },
-                    modifier = Modifier.width(170.dp),
+                    modifier = Modifier.width(150.dp),
 //                            modifier = Modifier.width(with(LocalDensity.current) { textFiledSize.width.toDp() })
                 ) {
                     countryToStateMap[departCountry.value]?.forEach { country ->
@@ -426,7 +426,7 @@ fun ChooseDropdownMenu(viewModel: PlanViewModel) {
                 DropdownMenu(
                     expanded = departCityExpanded,
                     onDismissRequest = { departCityExpanded = false },
-                    modifier = Modifier.width(170.dp),
+                    modifier = Modifier.width(150.dp),
 //                            modifier = Modifier.width(with(LocalDensity.current) { textFiledSize.width.toDp() })
                 ) {
                     stateToCityMap[departSate.value]?.forEach { country ->
@@ -459,7 +459,7 @@ fun ChooseDropdownMenu(viewModel: PlanViewModel) {
                     //Destination Country
                     OutlinedTextField(value = destCountry.value,
                         onValueChange = { viewModel.updateDestCountry(it) },
-                        modifier = Modifier.width(200.dp),
+                        modifier = Modifier.width(150.dp),
                         label = { Text(text = "Country") },
                         trailingIcon = {
                             Icon(
@@ -472,7 +472,7 @@ fun ChooseDropdownMenu(viewModel: PlanViewModel) {
                     DropdownMenu(
                         expanded = destCountryExpanded,
                         onDismissRequest = { destCountryExpanded = false },
-                        modifier = Modifier.width(170.dp),
+                        modifier = Modifier.width(150.dp),
 //                            modifier = Modifier.width(with(LocalDensity.current) { textFiledSize.width.toDp() })
                     ) {
                         countries.forEach { country ->
@@ -490,7 +490,7 @@ fun ChooseDropdownMenu(viewModel: PlanViewModel) {
                 //Destination State
                 OutlinedTextField(value = destState.value,
                     onValueChange = { viewModel.updateDestState(it) },
-                    modifier = Modifier.width(200.dp),
+                    modifier = Modifier.width(150.dp),
                     label = { Text(text = "State") },
                     trailingIcon = {
                         Icon(
@@ -503,7 +503,7 @@ fun ChooseDropdownMenu(viewModel: PlanViewModel) {
                 DropdownMenu(
                     expanded = destStateExpanded,
                     onDismissRequest = { destStateExpanded = false },
-                    modifier = Modifier.width(170.dp),
+                    modifier = Modifier.width(150.dp),
 //                            modifier = Modifier.width(with(LocalDensity.current) { textFiledSize.width.toDp() })
                 ) {
                     countryToStateMap[destCountry.value]?.forEach { country ->
@@ -517,7 +517,7 @@ fun ChooseDropdownMenu(viewModel: PlanViewModel) {
                 //Destination City
                 OutlinedTextField(value = destCity.value,
                     onValueChange = { viewModel.updateDestCity(it) },
-                    modifier = Modifier.width(200.dp),
+                    modifier = Modifier.width(150.dp),
 
                     label = { Text(text = "City") },
                     trailingIcon = {
@@ -531,7 +531,7 @@ fun ChooseDropdownMenu(viewModel: PlanViewModel) {
                 DropdownMenu(
                     expanded = destCityExpanded,
                     onDismissRequest = { destCityExpanded = false },
-                    modifier = Modifier.width(170.dp),
+                    modifier = Modifier.width(150.dp),
 //                            modifier = Modifier.width(with(LocalDensity.current) { textFiledSize.width.toDp() })
                 ) {
                     stateToCityMap[destState.value]?.forEach { country ->
@@ -610,11 +610,11 @@ fun PlanScreen(
                         modifier = Modifier.padding(32.dp,64.dp)
                     ) {
                         TravelDateComponent(selectedDateRange, calenderState, windowSize)
-                        Spacer(modifier = Modifier.height(60.dp))
+                        Spacer(modifier = Modifier.height(20.dp))
                         BudgetComponent(viewModel = planViewModel)
-                        Spacer(modifier = Modifier.height(60.dp))
+                        Spacer(modifier = Modifier.height(20.dp))
                         ChooseDropdownMenu(viewModel = planViewModel)
-                        Spacer(modifier = Modifier.height(60.dp))
+                        Spacer(modifier = Modifier.height(20.dp))
                         DestinationButton(navController)
                     }
                 }
