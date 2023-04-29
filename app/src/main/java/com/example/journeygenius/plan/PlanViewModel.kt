@@ -24,6 +24,7 @@ import java.nio.charset.Charset
 import java.nio.file.Path
 import java.time.LocalDate
 import java.util.concurrent.CopyOnWriteArrayList
+import kotlin.math.sin
 
 const val PlacesapiKey = "AIzaSyCNcLRKVJXQ8TL3WRiSujLRVD_qTLMxj8E"
 data class Place(
@@ -83,7 +84,7 @@ data class singlePlan(
     val destination:String,
     val attractions:List<Place>,
     val budget:String,
-    val hotel: List<String>,
+    var hotel: List<Hotel>,
     val trans_mode: String
 
 )
@@ -241,6 +242,9 @@ class PlanViewModel : ViewModel() {
     fun updateSinglePlan(value: singlePlan) {
         _singlePlan.value = value
     }
+    fun addHotelsToSinglePlan(value: List<Hotel>){
+        singlePlan.value.hotel=value
+    }
 
     private var _planList = mutableStateOf(listOf<singlePlan>())
     val planList: MutableState<List<singlePlan>> = _planList
@@ -352,32 +356,24 @@ class PlanViewModel : ViewModel() {
         _endAttraction.value=value
     }
 
-    //hotels near attraction: radius=2000m
-    private var _hotelList = mutableStateOf(listOf<Place>())
-    val hotelList: MutableState<List<Place>> = _hotelList
-    fun updateHotelList(value: List<Place>) {
-        _hotelList.value = value;
+    private var _selectedHotelList = mutableStateOf(listOf<Hotel>())
+    val selectedHotelList: MutableState<List<Hotel>> = _selectedHotelList
+    fun updateSelectedHotelList(value: List<Hotel>) {
+        _selectedHotelList.value = value
     }
 
-
-    private var _selectedHotelList = mutableStateOf(listOf<Place>())
-    val selectedHotelList: MutableState<List<Place>> = _selectedHotelList
-    fun updateSelectedHotelList(value: List<Place>) {
-        _selectedAttractionList.value = value
-    }
-
-    fun addSelectedHotel(place: Place) {
-        val updatedSelectedHotel = _hotelList.value.toMutableList()
-        if (!updatedSelectedHotel.contains(place)) {
-            updatedSelectedHotel.add(place)
+    fun addSelectedHotel(hotel: Hotel) {
+        val updatedSelectedHotel = _selectedHotelList.value.toMutableList()
+        if (!updatedSelectedHotel.contains(hotel)) {
+            updatedSelectedHotel.add(hotel)
         }
         updateSelectedHotelList(updatedSelectedHotel)
     }
 
-    fun delSelectedHotel(place: Place) {
-        val updatedSelectedHotel = _hotelList.value.toMutableList()
-        if (updatedSelectedHotel.contains(place)) {
-            updatedSelectedHotel.remove(place)
+    fun delSelectedHotel(hotel: Hotel) {
+        val updatedSelectedHotel = _selectedHotelList.value.toMutableList()
+        if (updatedSelectedHotel.contains(hotel)) {
+            updatedSelectedHotel.remove(hotel)
         }
         updateSelectedHotelList(updatedSelectedHotel)
     }
