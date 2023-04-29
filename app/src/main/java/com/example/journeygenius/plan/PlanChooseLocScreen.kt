@@ -247,39 +247,7 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel,navController: NavController,jo
     } else {
         Icons.Filled.KeyboardArrowDown
     }
-    val context= LocalContext.current
-    fun findLocOnMap(maxResult: Int, destCityName:String, context: Context){
-        val geocoder = Geocoder(context, Locale.getDefault())
-        val geocodeListener = @RequiresApi(33) object : Geocoder.GeocodeListener {
-            override fun onGeocode(results: List<Address>){
-                // do something with the addresses list
-                val latitude = results[0].latitude
-                val longitude = results[0].longitude
-                viewModel.updateSelectedCityLocation(LatLng(latitude,longitude))
-                viewModel.updateSelectedCityLatLng(listOf(latitude,longitude))
-                Log.d("lat,long", viewModel.selectedCityLatLng.value.toString())
-            }
-        }
-
-        if (Build.VERSION.SDK_INT >= 33) {
-            // declare here the geocodeListener, as it requires Android API 33
-            geocoder.getFromLocationName(destCityName,maxResult,geocodeListener)
-
-        } else {
-            // For Android SDK < 33, the addresses list will be still obtained from the getFromLocation() method
-            val addresses = geocoder.getFromLocationName(destCityName,maxResult)
-            if(addresses!=null){
-                val latitude =  addresses[0].latitude
-                val longitude =  addresses[0].longitude
-                viewModel.updateSelectedCityLocation(LatLng(latitude,longitude))
-                viewModel.updateSelectedCityLatLng(listOf(latitude,longitude))
-                Log.d("lat,long", "$latitude $longitude")
-                Pair(latitude, longitude)
-            }
-        }
-    }
-
-
+    val context = LocalContext.current
 
     val boston=LatLng(42.36, -71.05)
     val cameraPositionState= CameraPositionState(position= CameraPosition.fromLatLngZoom(selectedCityLocation.value,10f))
@@ -339,64 +307,7 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel,navController: NavController,jo
 
                                 }
                             }
-
-                            //Departure State
-                            OutlinedTextField(value = departSate.value,
-                                onValueChange = { viewModel.updateDepartState(it) },
-
-                                label = { Text(text = "State") },
-                                trailingIcon = {
-                                    Icon(
-                                        iconDepartState,
-                                        contentDescription = "",
-                                        Modifier.clickable {
-                                            departStateExpanded = !departStateExpanded
-                                        })
-                                })
-                            DropdownMenu(
-                                expanded = departStateExpanded,
-                                onDismissRequest = { departStateExpanded = false },
-                                modifier = Modifier.width(170.dp),
-//                            modifier = Modifier.width(with(LocalDensity.current) { textFiledSize.width.toDp() })
-                            ) {
-                                countryToStateMap[departCountry.value]?.forEach { country ->
-                                    DropdownMenuItem(text = { Text(country) }, onClick = {
-                                        viewModel.updateDepartState(country)
-                                        departStateExpanded = false
-                                    })
-                                }
-                            }
-                            //Departure City
-                            OutlinedTextField(value = departCity.value,
-                                onValueChange = { viewModel.updateDepartCity(it) },
-
-
-                                label = { Text(text = "City") },
-                                trailingIcon = {
-                                    Icon(
-                                        iconDepartCity,
-                                        contentDescription = "",
-                                        Modifier.clickable {
-                                            departCityExpanded = !departCityExpanded
-                                        })
-                                })
-                            DropdownMenu(
-                                expanded = departCityExpanded,
-                                onDismissRequest = { departCityExpanded = false },
-                                modifier = Modifier.width(170.dp),
-//                            modifier = Modifier.width(with(LocalDensity.current) { textFiledSize.width.toDp() })
-                            ) {
-                                stateToCityMap[departSate.value]?.forEach { country ->
-                                    DropdownMenuItem(text = { Text(country) }, onClick = {
-                                        viewModel.updateDepartCity(country)
-                                        departCityExpanded = false
-                                    })
-                                }
-                            }
-
-
                         }
-
                     }
                     Spacer(modifier = Modifier.width(15.dp))
                     //Destination
@@ -443,73 +354,8 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel,navController: NavController,jo
                                     }
                                 }
                             }
-
-                            //Destination State
-                            OutlinedTextField(value = destState.value,
-                                onValueChange = { viewModel.updateDestState(it) },
-                                modifier = Modifier.width(200.dp),
-                                label = { Text(text = "State") },
-                                trailingIcon = {
-                                    Icon(
-                                        iconDestinState,
-                                        contentDescription = "",
-                                        Modifier.clickable {
-                                            destStateExpanded = !destStateExpanded
-                                        })
-                                })
-                            DropdownMenu(
-                                expanded = destStateExpanded,
-                                onDismissRequest = { destStateExpanded = false },
-                                modifier = Modifier.width(170.dp),
-//                            modifier = Modifier.width(with(LocalDensity.current) { textFiledSize.width.toDp() })
-                            ) {
-                                countryToStateMap[destCountry.value]?.forEach { country ->
-                                    DropdownMenuItem(text = { Text(country) }, onClick = {
-                                        viewModel.updateDestState(country)
-                                        viewModel.updateDestCity("")
-                                        destStateExpanded = false
-                                    })
-                                }
-                            }
-                            //Destination City
-                            OutlinedTextField(value = destCity.value,
-                                onValueChange = { viewModel.updateDestCity(it) },
-                                modifier = Modifier.width(200.dp),
-
-                                label = { Text(text = "City") },
-                                trailingIcon = {
-                                    Icon(
-                                        iconDestinCity,
-                                        contentDescription = "",
-                                        Modifier.clickable {
-                                            destCityExpanded = !destCityExpanded
-                                        })
-                                })
-                            DropdownMenu(
-                                expanded = destCityExpanded,
-                                onDismissRequest = { destCityExpanded = false },
-                                modifier = Modifier.width(170.dp),
-//                            modifier = Modifier.width(with(LocalDensity.current) { textFiledSize.width.toDp() })
-                            ) {
-                                stateToCityMap[destState.value]?.forEach { country ->
-                                    DropdownMenuItem(text = { Text(country) }, onClick = {
-                                        viewModel.updateDestCity(country)
-                                        destCityExpanded = false
-//                                        Log.d("marker",selectedCityLocation.value.toString())
-                                        findLocOnMap(1,country, context)
-                                        viewModel.updateSelectedAttractionList(listOf())
-                                        viewModel.updateAttractionsList(listOf())
-                                        viewModel.updateSelectedPlacesOnMap(HashMap())
-                                    })
-                                }
-                            }
-
-
                         }
-
-
                     }
-
                 }
                 Column(
                     modifier = Modifier

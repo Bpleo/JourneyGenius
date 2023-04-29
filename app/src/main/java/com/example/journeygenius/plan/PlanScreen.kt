@@ -1,6 +1,12 @@
 package com.example.journeygenius.plan
 
+import android.content.Context
+import android.location.Address
+import android.location.Geocoder
+import android.os.Build
+import android.util.Log
 import android.util.Range
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -22,6 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -31,6 +38,7 @@ import com.example.journeygenius.WindowType
 import com.example.journeygenius.JourneyGeniusViewModel
 import com.example.journeygenius.rememberWindowSize
 import com.example.journeygenius.ui.theme.JourneyGeniusTheme
+import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -42,9 +50,8 @@ import com.maxkeppeler.sheets.calendar.models.CalendarSelection
 import com.maxkeppeler.sheets.calendar.models.CalendarStyle
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.*
 import kotlin.collections.HashMap
-
-
 
 @Composable
 fun PlanScreenGraph(
@@ -334,6 +341,37 @@ fun ChooseDropdownMenu(viewModel: PlanViewModel) {
     } else {
         Icons.Filled.KeyboardArrowDown
     }
+    val context = LocalContext.current
+    fun findLocOnMap(maxResult: Int, destCityName:String, context: Context){
+        val geocoder = Geocoder(context, Locale.getDefault())
+        val geocodeListener = @RequiresApi(33) object : Geocoder.GeocodeListener {
+            override fun onGeocode(results: List<Address>){
+                // do something with the addresses list
+                val latitude = results[0].latitude
+                val longitude = results[0].longitude
+                viewModel.updateSelectedCityLocation(LatLng(latitude,longitude))
+                viewModel.updateSelectedCityLatLng(listOf(latitude,longitude))
+                Log.d("lat,long", viewModel.selectedCityLatLng.value.toString())
+            }
+        }
+
+        if (Build.VERSION.SDK_INT >= 33) {
+            // declare here the geocodeListener, as it requires Android API 33
+            geocoder.getFromLocationName(destCityName,maxResult,geocodeListener)
+
+        } else {
+            // For Android SDK < 33, the addresses list will be still obtained from the getFromLocation() method
+            val addresses = geocoder.getFromLocationName(destCityName,maxResult)
+            if(addresses!=null){
+                val latitude =  addresses[0].latitude
+                val longitude =  addresses[0].longitude
+                viewModel.updateSelectedCityLocation(LatLng(latitude,longitude))
+                viewModel.updateSelectedCityLatLng(listOf(latitude,longitude))
+                Log.d("lat,long", "$latitude $longitude")
+                Pair(latitude, longitude)
+            }
+        }
+    }
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -536,7 +574,7 @@ fun ChooseDropdownMenu(viewModel: PlanViewModel) {
                             viewModel.updateDestCity(country)
                             destCityExpanded = false
 //                                        Log.d("marker",selectedCityLocation.value.toString())
-//                            findLocOnMap(1,country, context)
+                            findLocOnMap(1,country, context)
                             viewModel.updateSelectedAttractionList(listOf())
                             viewModel.updateAttractionsList(listOf())
                             viewModel.updateSelectedPlacesOnMap(HashMap())
