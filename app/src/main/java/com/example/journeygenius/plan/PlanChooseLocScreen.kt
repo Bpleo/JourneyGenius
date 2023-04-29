@@ -639,11 +639,14 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel,navController: NavController,jo
                                              journeyGeniusViewModel.travelType.value
 
                                          ))
-                                         viewModel.addSinglePlan(singlePlan)
-
-                                         viewModel.updatePlanGroup(Plans(viewModel.planGroup.value.title,viewModel.planGroup.value.description,planList))
-
-                                         navController.navigate("Plan List")
+                            if (selectedAttractionList.value.isNotEmpty()) {
+                                viewModel.updateStartAttraction(selectedAttractionList.value[0])
+                                viewModel.updateEndAttraction(selectedAttractionList.value[selectedAttractionList.value.size - 1])
+                            }
+//                                         viewModel.addSinglePlan(singlePlan)
+//
+//                                         viewModel.updatePlanGroup(Plans(viewModel.planGroup.value.title,viewModel.planGroup.value.description,planList))
+                                         navController.navigate("Plan Hotel")
                                          Log.d("Plan",planGroup.toString())
                         }, modifier = Modifier
                             .width(130.dp)

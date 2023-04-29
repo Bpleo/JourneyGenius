@@ -8,32 +8,81 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.journeygenius.JourneyGeniusViewModel
 import com.example.journeygenius.R
 import com.example.journeygenius.ui.theme.JourneyGeniusTheme
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
-import com.google.maps.android.compose.CameraPositionState
-import com.google.maps.android.compose.GoogleMap
-import com.google.maps.android.compose.Marker
-import com.google.maps.android.compose.MarkerState
+import com.google.maps.android.compose.*
 import kotlinx.coroutines.launch
+import java.util.ArrayList
+
+fun getURL(from : LatLng, to : LatLng, apiKey:String, waypoints:List<LatLng>,travelType:String) : String {
+    val origin = "origin=" + from.latitude + "," + from.longitude
+    val dest = "destination=" + to.latitude + "," + to.longitude
+    val Key= "key=$apiKey"
+    var waypointString= ""
+    if(waypoints.isNotEmpty()){
+        for (i in 0 until waypoints.size-1){
+            waypointString+="${waypoints[i].latitude}%2C${waypoints[i].longitude}%7C"
+        }
+        waypointString+="${waypoints[waypoints.size-1].latitude}%2C${waypoints[waypoints.size-1].longitude}"
+    }
+    val params = "$origin&$dest&$Key&waypoints=$waypointString&mode=walking"
+    return "https://maps.googleapis.com/maps/api/directions/json?$params"
+}
+
+fun decodePoly(encoded: String): List<LatLng> {
+    val poly = ArrayList<LatLng>()
+    var index = 0
+    val len = encoded.length
+    var lat = 0
+    var lng = 0
+
+    while (index < len) {
+        var b: Int
+        var shift = 0
+        var result = 0
+        do {
+            b = encoded[index++].toInt() - 63
+            result = result or (b and 0x1f shl shift)
+            shift += 5
+        } while (b >= 0x20)
+        val dlat = if (result and 1 != 0) (result shr 1).inv() else result shr 1
+        lat += dlat
+
+        shift = 0
+        result = 0
+        do {
+            b = encoded[index++].toInt() - 63
+            result = result or (b and 0x1f shl shift)
+            shift += 5
+        } while (b >= 0x20)
+        val dlng = if (result and 1 != 0) (result shr 1).inv() else result shr 1
+        lng += dlng
+
+        val p = LatLng(lat.toDouble() / 1E5,
+            lng.toDouble() / 1E5)
+        poly.add(p)
+    }
+
+    return poly
+}
 
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PlanHotelSelectionScreen(viewModel: PlanViewModel,navController: NavController) {
+fun PlanHotelSelectionScreen(viewModel: PlanViewModel,navController: NavController,journeyGeniusViewModel: JourneyGeniusViewModel) {
     val attractionToHotels=remember{
         viewModel.attractionToHotels
     }
@@ -45,6 +94,9 @@ fun PlanHotelSelectionScreen(viewModel: PlanViewModel,navController: NavControll
     }
     val startAttraction = remember{
         viewModel.startAttraction
+    }
+    val endAttraction = remember {
+        viewModel.endAttraction
     }
     val sliderValue = remember{
         viewModel.sliderValue
@@ -58,11 +110,35 @@ fun PlanHotelSelectionScreen(viewModel: PlanViewModel,navController: NavControll
     val planGroup= remember {
         viewModel.planGroup
     }
-    val cameraPositionState= CameraPositionState(position= CameraPosition.fromLatLngZoom(LatLng(startAttraction.value.location.lat,startAttraction.value.location.lng),10f))
+    val cameraPositionState= CameraPositionState(position= CameraPosition.fromLatLngZoom(LatLng(startAttraction.value.location.lat,startAttraction.value.location.lng),15f))
+    var polylinePoints by remember { mutableStateOf(emptyList<List<LatLng>>()) }
+    val coroutineScope = rememberCoroutineScope()
     LaunchedEffect(Unit) {
         selectedAttractionList.value.forEach {
             val hotelList=viewModel.searchNearbyHotels(it.location, apiKey = PlacesapiKey, maxPriceLevel = sliderValue.value?:4)
             viewModel.addAttractionToHotel(it,hotelList)
+        }
+    }
+    val from =LatLng(startAttraction.value.location.lat,startAttraction.value.location.lng)
+    val to=LatLng(endAttraction.value.location.lat,endAttraction.value.location.lng)
+    val waypoints= selectedAttractionList.value.toMutableList()
+    println(waypoints.toString())
+    if (waypoints.isNotEmpty()){
+        val first=waypoints[0]
+        val last=waypoints[waypoints.size-1]
+        waypoints.remove(first)
+        waypoints.remove(last)
+    }
+    println(waypoints.toString())
+    val waypointsLatLng:MutableList<LatLng> = mutableListOf();
+    waypoints.forEach{
+        waypointsLatLng.add(LatLng(it.location.lat,it.location.lng))
+    }
+
+    LaunchedEffect(key1 = from, key2 =to ) {
+        val points = viewModel.getRoutes(from, to, PlacesapiKey,waypointsLatLng)
+        coroutineScope.launch {
+            polylinePoints = points
         }
     }
     println(attractionToHotels)
@@ -114,6 +190,19 @@ fun PlanHotelSelectionScreen(viewModel: PlanViewModel,navController: NavControll
                             }
                         }
                     }
+                    if (polylinePoints.isNotEmpty()){
+                        for (i in polylinePoints.indices){
+                            if(i==0){
+                                Polyline(points = polylinePoints.get(0),
+                                    color = Color.Red,
+                                )
+                            }else{
+                                Polyline(points = polylinePoints.get(i),
+                                    color = Color.Blue,
+                                )
+                            }
+                        }
+                    }
                 }
                 Spacer(modifier = Modifier.height(5.dp))
                 Box(
@@ -155,8 +244,8 @@ fun PlanHotelSelectionScreen(viewModel: PlanViewModel,navController: NavControll
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun PreViewScreen(){
-    PlanHotelSelectionScreen(viewModel = PlanViewModel(), navController = rememberNavController())
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun PreViewScreen(){
+//    PlanHotelSelectionScreen(viewModel = PlanViewModel(), navController = rememberNavController(), journeyGeniusViewModel = JourneyGeniusViewModel())
+//}
