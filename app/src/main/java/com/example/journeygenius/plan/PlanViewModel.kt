@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
 import com.google.gson.Gson
+import com.google.gson.JsonParser
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberMarkerState
 import kotlinx.coroutines.Dispatchers
@@ -310,8 +311,8 @@ class PlanViewModel : ViewModel() {
 
 
     //slider
-    private val _sliderValue = mutableStateOf(0)
-    val sliderValue: MutableState<Int> = _sliderValue
+    private val _sliderValue = MutableLiveData(0)
+    val sliderValue: MutableLiveData<Int> = _sliderValue
 
     private val _sliderLabel = MutableLiveData("cheap")
     val sliderLabel: LiveData<String> = _sliderLabel
@@ -500,6 +501,44 @@ class PlanViewModel : ViewModel() {
             }
         }
     }
+    suspend fun getRoutes(from:LatLng, to:LatLng, apiKey:String,waypoints: List<LatLng>): List<List<LatLng>> = withContext(Dispatchers.IO) {
+
+        val url=getURL(from,to, apiKey,waypoints,"driving")
+        val result = URL(url).readText()
+        val jsonObject = JsonParser.parseString(result).asJsonObject
+        val routes = jsonObject.getAsJsonArray("routes")
+
+
+        val allRoutes= mutableListOf<List<LatLng>>()
+
+//    for (i in 0 until routes.size()) {
+//        val points = routes[i].asJsonObject
+//            .getAsJsonArray("legs")[0].asJsonObject
+//            .getAsJsonArray("steps")
+//            .flatMap {
+//                decodePoly(it.asJsonObject.getAsJsonObject("polyline").get("points").asString)
+//            }
+//        allPoints.add(points)
+//    }
+        for (i in 0 until routes.size()) {
+            val allPoints= mutableListOf<LatLng>()
+            allPoints.clear()
+            for(j in 0 until routes[i].asJsonObject.getAsJsonArray("legs").size()){
+                val points = routes[i].asJsonObject
+                    .getAsJsonArray("legs")[j].asJsonObject
+                    .getAsJsonArray("steps")
+                    .flatMap {
+                        decodePoly(it.asJsonObject.getAsJsonObject("polyline").get("points").asString)
+                    }
+                allPoints.addAll(points)
+            }
+            allRoutes.add(allPoints)
+
+        }
+
+        allRoutes
+    }
+
 
 
 }
