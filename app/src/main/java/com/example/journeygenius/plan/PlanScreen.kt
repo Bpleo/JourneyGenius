@@ -203,14 +203,19 @@ fun BudgetComponent(viewModel: JourneyGeniusViewModel){
         )
         Spacer(modifier = Modifier.height(15.dp))
         val sliderValue: Int by viewModel.sliderValue.observeAsState(0)
+        val sliderLabel: String by viewModel.sliderLabel.observeAsState("cheap")
 
-        Slider(
-            value = sliderValue.toFloat(),
-            onValueChange = { viewModel.onSliderValueChanged(it.toInt()) },
-            valueRange = 0f..5f,
-            steps = 5,
-            modifier = Modifier.width(200.dp)
-        )
+        Column {
+            Slider(
+                value = sliderValue.toFloat(),
+                onValueChange = { viewModel.onSliderValueChanged(it.toInt()) },
+                valueRange = 0f..30f,
+                steps = 2,
+                modifier = Modifier.width(200.dp)
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(text = sliderLabel, style = MaterialTheme.typography.bodyLarge)
+        }
     }
 }
 
