@@ -211,22 +211,4 @@ class JourneyGeniusViewModel(
             _selectedCityLocation.value=value
         }
     }
-
-    //slider
-    private val _sliderValue = MutableLiveData(0)
-    val sliderValue: LiveData<Int> = _sliderValue
-
-    private val _sliderLabel = MutableLiveData("cheap")
-    val sliderLabel: LiveData<String> = _sliderLabel
-
-    fun onSliderValueChanged(newValue: Int) {
-        _sliderValue.value = newValue
-        _sliderLabel.value = when (newValue) {
-            0 -> "cheap"
-            10 -> "medium"
-            20 -> "expensive"
-            30 -> "luxury"
-            else -> ""
-        }
-    }
 }

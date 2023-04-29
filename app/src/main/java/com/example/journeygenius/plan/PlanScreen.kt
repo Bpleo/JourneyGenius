@@ -56,7 +56,7 @@ fun PlanScreenGraph(
     NavHost(navController = planNavController,
         startDestination = "Plan Menu"){
         composable("Plan Menu"){
-            PlanScreen(viewModel,windowSize,planNavController)
+            PlanScreen(viewModel,planViewModel,windowSize,planNavController)
         }
         composable("Plan Map"){
             PlanChooseLocScreen(viewModel = planViewModel,planNavController,viewModel)
@@ -195,7 +195,7 @@ fun TravelDateComponent(
 
 
 @Composable
-fun BudgetComponent(viewModel: JourneyGeniusViewModel){
+fun BudgetComponent(viewModel: PlanViewModel){
     Column {
         Text(
             text = "What is your budget: ",
@@ -240,6 +240,7 @@ fun DestinationButton(navController: NavController) {
 @Composable
 fun PlanScreen(
     viewModel: JourneyGeniusViewModel,
+    planViewModel: PlanViewModel,
     windowSize: WindowSize,
     navController: NavController
 ) {
@@ -278,7 +279,7 @@ fun PlanScreen(
                     ) {
                         TravelDateComponent(selectedDateRange, calenderState, windowSize)
                         Spacer(modifier = Modifier.height(60.dp))
-                        BudgetComponent(viewModel = viewModel)
+                        BudgetComponent(viewModel = planViewModel)
                         Spacer(modifier = Modifier.height(60.dp))
                         DestinationButton(navController)
                     }
@@ -292,7 +293,7 @@ fun PlanScreen(
                         }
                         Spacer(modifier = Modifier.width(60.dp))
                         Column{
-                            BudgetComponent(viewModel = viewModel)
+                            BudgetComponent(viewModel = planViewModel)
                             Spacer(modifier = Modifier.height(60.dp))
                             DestinationButton(navController)
                         }
@@ -307,7 +308,7 @@ fun PlanScreen(
 @Preview(showBackground = true)
 @Composable
 fun PlanScreenPreview() {
-    PlanScreen(JourneyGeniusViewModel(Firebase.firestore, Firebase.auth), rememberWindowSize(),
+    PlanScreen(JourneyGeniusViewModel(Firebase.firestore, Firebase.auth), PlanViewModel(),rememberWindowSize(),
         rememberNavController())
 }
 
@@ -315,6 +316,7 @@ fun PlanScreenPreview() {
 @Composable
 fun PlanScreenLandscapePreview() {
     val viewModel = JourneyGeniusViewModel(Firebase.firestore, Firebase.auth)
+    val planViewModel = PlanViewModel()
     val selectedDateRange = remember {
         val value = viewModel.dateRange
         mutableStateOf(value)
@@ -331,7 +333,7 @@ fun PlanScreenLandscapePreview() {
                 }
                 Spacer(modifier = Modifier.width(60.dp))
                 Column{
-                    BudgetComponent(viewModel = viewModel)
+                    BudgetComponent(viewModel = planViewModel)
                     Spacer(modifier = Modifier.height(60.dp))
                     DestinationButton(rememberNavController())
                 }
