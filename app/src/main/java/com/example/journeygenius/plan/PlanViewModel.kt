@@ -165,6 +165,7 @@ class PlanViewModel : ViewModel() {
 //    fun updateAttractionsList(value: List<Place>) {
 //        _attractionsList.value = value
 //    }
+    @SuppressLint("MutableCollectionMutableState")
     private var _attractionsList = mutableStateOf(CopyOnWriteArrayList<Place>())
     val attractionsList:
             MutableState<CopyOnWriteArrayList<Place>> = _attractionsList
@@ -175,7 +176,6 @@ class PlanViewModel : ViewModel() {
             addAll(value)
         }
     }
-
     fun addAttractionsList(value: List<Place>) {
         _attractionsList.value.addAll(value)
     }
@@ -306,8 +306,8 @@ class PlanViewModel : ViewModel() {
 
 
     //slider
-    private val _sliderValue = MutableLiveData(0)
-    val sliderValue: LiveData<Int> = _sliderValue
+    private val _sliderValue = mutableStateOf(0)
+    val sliderValue: MutableState<Int> = _sliderValue
 
     private val _sliderLabel = MutableLiveData("cheap")
     val sliderLabel: LiveData<String> = _sliderLabel
@@ -340,17 +340,17 @@ class PlanViewModel : ViewModel() {
         _CityList.value = value;
     }
 
-//    private var _startAttraction = mutableStateOf(selectedAttractionList.value[0])
-//    val startAttraction : MutableState<Place> = _startAttraction
-//    fun updateStartAttraction(value: Place){
-//        _startAttraction.value=value
-//    }
-//
-//    private var _endAttraction = mutableStateOf(selectedAttractionList.value[selectedAttractionList.value.size-1])
-//    val endAttraction : MutableState<Place> = _endAttraction
-//    fun updateEndAttraction(value: Place){
-//        _endAttraction.value=value
-//    }
+    private var _startAttraction = mutableStateOf(Place("","", Location(0.0,0.0)))
+    val startAttraction : MutableState<Place> = _startAttraction
+    fun updateStartAttraction(value: Place){
+        _startAttraction.value=value
+    }
+
+    private var _endAttraction = mutableStateOf(Place("","",Location(0.0,0.0)))
+    val endAttraction : MutableState<Place> = _endAttraction
+    fun updateEndAttraction(value: Place){
+        _endAttraction.value=value
+    }
 
     //hotels near attraction: radius=2000m
     private var _hotelList = mutableStateOf(listOf<Place>())
@@ -387,6 +387,13 @@ class PlanViewModel : ViewModel() {
     val attractionToHotels: MutableState<Map<Place,List<Hotel>>> = _attractionToHotels
     fun updateAttractionToHotel(value: Map<Place,List<Hotel>>){
         _attractionToHotels.value=value;
+    }
+    fun addAttractionToHotel(key:Place,value:List<Hotel>){
+        val updateMap= _attractionToHotels.value.toMutableMap()
+        if(!updateMap.containsKey(key)){
+            updateMap[key] = value
+        }
+        updateAttractionToHotel(updateMap)
     }
 
 
