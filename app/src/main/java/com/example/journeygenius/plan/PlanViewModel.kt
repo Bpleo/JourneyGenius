@@ -327,6 +327,12 @@ class PlanViewModel : ViewModel() {
         }
     }
 
+    private var _travelType = mutableStateOf("driving")
+    val travelType: MutableState<String> = _travelType
+    fun updateTravelType(value: String) {
+        _travelType.value = value
+    }
+
     private val countryList = listOf<String>("Afghanistan", "Albania")
     fun getCountryList(): List<String> {
         return countryList;
