@@ -306,8 +306,8 @@ class PlanViewModel : ViewModel() {
 
 
     //slider
-    private val _sliderValue = mutableStateOf(0)
-    val sliderValue: MutableState<Int> = _sliderValue
+    private val _sliderValue = MutableLiveData(0)
+    val sliderValue: LiveData<Int> = _sliderValue
 
     private val _sliderLabel = MutableLiveData("cheap")
     val sliderLabel: LiveData<String> = _sliderLabel
