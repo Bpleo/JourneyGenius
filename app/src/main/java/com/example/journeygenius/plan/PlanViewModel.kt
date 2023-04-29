@@ -340,17 +340,17 @@ class PlanViewModel : ViewModel() {
         _CityList.value = value;
     }
 
-    private var _startAttraction = mutableStateOf(selectedAttractionList.value[0])
-    val startAttraction : MutableState<Place> = _startAttraction
-    fun updateStartAttraction(value: Place){
-        _startAttraction.value=value
-    }
-
-    private var _endAttraction = mutableStateOf(selectedAttractionList.value[selectedAttractionList.value.size-1])
-    val endAttraction : MutableState<Place> = _endAttraction
-    fun updateEndAttraction(value: Place){
-        _endAttraction.value=value
-    }
+//    private var _startAttraction = mutableStateOf(selectedAttractionList.value[0])
+//    val startAttraction : MutableState<Place> = _startAttraction
+//    fun updateStartAttraction(value: Place){
+//        _startAttraction.value=value
+//    }
+//
+//    private var _endAttraction = mutableStateOf(selectedAttractionList.value[selectedAttractionList.value.size-1])
+//    val endAttraction : MutableState<Place> = _endAttraction
+//    fun updateEndAttraction(value: Place){
+//        _endAttraction.value=value
+//    }
 
     //hotels near attraction: radius=2000m
     private var _hotelList = mutableStateOf(listOf<Place>())

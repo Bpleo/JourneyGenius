@@ -34,9 +34,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.journeygenius.JourneyGeniusViewModel
 import com.example.journeygenius.R
 import com.google.android.gms.maps.model.*
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.google.maps.android.compose.*
 import kotlinx.coroutines.launch
 
@@ -686,7 +690,7 @@ fun dropDownMenu() {
 @Preview(showBackground = true)
 @Composable
 fun PlanChooseLocScreenPreview() {
-    //PlanChooseLocScreen(PlanViewModel(), rememberNavController())
-    //dropDownMenu()
-    //Tag(title = "Shenzhen", onClose = {})
+    PlanChooseLocScreen(PlanViewModel(), rememberNavController(), JourneyGeniusViewModel(Firebase.firestore, Firebase.auth))
+//    dropDownMenu()
+//    Tag(title = "Shenzhen", onClose = {})
 }
