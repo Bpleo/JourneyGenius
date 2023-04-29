@@ -38,7 +38,7 @@ fun getURL(from : LatLng, to : LatLng, apiKey:String, waypoints:List<LatLng>,tra
         }
         waypointString+="${waypoints[waypoints.size-1].latitude}%2C${waypoints[waypoints.size-1].longitude}"
     }
-    val params = "$origin&$dest&$Key&waypoints=$waypointString&mode=walking"
+    val params = "$origin&$dest&$Key&waypoints=$waypointString&mode=$travelType"
     return "https://maps.googleapis.com/maps/api/directions/json?$params"
 }
 
@@ -82,7 +82,7 @@ fun decodePoly(encoded: String): List<LatLng> {
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PlanHotelSelectionScreen(viewModel: PlanViewModel,navController: NavController,journeyGeniusViewModel: JourneyGeniusViewModel) {
+fun PlanHotelSelectionScreen(viewModel: PlanViewModel,navController: NavController) {
     val attractionToHotels=remember{
         viewModel.attractionToHotels
     }
@@ -161,7 +161,7 @@ fun PlanHotelSelectionScreen(viewModel: PlanViewModel,navController: NavControll
                     cameraPositionState = cameraPositionState,
                     onMapLongClick = {
                         Log.d("selectedHotelOnMap",selectedHotelList.value.toString())
-                        },
+                    },
                     onMapClick = {}
                 ){
                     if(selectedAttractionList.value.isNotEmpty()){
@@ -240,7 +240,7 @@ fun PlanHotelSelectionScreen(viewModel: PlanViewModel,navController: NavControll
                 }
 
             }
-    }
+        }
     }
 }
 

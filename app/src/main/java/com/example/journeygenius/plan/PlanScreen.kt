@@ -69,7 +69,7 @@ fun PlanScreenGraph(
             PlanChooseLocScreen(viewModel = planViewModel,planNavController,viewModel)
         }
         composable("Plan Hotel"){
-            PlanHotelSelectionScreen(viewModel = planViewModel,planNavController,viewModel)
+            PlanHotelSelectionScreen(viewModel = planViewModel,planNavController)
         }
         composable("Plan List"){
             PlanList(navController = planNavController, planViewModel = planViewModel)

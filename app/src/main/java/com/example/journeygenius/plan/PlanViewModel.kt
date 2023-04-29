@@ -40,7 +40,7 @@ data class Hotel(
     val priceLevel:Int,
     val rating:Double,
 
-)
+    )
 data class Location(
     val lat: Double,
     val lng: Double
@@ -162,7 +162,7 @@ class PlanViewModel : ViewModel() {
         _selectedCityLatLng.value = value
     }
 
-//    private var _attractionsList = mutableStateOf<List<Place>>(listOf())
+    //    private var _attractionsList = mutableStateOf<List<Place>>(listOf())
 //    val attractionsList: MutableState<List<Place>> = _attractionsList
 //    fun updateAttractionsList(value: List<Place>) {
 //        _attractionsList.value = value
@@ -501,6 +501,8 @@ class PlanViewModel : ViewModel() {
             }
         }
     }
+
+    // TODO: add viewModel.travelType
     suspend fun getRoutes(from:LatLng, to:LatLng, apiKey:String,waypoints: List<LatLng>): List<List<LatLng>> = withContext(Dispatchers.IO) {
 
         val url=getURL(from,to, apiKey,waypoints,"driving")
