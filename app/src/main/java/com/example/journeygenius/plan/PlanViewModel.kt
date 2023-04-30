@@ -29,19 +29,28 @@ import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.math.sin
 
 const val PlacesapiKey = "AIzaSyCNcLRKVJXQ8TL3WRiSujLRVD_qTLMxj8E"
+
+data class Photo(
+    val height: Int,
+    val html_attributions: Array<String>,
+    val photo_reference: String,
+    val width: Int,
+)
+
 data class Place(
     val name: String,
     val vicinity: String,
-    val location: Location
+    val location: Location,
+    val rating: Double,
+    val place_id: String,
+    val photos: Array<Photo>
 )
 
-// TODO: ADD MORE HOTEL DETAILS
 data class Hotel(
     val place: Place,
-    val priceLevel:Int,
-    val rating:Double,
+    val priceLevel: Int,
+)
 
-    )
 data class Location(
     val lat: Double,
     val lng: Double
@@ -50,22 +59,28 @@ data class Location(
 data class Response(
     val results: List<Result>
 )
+
 data class HotelResponse(
     val results: List<HotelResult>
 )
+
 data class Result(
     val name: String,
     val vicinity: String,
-    val geometry: Geometry
+    val geometry: Geometry,
+    val rating: Double,
+    val place_id: String,
+    val photos: Array<Photo>
 )
 
 data class HotelResult(
     val name: String,
     val vicinity: String,
     val geometry: Geometry,
-    val place_id:String,
-    val price_level:Int,
-    val rating: Double
+    val place_id: String,
+    val price_level: Int,
+    val rating: Double,
+    val photos: Array<Photo>
 )
 
 data class Geometry(
@@ -82,9 +97,9 @@ data class GeocodeResult(
 )
 
 data class singlePlan(
-    val date:String,
-    val destination:String,
-    val attractions:List<Place>,
+    val date: String,
+    val destination: String,
+    val attractions: List<Place>,
     val priceLevel: Int,
     val priceLevelLabel: String,
     var hotel: List<Hotel>,
@@ -93,8 +108,8 @@ data class singlePlan(
 )
 
 data class Plans(
-    val title:String,
-    val description:String,
+    val title: String,
+    val description: String,
     val plans: List<singlePlan>
 )
 
@@ -180,6 +195,7 @@ class PlanViewModel : ViewModel() {
             addAll(value)
         }
     }
+
     fun addAttractionsList(value: List<Place>) {
         _attractionsList.value.addAll(value)
     }
@@ -240,13 +256,15 @@ class PlanViewModel : ViewModel() {
 
     }
 
-    private var _singlePlan = mutableStateOf(singlePlan("", "", listOf(), 4, "luxury",listOf(), ""))
+    private var _singlePlan =
+        mutableStateOf(singlePlan("", "", listOf(), 4, "luxury", listOf(), ""))
     val singlePlan: MutableState<singlePlan> = _singlePlan
     fun updateSinglePlan(value: singlePlan) {
         _singlePlan.value = value
     }
-    fun addHotelsToSinglePlan(value: List<Hotel>){
-        singlePlan.value.hotel=value
+
+    fun addHotelsToSinglePlan(value: List<Hotel>) {
+        singlePlan.value.hotel = value
     }
 
     private var _planList = mutableStateOf(listOf<singlePlan>())
@@ -354,16 +372,18 @@ class PlanViewModel : ViewModel() {
         _CityList.value = value;
     }
 
-    private var _startAttraction = mutableStateOf(Place("","", Location(0.0,0.0)))
-    val startAttraction : MutableState<Place> = _startAttraction
-    fun updateStartAttraction(value: Place){
-        _startAttraction.value=value
+    private var _startAttraction =
+        mutableStateOf(Place("", "", Location(0.0, 0.0), 0.0, "", emptyArray()))
+    val startAttraction: MutableState<Place> = _startAttraction
+    fun updateStartAttraction(value: Place) {
+        _startAttraction.value = value
     }
 
-    private var _endAttraction = mutableStateOf(Place("","",Location(0.0,0.0)))
-    val endAttraction : MutableState<Place> = _endAttraction
-    fun updateEndAttraction(value: Place){
-        _endAttraction.value=value
+    private var _endAttraction =
+        mutableStateOf(Place("", "", Location(0.0, 0.0), 0.0, "", emptyArray()))
+    val endAttraction: MutableState<Place> = _endAttraction
+    fun updateEndAttraction(value: Place) {
+        _endAttraction.value = value
     }
 
     private var _selectedHotelList = mutableStateOf(listOf<Hotel>())
@@ -389,14 +409,15 @@ class PlanViewModel : ViewModel() {
     }
 
 
-    private var _attractionToHotels = mutableStateOf(mapOf<Place,List<Hotel>>())
-    val attractionToHotels: MutableState<Map<Place,List<Hotel>>> = _attractionToHotels
-    fun updateAttractionToHotel(value: Map<Place,List<Hotel>>){
-        _attractionToHotels.value=value;
+    private var _attractionToHotels = mutableStateOf(mapOf<Place, List<Hotel>>())
+    val attractionToHotels: MutableState<Map<Place, List<Hotel>>> = _attractionToHotels
+    fun updateAttractionToHotel(value: Map<Place, List<Hotel>>) {
+        _attractionToHotels.value = value;
     }
-    fun addAttractionToHotel(key:Place,value:List<Hotel>){
-        val updateMap= _attractionToHotels.value.toMutableMap()
-        if(!updateMap.containsKey(key)){
+
+    fun addAttractionToHotel(key: Place, value: List<Hotel>) {
+        val updateMap = _attractionToHotels.value.toMutableMap()
+        if (!updateMap.containsKey(key)) {
             updateMap[key] = value
         }
         updateAttractionToHotel(updateMap)
@@ -429,7 +450,10 @@ class PlanViewModel : ViewModel() {
                 Place(
                     name = result.name,
                     vicinity = result.vicinity,
-                    location = Location(result.geometry.location.lat, result.geometry.location.lng)
+                    location = Location(result.geometry.location.lat, result.geometry.location.lng),
+                    rating = result.rating,
+                    place_id = result.place_id,
+                    photos = result.photos?: emptyArray()
                 )
             })
             Log.d("attractionlist", attractionsList.toString())
@@ -451,13 +475,23 @@ class PlanViewModel : ViewModel() {
                 Place(
                     name = result.name,
                     vicinity = result.vicinity,
-                    location = Location(result.geometry.location.lat, result.geometry.location.lng)
+                    location = Location(result.geometry.location.lat, result.geometry.location.lng),
+                    rating = result.rating,
+                    place_id = result.place_id,
+                    photos = result.photos?: emptyArray()
                 )
             }
         }
     }
 
-    suspend fun searchNearbyHotels(placeName:String,location: Location, radius: Int = 2000, apiKey: String, maxPriceLevel: Int,context:Context): List<Hotel> = withContext(Dispatchers.IO) {
+    suspend fun searchNearbyHotels(
+        placeName: String,
+        location: Location,
+        radius: Int = 2000,
+        apiKey: String,
+        maxPriceLevel: Int,
+        context: Context
+    ): List<Hotel> = withContext(Dispatchers.IO) {
         /*
         if no price level information provided, return all the hotels nearby
         if no price level matched, return all the hotels nearby
@@ -488,17 +522,27 @@ class PlanViewModel : ViewModel() {
         if (!priceLevelFound || (priceLevelFound && !priceLevelMatched)) {
             // TODO: Toast Upgrade
             CoroutineScope(Dispatchers.Main).launch {
-                Toast.makeText(context, "No hotels found within the specified price range near $placeName", Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    context,
+                    "No hotels found within the specified price range near $placeName",
+                    Toast.LENGTH_LONG
+                ).show()
             }
             response.results.map { result ->
                 Hotel(
                     place = Place(
                         name = result.name,
                         vicinity = result.vicinity,
-                        location = Location(result.geometry.location.lat, result.geometry.location.lng)
+                        location = Location(
+                            result.geometry.location.lat,
+                            result.geometry.location.lng
+                        ),
+                        rating = result.rating,
+                        place_id = result.place_id,
+                        photos = result.photos?: emptyArray()
                     ),
                     priceLevel = result.price_level,
-                    rating = result.rating
+
                 )
             }
         } else {
@@ -507,24 +551,36 @@ class PlanViewModel : ViewModel() {
                     place = Place(
                         name = result.name,
                         vicinity = result.vicinity,
-                        location = Location(result.geometry.location.lat, result.geometry.location.lng)
+                        location = Location(
+                            result.geometry.location.lat,
+                            result.geometry.location.lng
+                        ),
+                        rating = result.rating,
+                        place_id = result.place_id,
+                        photos = result.photos?: emptyArray()
                     ),
                     priceLevel = result.price_level,
-                    rating = result.rating
+
                 )
             }
         }
     }
-    
-    suspend fun getRoutes(from:LatLng, to:LatLng, apiKey:String,waypoints: List<LatLng>,travelModeOption:String): List<List<LatLng>> = withContext(Dispatchers.IO) {
 
-        val url=getURL(from,to, apiKey,waypoints,travelModeOption)
+    suspend fun getRoutes(
+        from: LatLng,
+        to: LatLng,
+        apiKey: String,
+        waypoints: List<LatLng>,
+        travelModeOption: String
+    ): List<List<LatLng>> = withContext(Dispatchers.IO) {
+
+        val url = getURL(from, to, apiKey, waypoints, travelModeOption)
         val result = URL(url).readText()
         val jsonObject = JsonParser.parseString(result).asJsonObject
         val routes = jsonObject.getAsJsonArray("routes")
 
 
-        val allRoutes= mutableListOf<List<LatLng>>()
+        val allRoutes = mutableListOf<List<LatLng>>()
 
 //    for (i in 0 until routes.size()) {
 //        val points = routes[i].asJsonObject
@@ -536,14 +592,16 @@ class PlanViewModel : ViewModel() {
 //        allPoints.add(points)
 //    }
         for (i in 0 until routes.size()) {
-            val allPoints= mutableListOf<LatLng>()
+            val allPoints = mutableListOf<LatLng>()
             allPoints.clear()
-            for(j in 0 until routes[i].asJsonObject.getAsJsonArray("legs").size()){
+            for (j in 0 until routes[i].asJsonObject.getAsJsonArray("legs").size()) {
                 val points = routes[i].asJsonObject
                     .getAsJsonArray("legs")[j].asJsonObject
                     .getAsJsonArray("steps")
                     .flatMap {
-                        decodePoly(it.asJsonObject.getAsJsonObject("polyline").get("points").asString)
+                        decodePoly(
+                            it.asJsonObject.getAsJsonObject("polyline").get("points").asString
+                        )
                     }
                 allPoints.addAll(points)
             }
@@ -553,7 +611,6 @@ class PlanViewModel : ViewModel() {
 
         allRoutes
     }
-
 
 
 }
