@@ -39,6 +39,8 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.maps.android.compose.*
 import kotlinx.coroutines.launch
+import com.example.journeygenius.data.models.*
+
 
 import java.util.*
 
@@ -541,7 +543,7 @@ fun PlanChooseLocScreen(
                     ){
                         Button(onClick = {
 
-                            viewModel.updateSinglePlan(singlePlan(
+                            viewModel.updateSinglePlan(SinglePlan(
                                 "${viewModel.dateRange.value.lower} - ${viewModel.dateRange.value.upper}",
                                 "${destCountry.value}  ${destState.value}  ${destCity.value}",
                                 selectedAttractionList.value,

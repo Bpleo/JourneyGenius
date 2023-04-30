@@ -16,6 +16,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.journeygenius.JourneyGeniusViewModel
+import com.example.journeygenius.data.models.Plans
 import com.example.journeygenius.ui.theme.JourneyGeniusTheme
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition

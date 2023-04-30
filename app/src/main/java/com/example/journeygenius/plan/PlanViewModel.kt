@@ -15,6 +15,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.journeygenius.data.models.*
 import com.google.android.gms.maps.model.LatLng
 import com.google.gson.Gson
 import com.google.gson.JsonParser
@@ -30,88 +31,6 @@ import kotlin.math.sin
 
 const val PlacesapiKey = "AIzaSyCNcLRKVJXQ8TL3WRiSujLRVD_qTLMxj8E"
 
-data class Photo(
-    val height: Int,
-    val html_attributions: Array<String>,
-    val photo_reference: String,
-    val width: Int,
-)
-
-data class Place(
-    val name: String,
-    val vicinity: String,
-    val location: Location,
-    val rating: Double,
-    val place_id: String,
-    val photos: Array<Photo>
-)
-
-data class Hotel(
-    val place: Place,
-    val priceLevel: Int,
-)
-
-data class Location(
-    val lat: Double,
-    val lng: Double
-)
-
-data class Response(
-    val results: List<Result>
-)
-
-data class HotelResponse(
-    val results: List<HotelResult>
-)
-
-data class Result(
-    val name: String,
-    val vicinity: String,
-    val geometry: Geometry,
-    val rating: Double,
-    val place_id: String,
-    val photos: Array<Photo>
-)
-
-data class HotelResult(
-    val name: String,
-    val vicinity: String,
-    val geometry: Geometry,
-    val place_id: String,
-    val price_level: Int,
-    val rating: Double,
-    val photos: Array<Photo>
-)
-
-data class Geometry(
-    val location: Location
-)
-
-
-data class GeocodeResponse(
-    val results: List<GeocodeResult>
-)
-
-data class GeocodeResult(
-    val geometry: Geometry
-)
-
-data class singlePlan(
-    val date: String,
-    val destination: String,
-    val attractions: List<Place>,
-    val priceLevel: Int,
-    val priceLevelLabel: String,
-    var hotel: List<Hotel>,
-    val travelType: String
-
-)
-
-data class Plans(
-    val title: String,
-    val description: String,
-    val plans: List<singlePlan>
-)
 
 @SuppressLint("SuspiciousIndentation")
 class PlanViewModel : ViewModel() {
@@ -257,9 +176,9 @@ class PlanViewModel : ViewModel() {
     }
 
     private var _singlePlan =
-        mutableStateOf(singlePlan("", "", listOf(), 4, "luxury", listOf(), ""))
-    val singlePlan: MutableState<singlePlan> = _singlePlan
-    fun updateSinglePlan(value: singlePlan) {
+        mutableStateOf(SinglePlan("", "", listOf(), 4, "luxury", listOf(), ""))
+    val singlePlan: MutableState<SinglePlan> = _singlePlan
+    fun updateSinglePlan(value: SinglePlan) {
         _singlePlan.value = value
     }
 
@@ -267,13 +186,13 @@ class PlanViewModel : ViewModel() {
         singlePlan.value.hotel = value
     }
 
-    private var _planList = mutableStateOf(listOf<singlePlan>())
-    val planList: MutableState<List<singlePlan>> = _planList
-    fun updatePlanList(value: List<singlePlan>) {
+    private var _planList = mutableStateOf(listOf<SinglePlan>())
+    val planList: MutableState<List<SinglePlan>> = _planList
+    fun updatePlanList(value: List<SinglePlan>) {
         _planList.value = value
     }
 
-    fun addSinglePlan(value: singlePlan) {
+    fun addSinglePlan(value: SinglePlan) {
         val updatedPlanList = _planList.value.toMutableList()
         if (!updatedPlanList.contains(value)) {
             updatedPlanList.add(value)
@@ -281,7 +200,7 @@ class PlanViewModel : ViewModel() {
         }
     }
 
-    fun delSinglePlan(value: singlePlan) {
+    fun delSinglePlan(value: SinglePlan) {
         val updatedPlanList = _planList.value.toMutableList()
         if (updatedPlanList.contains(value)) {
             updatedPlanList.remove(value)
@@ -324,8 +243,8 @@ class PlanViewModel : ViewModel() {
     }
 
     private var _planOnDetail = mutableStateOf(singlePlan.value)
-    val planOnDetail: MutableState<singlePlan> = _planOnDetail
-    fun updatePlanOnDetail(value: singlePlan) {
+    val planOnDetail: MutableState<SinglePlan> = _planOnDetail
+    fun updatePlanOnDetail(value: SinglePlan) {
         _planOnDetail.value = value
     }
 

@@ -30,6 +30,7 @@ import java.net.URL
 import java.nio.charset.Charset
 import java.time.LocalDate
 import java.util.concurrent.CopyOnWriteArrayList
+import com.example.journeygenius.data.models.*
 import javax.inject.Inject
 
 //@HiltViewModel
@@ -306,9 +307,9 @@ class JourneyGeniusViewModel(
     }
 
     private var _singlePlan =
-        mutableStateOf(singlePlan("", "", listOf(), 4, "luxury", listOf(), ""))
-    val singlePlan: MutableState<singlePlan> = _singlePlan
-    fun updateSinglePlan(value: singlePlan) {
+        mutableStateOf(SinglePlan("", "", listOf(), 4, "luxury", listOf(), ""))
+    val singlePlan: MutableState<SinglePlan> = _singlePlan
+    fun updateSinglePlan(value: SinglePlan) {
         _singlePlan.value = value
     }
 
@@ -316,13 +317,13 @@ class JourneyGeniusViewModel(
         singlePlan.value.hotel = value
     }
 
-    private var _planList = mutableStateOf(listOf<singlePlan>())
-    val planList: MutableState<List<singlePlan>> = _planList
-    fun updatePlanList(value: List<singlePlan>) {
+    private var _planList = mutableStateOf(listOf<SinglePlan>())
+    val planList: MutableState<List<SinglePlan>> = _planList
+    fun updatePlanList(value: List<SinglePlan>) {
         _planList.value = value
     }
 
-    fun addSinglePlan(value: singlePlan) {
+    fun addSinglePlan(value: SinglePlan) {
         val updatedPlanList = _planList.value.toMutableList()
         if (!updatedPlanList.contains(value)) {
             updatedPlanList.add(value)
@@ -330,7 +331,7 @@ class JourneyGeniusViewModel(
         }
     }
 
-    fun delSinglePlan(value: singlePlan) {
+    fun delSinglePlan(value: SinglePlan) {
         val updatedPlanList = _planList.value.toMutableList()
         if (updatedPlanList.contains(value)) {
             updatedPlanList.remove(value)
@@ -373,8 +374,8 @@ class JourneyGeniusViewModel(
     }
 
     private var _planOnDetail = mutableStateOf(singlePlan.value)
-    val planOnDetail: MutableState<singlePlan> = _planOnDetail
-    fun updatePlanOnDetail(value: singlePlan) {
+    val planOnDetail: MutableState<SinglePlan> = _planOnDetail
+    fun updatePlanOnDetail(value: SinglePlan) {
         _planOnDetail.value = value
     }
 
