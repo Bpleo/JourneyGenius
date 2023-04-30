@@ -391,7 +391,7 @@ fun ChooseDropdownMenu(viewModel: PlanViewModel) {
                 //Departure Country
                 OutlinedTextField(value = departCountry.value,
                     onValueChange = { viewModel.updateDepartCountry(it) },
-
+                    modifier = Modifier.width(150.dp).height(70.dp),
                     label = { Text(text = "Country") },
                     trailingIcon = {
                         Icon(
@@ -421,7 +421,7 @@ fun ChooseDropdownMenu(viewModel: PlanViewModel) {
                 //Departure State
                 OutlinedTextField(value = departSate.value,
                     onValueChange = { viewModel.updateDepartState(it) },
-
+                    modifier = Modifier.width(150.dp).height(70.dp),
                     label = { Text(text = "State") },
                     trailingIcon = {
                         Icon(
@@ -447,8 +447,7 @@ fun ChooseDropdownMenu(viewModel: PlanViewModel) {
                 //Departure City
                 OutlinedTextField(value = departCity.value,
                     onValueChange = { viewModel.updateDepartCity(it) },
-
-
+                    modifier = Modifier.width(150.dp).height(70.dp),
                     label = { Text(text = "City") },
                     trailingIcon = {
                         Icon(
@@ -494,7 +493,7 @@ fun ChooseDropdownMenu(viewModel: PlanViewModel) {
                     //Destination Country
                     OutlinedTextField(value = destCountry.value,
                         onValueChange = { viewModel.updateDestCountry(it) },
-                        modifier = Modifier.width(150.dp),
+                        modifier = Modifier.width(150.dp).height(70.dp),
                         label = { Text(text = "Country") },
                         trailingIcon = {
                             Icon(
@@ -525,7 +524,7 @@ fun ChooseDropdownMenu(viewModel: PlanViewModel) {
                 //Destination State
                 OutlinedTextField(value = destState.value,
                     onValueChange = { viewModel.updateDestState(it) },
-                    modifier = Modifier.width(150.dp),
+                    modifier = Modifier.width(150.dp).height(70.dp),
                     label = { Text(text = "State") },
                     trailingIcon = {
                         Icon(
@@ -552,7 +551,7 @@ fun ChooseDropdownMenu(viewModel: PlanViewModel) {
                 //Destination City
                 OutlinedTextField(value = destCity.value,
                     onValueChange = { viewModel.updateDestCity(it) },
-                    modifier = Modifier.width(150.dp),
+                    modifier = Modifier.width(150.dp).height(70.dp),
 
                     label = { Text(text = "City") },
                     trailingIcon = {

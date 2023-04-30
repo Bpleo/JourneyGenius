@@ -286,7 +286,7 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel,navController: NavController,jo
                                     val updatedPlace = Place(it, startAttraction.value.vicinity, startAttraction.value.location)
                                     viewModel.updateStartAttraction(updatedPlace)
                                 },
-
+                                modifier = Modifier.width(170.dp).height(70.dp),
                                 label = { Text(text = "Choose") },
                                 trailingIcon = {
                                     Icon(
@@ -302,7 +302,7 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel,navController: NavController,jo
                                 modifier = Modifier.width(170.dp),
 //                            modifier = Modifier.width(with(LocalDensity.current) { textFiledSize.width.toDp() })
                             ) {
-                                nameList.forEach { attraction ->
+                                nameList.filter { it != endAttraction.value.name }.forEach { attraction ->
                                     DropdownMenuItem(text = { Text(attraction) }, onClick = {
                                         val updatedPlace = Place(attraction, startAttraction.value.vicinity, startAttraction.value.location)
                                         viewModel.updateStartAttraction(updatedPlace)
@@ -332,7 +332,7 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel,navController: NavController,jo
                                     val updatedPlace = Place(it, endAttraction.value.vicinity, endAttraction.value.location)
                                     viewModel.updateEndAttraction(updatedPlace)
                                 },
-
+                                modifier = Modifier.width(170.dp).height(70.dp),
                                 label = { Text(text = "Choose") },
                                 trailingIcon = {
                                     Icon(
@@ -375,7 +375,7 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel,navController: NavController,jo
 
                     GoogleMap(modifier = Modifier
                         .fillMaxWidth()
-                        .height(400.dp),
+                        .height(320.dp),
                         cameraPositionState = cameraPositionState,
                         onMapLongClick = {
                             viewModel.viewModelScope.launch {
