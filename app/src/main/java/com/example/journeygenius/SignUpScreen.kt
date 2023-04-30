@@ -14,7 +14,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.journeygenius.data.models.Personal
+import com.example.journeygenius.data.models.Plans
+import com.example.journeygenius.data.models.User
 import com.example.journeygenius.ui.theme.JourneyGeniusTheme
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -142,7 +143,7 @@ fun SignUpButton(
                             Log.i("Auth","Success")
                             val currentUser = auth.currentUser
                             val uid = currentUser!!.uid
-                            val user = Personal(userName = userName, email = email, pwd = pwd, id = uid)
+                            val user = User(userName = userName, email = email, pwd = pwd, id = uid, planGroupList = listOf<Plans>())
                             db.collection("users").document(uid).set(user)
                                 .addOnSuccessListener {
                                     Log.d("FIRESTORE", "DocumentSnapshot written with ID: $uid")
