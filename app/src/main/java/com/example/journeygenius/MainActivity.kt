@@ -25,8 +25,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private lateinit var auth : FirebaseAuth
     private lateinit var db : FirebaseFirestore
-    private val mainViewModel: MainViewModel by viewModels()
-    private val planViewModel:PlanViewModel by viewModels()
+//    private val planViewModel:PlanViewModel by viewModels()
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,7 +35,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             JourneyGeniusTheme {
                 Scaffold{
-                    JourneyGenius(auth, this, db,planViewModel)
+                    JourneyGenius(auth, this, db)
                 }
             }
         }

@@ -26,7 +26,6 @@ fun MainScreen(
     db: FirebaseFirestore,
     viewModel: JourneyGeniusViewModel,
     navController: NavHostController,
-    planViewModel:PlanViewModel
 ) {
     val bottomController = rememberNavController()
     viewModel.signIn()
@@ -38,8 +37,7 @@ fun MainScreen(
             bottomController = bottomController,
             db = db,
             viewModel = viewModel,
-            auth = auth,
-            planViewModel = planViewModel
+            auth = auth
         )
     }
 }
@@ -92,5 +90,5 @@ fun RowScope.AddItem(
 @Preview
 @Composable
 fun MainScreenPreview(){
-    MainScreen(Firebase.auth, Firebase.firestore, JourneyGeniusViewModel(Firebase.firestore, Firebase.auth), rememberNavController(), planViewModel = PlanViewModel())
+    MainScreen(Firebase.auth, Firebase.firestore, JourneyGeniusViewModel(Firebase.firestore, Firebase.auth), rememberNavController())
 }

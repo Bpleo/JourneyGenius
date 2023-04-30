@@ -56,26 +56,25 @@ import kotlin.collections.HashMap
 @Composable
 fun PlanScreenGraph(
     viewModel: JourneyGeniusViewModel,
-    windowSize: WindowSize,
-    planViewModel: PlanViewModel
+    windowSize: WindowSize
 ){
     val planNavController= rememberNavController()
     NavHost(navController = planNavController,
         startDestination = "Plan Menu"){
         composable("Plan Menu"){
-            PlanScreen(viewModel,planViewModel,windowSize,planNavController)
+            PlanScreen(viewModel,windowSize,planNavController)
         }
         composable("Plan Map"){
-            PlanChooseLocScreen(viewModel = planViewModel,planNavController,viewModel)
+            PlanChooseLocScreen(viewModel = viewModel,planNavController)
         }
         composable("Plan Hotel"){
-            PlanHotelSelectionScreen(viewModel = planViewModel,planNavController)
+            PlanHotelSelectionScreen(viewModel = viewModel,planNavController)
         }
         composable("Plan List"){
-            PlanList(navController = planNavController, planViewModel = planViewModel)
+            PlanList(navController = planNavController, planViewModel = viewModel)
         }
         composable("Plan Detail"){
-            PlanDetail(planNavController,planViewModel)
+            PlanDetail(planNavController,viewModel)
         }
     }
 }
@@ -205,7 +204,7 @@ fun TravelDateComponent(
 
 
 @Composable
-fun BudgetComponent(viewModel: PlanViewModel){
+fun BudgetComponent(viewModel: JourneyGeniusViewModel){
     Column {
         Text(
             text = "What is your budget: ",
@@ -233,7 +232,7 @@ fun BudgetComponent(viewModel: PlanViewModel){
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ChooseDropdownMenu(viewModel: PlanViewModel) {
+fun ChooseDropdownMenu(viewModel: JourneyGeniusViewModel) {
     val countries = listOf("China", "Japan", "Korea", "US", "UK")
     val usStates = listOf("AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID",
         "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN")
@@ -608,7 +607,6 @@ fun DestinationButton(navController: NavController) {
 @Composable
 fun PlanScreen(
     viewModel: JourneyGeniusViewModel,
-    planViewModel: PlanViewModel,
     windowSize: WindowSize,
     navController: NavController
 ) {
@@ -647,9 +645,9 @@ fun PlanScreen(
                     ) {
                         TravelDateComponent(selectedDateRange, calenderState, windowSize)
                         Spacer(modifier = Modifier.height(20.dp))
-                        BudgetComponent(viewModel = planViewModel)
+                        BudgetComponent(viewModel = viewModel)
                         Spacer(modifier = Modifier.height(20.dp))
-                        ChooseDropdownMenu(viewModel = planViewModel)
+                        ChooseDropdownMenu(viewModel = viewModel)
                         Spacer(modifier = Modifier.height(20.dp))
                         DestinationButton(navController)
                     }
@@ -663,7 +661,7 @@ fun PlanScreen(
                         }
                         Spacer(modifier = Modifier.width(60.dp))
                         Column{
-                            BudgetComponent(viewModel = planViewModel)
+                            BudgetComponent(viewModel = viewModel)
                             Spacer(modifier = Modifier.height(60.dp))
                             DestinationButton(navController)
                         }
@@ -678,7 +676,7 @@ fun PlanScreen(
 @Preview(showBackground = true)
 @Composable
 fun PlanScreenPreview() {
-    PlanScreen(JourneyGeniusViewModel(Firebase.firestore, Firebase.auth), PlanViewModel(),rememberWindowSize(),
+    PlanScreen(JourneyGeniusViewModel(Firebase.firestore, Firebase.auth),rememberWindowSize(),
         rememberNavController())
 }
 
@@ -686,7 +684,6 @@ fun PlanScreenPreview() {
 @Composable
 fun PlanScreenLandscapePreview() {
     val viewModel = JourneyGeniusViewModel(Firebase.firestore, Firebase.auth)
-    val planViewModel = PlanViewModel()
     val selectedDateRange = remember {
         val value = viewModel.dateRange
         mutableStateOf(value)
@@ -703,9 +700,9 @@ fun PlanScreenLandscapePreview() {
                 }
                 Spacer(modifier = Modifier.width(60.dp))
                 Column{
-                    BudgetComponent(viewModel = planViewModel)
+                    BudgetComponent(viewModel = viewModel)
                     Spacer(modifier = Modifier.height(60.dp))
-                    ChooseDropdownMenu(planViewModel)
+                    ChooseDropdownMenu(viewModel)
                     Spacer(modifier = Modifier.height(60.dp))
                     DestinationButton(rememberNavController())
                 }

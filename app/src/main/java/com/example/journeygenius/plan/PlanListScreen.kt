@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
@@ -16,14 +15,15 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.journeygenius.ui.theme.JourneyGeniusTheme
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import androidx.compose.foundation.gestures.Orientation
+import com.example.journeygenius.JourneyGeniusViewModel
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PlanList(navController: NavController,planViewModel: PlanViewModel) {
+fun PlanList(navController: NavController, planViewModel: JourneyGeniusViewModel) {
     val planTitle =remember{
         planViewModel.planTitle
     }
@@ -141,5 +141,7 @@ fun PlanList(navController: NavController,planViewModel: PlanViewModel) {
 @Preview(showBackground = true)
 @Composable
 fun PlanListPreview(){
-    PlanList(navController = rememberNavController(), planViewModel = PlanViewModel())
+    PlanList(navController = rememberNavController(), planViewModel = JourneyGeniusViewModel(
+        FirebaseFirestore.getInstance(), FirebaseAuth.getInstance())
+    )
 }

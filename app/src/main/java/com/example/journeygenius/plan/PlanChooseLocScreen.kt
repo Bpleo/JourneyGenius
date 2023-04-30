@@ -2,7 +2,6 @@ package com.example.journeygenius.plan
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
-import android.location.Address
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -20,10 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import com.example.journeygenius.ui.theme.JourneyGeniusTheme
 import androidx.compose.material.*
-import android.location.Geocoder
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -45,7 +41,6 @@ import com.google.maps.android.compose.*
 import kotlinx.coroutines.launch
 
 import java.util.*
-import kotlin.collections.HashMap
 
 fun bitmapDescriptorFromVector(
     context: Context,
@@ -91,7 +86,9 @@ fun Tag(title: String, onClose: () -> Unit) {
 @SuppressLint("CoroutineCreationDuringComposition")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PlanChooseLocScreen(viewModel: PlanViewModel,navController: NavController,journeyGeniusViewModel: JourneyGeniusViewModel) {
+fun PlanChooseLocScreen(
+    viewModel: JourneyGeniusViewModel,
+    navController: NavController) {
     val countries = listOf("China", "Japan", "Korea", "US", "UK")
     val usStates = listOf("AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID",
         "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN")
@@ -545,7 +542,7 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel,navController: NavController,jo
                         Button(onClick = {
 
                             viewModel.updateSinglePlan(singlePlan(
-                                "${journeyGeniusViewModel.dateRange.value.lower} - ${journeyGeniusViewModel.dateRange.value.upper}",
+                                "${viewModel.dateRange.value.lower} - ${viewModel.dateRange.value.upper}",
                                 "${destCountry.value}  ${destState.value}  ${destCity.value}",
                                 selectedAttractionList.value,
                                 viewModel.sliderValue.value?:4,
@@ -628,7 +625,7 @@ fun dropDownMenu() {
 @Preview(showBackground = true)
 @Composable
 fun PlanChooseLocScreenPreview() {
-    PlanChooseLocScreen(PlanViewModel(), rememberNavController(), JourneyGeniusViewModel(Firebase.firestore, Firebase.auth))
+    PlanChooseLocScreen(JourneyGeniusViewModel(Firebase.firestore, Firebase.auth), rememberNavController())
 //    dropDownMenu()
 //    Tag(title = "Shenzhen", onClose = {})
 }

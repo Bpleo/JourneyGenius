@@ -13,13 +13,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.journeygenius.JourneyGeniusViewModel
-import com.example.journeygenius.R
 import com.example.journeygenius.ui.theme.JourneyGeniusTheme
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
@@ -83,7 +79,7 @@ fun decodePoly(encoded: String): List<LatLng> {
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PlanHotelSelectionScreen(viewModel: PlanViewModel,navController: NavController) {
+fun PlanHotelSelectionScreen(viewModel: JourneyGeniusViewModel, navController: NavController) {
     val attractionToHotels=remember{
         viewModel.attractionToHotels
     }
