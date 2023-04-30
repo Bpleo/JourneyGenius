@@ -221,7 +221,9 @@ fun BudgetComponent(viewModel: PlanViewModel){
                 onValueChange = { viewModel.onSliderValueChanged(it.toInt()) },
                 valueRange = 0f..3f,
                 steps = 2,
-                modifier = Modifier.width(200.dp)
+                modifier = Modifier
+                    .height(50.dp)
+                    .width(300.dp)
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(text = sliderLabel, style = MaterialTheme.typography.bodyLarge)
