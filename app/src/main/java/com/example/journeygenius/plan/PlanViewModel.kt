@@ -400,7 +400,7 @@ class PlanViewModel : ViewModel() {
         updateAttractionToHotel(updateMap)
     }
 
-    private val _travelModeOption = mutableStateOf("bicycling")
+    private val _travelModeOption = mutableStateOf("driving")
     val travelModeOption: State<String> = _travelModeOption
 
     fun onTravelModeChanged(option: String) {
@@ -511,9 +511,9 @@ class PlanViewModel : ViewModel() {
     }
 
     // TODO: add viewModel.travelType
-    suspend fun getRoutes(from:LatLng, to:LatLng, apiKey:String,waypoints: List<LatLng>): List<List<LatLng>> = withContext(Dispatchers.IO) {
+    suspend fun getRoutes(from:LatLng, to:LatLng, apiKey:String,waypoints: List<LatLng>,travelModeOption:String): List<List<LatLng>> = withContext(Dispatchers.IO) {
 
-        val url=getURL(from,to, apiKey,waypoints,"driving")
+        val url=getURL(from,to, apiKey,waypoints,travelModeOption)
         val result = URL(url).readText()
         val jsonObject = JsonParser.parseString(result).asJsonObject
         val routes = jsonObject.getAsJsonArray("routes")

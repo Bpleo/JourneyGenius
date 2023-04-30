@@ -27,7 +27,7 @@ import com.google.maps.android.compose.*
 import kotlinx.coroutines.launch
 import java.util.ArrayList
 
-fun getURL(from : LatLng, to : LatLng, apiKey:String, waypoints:List<LatLng>,travelType:String) : String {
+fun getURL(from : LatLng, to : LatLng, apiKey:String, waypoints:List<LatLng>,travelModeOption:String) : String {
     val origin = "origin=" + from.latitude + "," + from.longitude
     val dest = "destination=" + to.latitude + "," + to.longitude
     val Key= "key=$apiKey"
@@ -38,7 +38,7 @@ fun getURL(from : LatLng, to : LatLng, apiKey:String, waypoints:List<LatLng>,tra
         }
         waypointString+="${waypoints[waypoints.size-1].latitude}%2C${waypoints[waypoints.size-1].longitude}"
     }
-    val params = "$origin&$dest&$Key&waypoints=$waypointString&mode=$travelType"
+    val params = "$origin&$dest&$Key&waypoints=$waypointString&mode=$travelModeOption"
     return "https://maps.googleapis.com/maps/api/directions/json?$params"
 }
 
@@ -110,6 +110,9 @@ fun PlanHotelSelectionScreen(viewModel: PlanViewModel,navController: NavControll
     val planGroup= remember {
         viewModel.planGroup
     }
+    val travelModeOption = remember{
+        viewModel.travelModeOption
+    }
     val cameraPositionState= CameraPositionState(position= CameraPosition.fromLatLngZoom(LatLng(startAttraction.value.location.lat,startAttraction.value.location.lng),15f))
     var polylinePoints by remember { mutableStateOf(emptyList<List<LatLng>>()) }
     val coroutineScope = rememberCoroutineScope()
@@ -136,7 +139,7 @@ fun PlanHotelSelectionScreen(viewModel: PlanViewModel,navController: NavControll
     }
 
     LaunchedEffect(key1 = from, key2 =to ) {
-        val points = viewModel.getRoutes(from, to, PlacesapiKey,waypointsLatLng)
+        val points = viewModel.getRoutes(from, to, PlacesapiKey,waypointsLatLng,travelModeOption.value)
         coroutineScope.launch {
             polylinePoints = points
         }
@@ -170,6 +173,7 @@ fun PlanHotelSelectionScreen(viewModel: PlanViewModel,navController: NavControll
                                 state= MarkerState(position=LatLng(it.location.lat,it.location.lng)),
                                 snippet = "Marker in ${it.name}",
                             )
+
                             if(attractionToHotels.value.containsKey(it) && !attractionToHotels.value[it].isNullOrEmpty()){
                                 attractionToHotels.value[it]!!.forEach {hotel->
                                     Marker(
@@ -185,7 +189,9 @@ fun PlanHotelSelectionScreen(viewModel: PlanViewModel,navController: NavControll
                                             return@Marker true
 
                                         }
+
                                     )
+
                                 }
                             }
                         }
@@ -194,11 +200,11 @@ fun PlanHotelSelectionScreen(viewModel: PlanViewModel,navController: NavControll
                         for (i in polylinePoints.indices){
                             if(i==0){
                                 Polyline(points = polylinePoints.get(0),
-                                    color = Color.Red,
+                                    color = Color.Blue,
                                 )
                             }else{
                                 Polyline(points = polylinePoints.get(i),
-                                    color = Color.Blue,
+                                    color = Color.Cyan,
                                 )
                             }
                         }

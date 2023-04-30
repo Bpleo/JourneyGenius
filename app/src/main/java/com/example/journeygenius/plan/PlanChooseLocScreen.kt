@@ -194,7 +194,6 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel,navController: NavController,jo
     val selectedAttractionList = remember {
         viewModel.selectedAttractionList
     }
-    val nameList: List<String> = selectedAttractionList.value.map { place -> place.name }
 
     var textFiledSize by remember {
         mutableStateOf(Size.Zero)
@@ -288,8 +287,7 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel,navController: NavController,jo
                             //Departure Sight
                             OutlinedTextField(value = startAttraction.value.name,
                                 onValueChange = {
-                                    val updatedPlace = Place(it, startAttraction.value.vicinity, startAttraction.value.location)
-                                    viewModel.updateStartAttraction(updatedPlace)
+
                                 },
                                 modifier = Modifier.width(170.dp).height(70.dp),
                                 label = { Text(text = "Choose") },
@@ -307,10 +305,9 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel,navController: NavController,jo
                                 modifier = Modifier.width(170.dp),
 //                            modifier = Modifier.width(with(LocalDensity.current) { textFiledSize.width.toDp() })
                             ) {
-                                nameList.filter { it != endAttraction.value.name }.forEach { attraction ->
-                                    DropdownMenuItem(text = { Text(attraction) }, onClick = {
-                                        val updatedPlace = Place(attraction, startAttraction.value.vicinity, startAttraction.value.location)
-                                        viewModel.updateStartAttraction(updatedPlace)
+                                selectedAttractionList.value.filter { it != endAttraction.value }.forEach { attraction ->
+                                    DropdownMenuItem(text = { Text(attraction.name) }, onClick = {
+                                        viewModel.updateStartAttraction(attraction)
                                         startAttractionExpanded = false
                                     })
 
@@ -334,8 +331,7 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel,navController: NavController,jo
                             //Destination Sight
                             OutlinedTextField(value = endAttraction.value.name,
                                 onValueChange = {
-                                    val updatedPlace = Place(it, endAttraction.value.vicinity, endAttraction.value.location)
-                                    viewModel.updateEndAttraction(updatedPlace)
+
                                 },
                                 modifier = Modifier.width(170.dp).height(70.dp),
                                 label = { Text(text = "Choose") },
@@ -353,10 +349,9 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel,navController: NavController,jo
                                 modifier = Modifier.width(170.dp),
 //                            modifier = Modifier.width(with(LocalDensity.current) { textFiledSize.width.toDp() })
                             ) {
-                                nameList.filter { it != startAttraction.value.name }.forEach { attraction ->
-                                    DropdownMenuItem(text = { Text(attraction) }, onClick = {
-                                        val updatedPlace = Place(attraction, endAttraction.value.vicinity, endAttraction.value.location)
-                                        viewModel.updateEndAttraction(updatedPlace)
+                                selectedAttractionList.value.filter { it != startAttraction.value }.forEach { attraction ->
+                                    DropdownMenuItem(text = { Text(attraction.name) }, onClick = {
+                                        viewModel.updateEndAttraction(attraction)
                                         endAttractionExpanded = false
                                     })
                                 }
@@ -501,17 +496,24 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel,navController: NavController,jo
                                 Marker(
                                     state = MarkerState(position = LatLng(place.location.lat,place.location.lng),),
                                     title = place.name,
-                                    snippet = "Marker in ${place.name}",
+                                    snippet = "Marker in ${place.name}" ,
                                     icon = bitmapDescriptorFromVector(
                                         context, R.drawable.pin
                                     ),
-                                    onClick = {
+                                    onInfoWindowClick = {
                                         if(!selectedAttractionList.value.contains(place)){
                                             viewModel.addSelectedAttraction(place)
                                         }
                                         Log.d("selectedAttractionList: ",viewModel.selectedAttractionList.value.toString())
-                                        return@Marker true
+
                                     }
+//                                    onClick = {
+//                                        if(!selectedAttractionList.value.contains(place)){
+//                                            viewModel.addSelectedAttraction(place)
+//                                        }
+//                                        Log.d("selectedAttractionList: ",viewModel.selectedAttractionList.value.toString())
+//                                        return@Marker true
+//                                    }
 
                                 )
                             }
@@ -553,14 +555,16 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel,navController: NavController,jo
                                 journeyGeniusViewModel.travelType.value
 
                             ))
-                            if (selectedAttractionList.value.isNotEmpty()) {
-                                viewModel.updateStartAttraction(selectedAttractionList.value[0])
-                                viewModel.updateEndAttraction(selectedAttractionList.value[selectedAttractionList.value.size - 1])
-                            }
+//                            if (selectedAttractionList.value.isNotEmpty()) {
+//                                viewModel.updateStartAttraction(selectedAttractionList.value[0])
+//                                viewModel.updateEndAttraction(selectedAttractionList.value[selectedAttractionList.value.size - 1])
+//                            }
 //                                         viewModel.addSinglePlan(singlePlan)
 //
 //                                         viewModel.updatePlanGroup(Plans(viewModel.planGroup.value.title,viewModel.planGroup.value.description,planList))
                             navController.navigate("Plan Hotel")
+                            Log.d("startAttraction",startAttraction.value.toString())
+                            Log.d("endAttraction",endAttraction.value.toString())
                             Log.d("Plan",planGroup.toString())
                         }, modifier = Modifier
                             .width(130.dp)
