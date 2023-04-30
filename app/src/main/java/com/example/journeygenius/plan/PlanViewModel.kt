@@ -1,12 +1,15 @@
 package com.example.journeygenius.plan
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.util.Log
 import android.util.Range
+import android.widget.Toast
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -17,10 +20,7 @@ import com.google.gson.Gson
 import com.google.gson.JsonParser
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberMarkerState
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import java.net.URL
 import java.nio.charset.Charset
 import java.nio.file.Path
@@ -455,7 +455,7 @@ class PlanViewModel : ViewModel() {
         }
     }
 
-    suspend fun searchNearbyHotels(location: Location, radius: Int = 2000, apiKey: String, maxPriceLevel: Int): List<Hotel> = withContext(Dispatchers.IO) {
+    suspend fun searchNearbyHotels(placeName:String,location: Location, radius: Int = 2000, apiKey: String, maxPriceLevel: Int,context:Context): List<Hotel> = withContext(Dispatchers.IO) {
         /*
         if no price level information provided, return all the hotels nearby
         if no price level matched, return all the hotels nearby
@@ -484,6 +484,10 @@ class PlanViewModel : ViewModel() {
         println("mutableHotelSize: ${mutableHotelList.size}")
 
         if (!priceLevelFound || (priceLevelFound && !priceLevelMatched)) {
+            // TODO: Toast Upgrade
+            CoroutineScope(Dispatchers.Main).launch {
+                Toast.makeText(context, "No hotels found within the specified price range near $placeName", Toast.LENGTH_LONG).show()
+            }
             response.results.map { result ->
                 Hotel(
                     place = Place(
@@ -509,8 +513,7 @@ class PlanViewModel : ViewModel() {
             }
         }
     }
-
-    // TODO: add viewModel.travelType
+    
     suspend fun getRoutes(from:LatLng, to:LatLng, apiKey:String,waypoints: List<LatLng>,travelModeOption:String): List<List<LatLng>> = withContext(Dispatchers.IO) {
 
         val url=getURL(from,to, apiKey,waypoints,travelModeOption)

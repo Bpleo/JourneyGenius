@@ -12,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewModelScope
@@ -104,7 +105,7 @@ fun PlanHotelSelectionScreen(viewModel: PlanViewModel,navController: NavControll
     val singlePlan = remember {
         viewModel.singlePlan
     }
-    val planList = remember {
+    val planList by remember {
         viewModel.planList
     }
     val planGroup= remember {
@@ -113,12 +114,13 @@ fun PlanHotelSelectionScreen(viewModel: PlanViewModel,navController: NavControll
     val travelModeOption = remember{
         viewModel.travelModeOption
     }
+    val context = LocalContext.current
     val cameraPositionState= CameraPositionState(position= CameraPosition.fromLatLngZoom(LatLng(startAttraction.value.location.lat,startAttraction.value.location.lng),15f))
     var polylinePoints by remember { mutableStateOf(emptyList<List<LatLng>>()) }
     val coroutineScope = rememberCoroutineScope()
-    LaunchedEffect(Unit) {
+    LaunchedEffect(key1=context) {
         selectedAttractionList.value.forEach {
-            val hotelList=viewModel.searchNearbyHotels(it.location, apiKey = PlacesapiKey, maxPriceLevel = sliderValue.value?:4)
+            val hotelList=viewModel.searchNearbyHotels(it.name,it.location, apiKey = PlacesapiKey, maxPriceLevel = sliderValue.value?:4, context = context)
             viewModel.addAttractionToHotel(it,hotelList)
         }
     }
@@ -145,6 +147,8 @@ fun PlanHotelSelectionScreen(viewModel: PlanViewModel,navController: NavControll
         }
     }
     println(attractionToHotels)
+
+    var showDialog by remember { mutableStateOf(false) }
 
     JourneyGeniusTheme{
         Box(
@@ -235,7 +239,7 @@ fun PlanHotelSelectionScreen(viewModel: PlanViewModel,navController: NavControll
                     Button(onClick = {
                         viewModel.addHotelsToSinglePlan(selectedHotelList.value)
                         viewModel.addSinglePlan(singlePlan.value)
-                        viewModel.updatePlanGroup(Plans(viewModel.planGroup.value.title,viewModel.planGroup.value.description,planList.value))
+                        viewModel.updatePlanGroup(Plans(viewModel.planGroup.value.title,viewModel.planGroup.value.description,planList))
                         navController.navigate("Plan List")
                         Log.d("Plan",planGroup.value.toString())
                     }, modifier = Modifier
