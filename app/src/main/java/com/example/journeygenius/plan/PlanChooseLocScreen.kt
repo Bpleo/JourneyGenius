@@ -136,10 +136,10 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel,navController: NavController,jo
         "Seoul" to seoulCities,
     )
 
-    val label1 = "Bicycle"
-    val label2 = "Train/Bus"
-    val label3 = "Car"
-    val label4 = "All"
+    val label1 = "Bicycling"
+    val label2 = "Walking"
+    val label3 = "Driving"
+    val label4 = "Transit"
 
     var startAttractionExpanded by remember { mutableStateOf(false) }
     var endAttractionExpanded by remember { mutableStateOf(false) }
@@ -378,8 +378,8 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel,navController: NavController,jo
                     .padding(12.dp)) {
 
                     RadioButton(
-                        selected = viewModel.travelModeOption.value == "Bicycle",
-                        onClick = { viewModel.onTravelModeChanged("Bicycle") },
+                        selected = viewModel.travelModeOption.value == "bicycling",
+                        onClick = { viewModel.onTravelModeChanged("bicycling") },
                         modifier = Modifier
                             .size(20.dp)
                             .padding(end = 12.dp),
@@ -390,8 +390,8 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel,navController: NavController,jo
                     )
 
                     RadioButton(
-                        selected = viewModel.travelModeOption.value == "Train/Bus",
-                        onClick = { viewModel.onTravelModeChanged("Train/Bus") },
+                        selected = viewModel.travelModeOption.value == "walking",
+                        onClick = { viewModel.onTravelModeChanged("walking") },
                         modifier = Modifier
                             .size(20.dp)
                             .padding(end = 12.dp),
@@ -402,8 +402,8 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel,navController: NavController,jo
                     )
 
                     RadioButton(
-                        selected = viewModel.travelModeOption.value == "Car",
-                        onClick = { viewModel.onTravelModeChanged("Car") },
+                        selected = viewModel.travelModeOption.value == "driving",
+                        onClick = { viewModel.onTravelModeChanged("driving") },
                         modifier = Modifier
                             .size(20.dp)
                             .padding(end = 12.dp),
@@ -414,8 +414,8 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel,navController: NavController,jo
                     )
 
                     RadioButton(
-                        selected = viewModel.travelModeOption.value == "All",
-                        onClick = { viewModel.onTravelModeChanged("All") },
+                        selected = viewModel.travelModeOption.value == "transit",
+                        onClick = { viewModel.onTravelModeChanged("transit") },
                         modifier = Modifier
                             .size(20.dp)
                             .padding(end = 12.dp),

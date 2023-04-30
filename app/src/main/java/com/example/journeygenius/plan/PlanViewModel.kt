@@ -400,7 +400,7 @@ class PlanViewModel : ViewModel() {
         updateAttractionToHotel(updateMap)
     }
 
-    private val _travelModeOption = mutableStateOf("Bicycle")
+    private val _travelModeOption = mutableStateOf("bicycling")
     val travelModeOption: State<String> = _travelModeOption
 
     fun onTravelModeChanged(option: String) {
