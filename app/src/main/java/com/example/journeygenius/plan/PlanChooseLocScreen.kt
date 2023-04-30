@@ -144,20 +144,20 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel,navController: NavController,jo
     var startAttractionExpanded by remember { mutableStateOf(false) }
     var endAttractionExpanded by remember { mutableStateOf(false) }
 
-    var departCountryExpanded by remember { mutableStateOf(false) }
-    var departStateExpanded by remember {
+    val departCountryExpanded by remember { mutableStateOf(false) }
+    val departStateExpanded by remember {
         mutableStateOf(false)
     }
-    var departCityExpanded by remember {
+    val departCityExpanded by remember {
         mutableStateOf(false)
     }
-    var destCountryExpanded by remember {
+    val destCountryExpanded by remember {
         mutableStateOf(false)
     }
-    var destStateExpanded by remember {
+    val destStateExpanded by remember {
         mutableStateOf(false)
     }
-    var destCityExpanded by remember {
+    val destCityExpanded by remember {
         mutableStateOf(false)
     }
     val departCountry by remember {
@@ -166,7 +166,6 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel,navController: NavController,jo
     val startAttraction by remember {
         mutableStateOf(viewModel.startAttraction)
     }
-
     val endAttraction by remember {
         mutableStateOf(viewModel.endAttraction)
     }
@@ -176,7 +175,6 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel,navController: NavController,jo
     val departCity by remember {
         mutableStateOf(viewModel.departCity)
     }
-
     val destCountry by remember {
         mutableStateOf(viewModel.destCountry)
     }
@@ -550,9 +548,10 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel,navController: NavController,jo
                                 "${journeyGeniusViewModel.dateRange.value.lower} - ${journeyGeniusViewModel.dateRange.value.upper}",
                                 "${destCountry.value}  ${destState.value}  ${destCity.value}",
                                 selectedAttractionList.value,
-                                journeyGeniusViewModel.budget.value.text,
+                                viewModel.sliderValue.value?:4,
+                                viewModel.sliderLabel.value?:"luxury",
                                 listOf(),
-                                journeyGeniusViewModel.travelType.value
+                                viewModel.travelType.value
 
                             ))
 //                            if (selectedAttractionList.value.isNotEmpty()) {

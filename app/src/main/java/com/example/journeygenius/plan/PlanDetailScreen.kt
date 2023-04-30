@@ -74,24 +74,34 @@ fun PlanDetail(navController: NavController,viewModel: PlanViewModel){
                     }
 
                     Spacer(modifier = Modifier.height(15.dp))
-                    Text(text = "Budget: ",
+                    Text(text = "Price Level: ",
                         fontSize = MaterialTheme.typography.titleLarge.fontSize)
                     Spacer(modifier = Modifier.height(10.dp))
-                    Text(text = planOnDetail.value.budget,
+                    Text(text = "${planOnDetail.value.priceLevel}: ${planOnDetail.value.priceLevelLabel}",
                         fontSize = MaterialTheme.typography.titleLarge.fontSize
                     )
                     Spacer(modifier = Modifier.height(35.dp))
                     Text(text = "Hotel: ",
                         fontSize = MaterialTheme.typography.titleLarge.fontSize)
                     Spacer(modifier = Modifier.height(10.dp))
-                    Text(text = planOnDetail.value.hotel.toString(),
-                        fontSize = MaterialTheme.typography.titleLarge.fontSize
-                    )
-                    Spacer(modifier = Modifier.height(35.dp))
+                    // TODO:  
+                    Box(modifier = Modifier
+                        .fillMaxWidth()
+                        .height(90.dp)){
+                        LazyColumn(modifier = Modifier.fillMaxWidth())
+                        {
+                            items(planOnDetail.value.hotel,key={it.place.name}){
+                                Text(text = it.place.name,
+                                    fontSize = MaterialTheme.typography.titleLarge.fontSize
+                                )
+                            }
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(15.dp))
                     Text(text = "Transport Mode: ",
                         fontSize = MaterialTheme.typography.titleLarge.fontSize)
                     Spacer(modifier = Modifier.height(10.dp))
-                    Text(text = planOnDetail.value.trans_mode,
+                    Text(text = planOnDetail.value.travelType,
                         fontSize = MaterialTheme.typography.titleLarge.fontSize
                     )
                     Spacer(modifier = Modifier.height(75.dp))

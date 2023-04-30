@@ -85,9 +85,10 @@ data class singlePlan(
     val date:String,
     val destination:String,
     val attractions:List<Place>,
-    val budget:String,
+    val priceLevel: Int,
+    val priceLevelLabel: String,
     var hotel: List<Hotel>,
-    val trans_mode: String
+    val travelType: String
 
 )
 
@@ -239,7 +240,7 @@ class PlanViewModel : ViewModel() {
 
     }
 
-    private var _singlePlan = mutableStateOf(singlePlan("", "", listOf(), "", listOf(), ""))
+    private var _singlePlan = mutableStateOf(singlePlan("", "", listOf(), 4, "luxury",listOf(), ""))
     val singlePlan: MutableState<singlePlan> = _singlePlan
     fun updateSinglePlan(value: singlePlan) {
         _singlePlan.value = value
@@ -311,7 +312,7 @@ class PlanViewModel : ViewModel() {
     }
 
 
-    //slider
+    //price level slider variable
     private val _sliderValue = MutableLiveData(0)
     val sliderValue: MutableLiveData<Int> = _sliderValue
 
