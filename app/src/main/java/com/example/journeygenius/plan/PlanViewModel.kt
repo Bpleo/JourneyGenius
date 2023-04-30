@@ -5,6 +5,7 @@ import android.util.Log
 import android.util.Range
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.LiveData
@@ -397,6 +398,13 @@ class PlanViewModel : ViewModel() {
             updateMap[key] = value
         }
         updateAttractionToHotel(updateMap)
+    }
+
+    private val _travelModeOption = mutableStateOf("Bicycle")
+    val travelModeOption: State<String> = _travelModeOption
+
+    fun onTravelModeChanged(option: String) {
+        _travelModeOption.value = option
     }
 
 

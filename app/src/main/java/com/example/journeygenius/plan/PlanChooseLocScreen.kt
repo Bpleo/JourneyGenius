@@ -136,6 +136,11 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel,navController: NavController,jo
         "Seoul" to seoulCities,
     )
 
+    val label1 = "Bicycle"
+    val label2 = "Train/Bus"
+    val label3 = "Car"
+    val label4 = "All"
+
     var startAttractionExpanded by remember { mutableStateOf(false) }
     var endAttractionExpanded by remember { mutableStateOf(false) }
 
@@ -358,6 +363,67 @@ fun PlanChooseLocScreen(viewModel: PlanViewModel,navController: NavController,jo
                             }
                         }
                     }
+                }
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth(), contentAlignment = Alignment.TopCenter
+                ) {
+                    Text(
+                        text = "Select your preferred travel mode:",
+                        fontSize = MaterialTheme.typography.bodyLarge.fontSize,
+                    )
+                }
+                Row(modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp)) {
+
+                    RadioButton(
+                        selected = viewModel.travelModeOption.value == "Bicycle",
+                        onClick = { viewModel.onTravelModeChanged("Bicycle") },
+                        modifier = Modifier
+                            .size(20.dp)
+                            .padding(end = 12.dp),
+                    )
+                    Text(
+                        text = label1,
+                        modifier = Modifier.padding(end = 16.dp)
+                    )
+
+                    RadioButton(
+                        selected = viewModel.travelModeOption.value == "Train/Bus",
+                        onClick = { viewModel.onTravelModeChanged("Train/Bus") },
+                        modifier = Modifier
+                            .size(20.dp)
+                            .padding(end = 12.dp),
+                    )
+                    Text(
+                        text = label2,
+                        modifier = Modifier.padding(end = 16.dp)
+                    )
+
+                    RadioButton(
+                        selected = viewModel.travelModeOption.value == "Car",
+                        onClick = { viewModel.onTravelModeChanged("Car") },
+                        modifier = Modifier
+                            .size(20.dp)
+                            .padding(end = 12.dp),
+                    )
+                    Text(
+                        text = label3,
+                        modifier = Modifier.padding(end = 16.dp)
+                    )
+
+                    RadioButton(
+                        selected = viewModel.travelModeOption.value == "All",
+                        onClick = { viewModel.onTravelModeChanged("All") },
+                        modifier = Modifier
+                            .size(20.dp)
+                            .padding(end = 12.dp),
+                    )
+                    Text(
+                        text = label4,
+                        modifier = Modifier.padding(end = 16.dp)
+                    )
                 }
                 Column(
                     modifier = Modifier
