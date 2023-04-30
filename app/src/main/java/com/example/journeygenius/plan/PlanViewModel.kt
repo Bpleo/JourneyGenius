@@ -326,6 +326,7 @@ class PlanViewModel : ViewModel() {
             1 -> "medium"
             2 -> "expensive"
             3 -> "luxury"
+            4 -> "extravagant"
             else -> ""
         }
     }

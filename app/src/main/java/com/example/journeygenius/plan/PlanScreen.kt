@@ -219,8 +219,8 @@ fun BudgetComponent(viewModel: PlanViewModel){
             Slider(
                 value = sliderValue.toFloat(),
                 onValueChange = { viewModel.onSliderValueChanged(it.toInt()) },
-                valueRange = 0f..3f,
-                steps = 2,
+                valueRange = 0f..4f,
+                steps = 3,
                 modifier = Modifier
                     .height(50.dp)
                     .width(300.dp)
