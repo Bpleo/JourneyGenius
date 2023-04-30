@@ -345,6 +345,8 @@ class JourneyGeniusViewModel(
         _planGroup.value = value
     }
 
+
+    //plan title in a planGroup
     private var _planTitle = mutableStateOf("")
     val planTitle: MutableState<String> = _planTitle
     fun updatePlanTitle(value: String) {
@@ -359,6 +361,7 @@ class JourneyGeniusViewModel(
         Log.d("updatePlanGroup", planGroup.value.toString())
     }
 
+    //plan description in a planGroup
     private var _planDescription = mutableStateOf("")
     val planDescription: MutableState<String> = _planDescription
     fun updatePlanDescription(value: String) {
@@ -373,12 +376,32 @@ class JourneyGeniusViewModel(
         Log.d("updatePlanGroup", planGroup.value.toString())
     }
 
+    //value change when user click different plan on Plan List page
     private var _planOnDetail = mutableStateOf(singlePlan.value)
     val planOnDetail: MutableState<SinglePlan> = _planOnDetail
     fun updatePlanOnDetail(value: SinglePlan) {
         _planOnDetail.value = value
     }
 
+    private var _planGroupList = mutableStateOf(listOf<Plans>())
+    val planGroupList : MutableState<List<Plans>> =_planGroupList
+    fun updatePlanGroupList(value: List<Plans>){
+        _planGroupList.value=value
+    }
+    fun addPlanGroupToList(value:Plans){
+        if(!_planGroupList.value.contains(value)){
+            val updatedGroupList=_planGroupList.value.toMutableList()
+            updatedGroupList.add(value)
+            updatePlanGroupList(updatedGroupList)
+        }
+    }
+    fun delPlanGroupToList(value:Plans){
+        if(_planGroupList.value.contains(value)){
+            val updatedGroupList=_planGroupList.value.toMutableList()
+            updatedGroupList.remove(value)
+            updatePlanGroupList(updatedGroupList)
+        }
+    }
 
     //price level slider variable
     private val _sliderValue = MutableLiveData(0)
