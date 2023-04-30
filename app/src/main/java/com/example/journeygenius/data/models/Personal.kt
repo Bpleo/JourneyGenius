@@ -8,4 +8,6 @@ data class Personal (
     val id: String,
     val userName: String,
     val email: String,
-    val pwd: String)
+    val pwd: String,
+    val planGroupList: List<Plans>
+)
