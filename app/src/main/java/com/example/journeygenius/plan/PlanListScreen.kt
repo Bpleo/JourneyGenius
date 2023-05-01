@@ -124,7 +124,17 @@ fun PlanList(navController: NavController, planViewModel: JourneyGeniusViewModel
                 .padding(bottom = 90.dp),
                 contentAlignment = Alignment.BottomCenter
             ){
-                Row() {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Switch(
+                        checked = planViewModel.isPublic.value,
+                        onCheckedChange = { planViewModel.onPublicSwitched(it) },
+                        modifier = Modifier.padding(start = 16.dp, end = 8.dp)
+                    )
+                    Text(
+                        text = if (planViewModel.isPublic.value) "Public" else "Private",
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(end = 16.dp)
+                    )
                     Button(onClick = { navController.navigate("Plan Menu")
                         planViewModel.updateSelectedAttractionList(listOf())
                         planViewModel.updateSelectedHotelList(listOf())
@@ -133,12 +143,12 @@ fun PlanList(navController: NavController, planViewModel: JourneyGeniusViewModel
                     ) {
                         Text(text = "ADD")
                     }
-                    Spacer(modifier = Modifier.width(50.dp))
+                    Spacer(modifier = Modifier.width(20.dp))
                     Button(onClick = { navController.navigate("Plan Menu")
                         planViewModel.updateSelectedAttractionList(listOf())
                         planViewModel.updateSelectedHotelList(listOf())
                     }, modifier = Modifier
-                        .width(170.dp)
+                        .width(120.dp)
                     ) {
                         Text(text = "COMPLETE")
                     }

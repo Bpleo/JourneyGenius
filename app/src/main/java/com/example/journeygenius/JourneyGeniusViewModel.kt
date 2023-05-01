@@ -503,6 +503,12 @@ class JourneyGeniusViewModel(
         _travelModeOption.value = option
     }
 
+    private val _isPublic = mutableStateOf(false)
+    val isPublic: State<Boolean> = _isPublic
+
+    fun onPublicSwitched(isChecked: Boolean) {
+        _isPublic.value = isChecked
+    }
 
     suspend fun getLatLng(city: String, apiKey: String): Location? = withContext(Dispatchers.IO) {
         val url = URL("https://maps.googleapis.com/maps/api/geocode/json?address=$city&key=$apiKey")

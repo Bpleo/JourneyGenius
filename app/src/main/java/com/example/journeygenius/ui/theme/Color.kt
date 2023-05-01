@@ -65,3 +65,11 @@ val md_theme_dark_scrim = Color(0xFF000000)
 
 
 val seed = Color(0xFF2775B6)
+
+val primaryBlue = Color(0xFF0062A1)
+val thirdBlue = Color(0xFF9CCAFF)
+val secondaryBlue = Color(0xFF003350)
+val primaryGrey = Color(0xFF42474E)
+val secondaryGrey = Color(0xFFC2C7CF)
+val thirdGrey = Color(0xFF73777F)
+
