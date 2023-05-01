@@ -124,13 +124,24 @@ fun PlanList(navController: NavController, planViewModel: JourneyGeniusViewModel
                 .padding(bottom = 90.dp),
                 contentAlignment = Alignment.BottomCenter
             ){
-                Button(onClick = { navController.navigate("Plan Menu")
-                    planViewModel.updateSelectedAttractionList(listOf())
-                    planViewModel.updateSelectedHotelList(listOf())
-                }, modifier = Modifier
-                    .width(100.dp)
-                ) {
-                    Text(text = "ADD")
+                Row() {
+                    Button(onClick = { navController.navigate("Plan Menu")
+                        planViewModel.updateSelectedAttractionList(listOf())
+                        planViewModel.updateSelectedHotelList(listOf())
+                    }, modifier = Modifier
+                        .width(100.dp)
+                    ) {
+                        Text(text = "ADD")
+                    }
+                    Spacer(modifier = Modifier.width(50.dp))
+                    Button(onClick = { navController.navigate("Plan Menu")
+                        planViewModel.updateSelectedAttractionList(listOf())
+                        planViewModel.updateSelectedHotelList(listOf())
+                    }, modifier = Modifier
+                        .width(170.dp)
+                    ) {
+                        Text(text = "COMPLETE")
+                    }
                 }
             }
         }
