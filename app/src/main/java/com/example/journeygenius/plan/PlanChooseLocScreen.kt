@@ -431,79 +431,89 @@ fun PlanChooseLocScreen(
                         )
                     }
 
-                    GoogleMap(modifier = Modifier
-                        .fillMaxWidth()
-                        .height(320.dp),
-                        cameraPositionState = cameraPositionState,
-                        onMapLongClick = {
-                            viewModel.viewModelScope.launch {
-                                val places= viewModel.getNearbyPlaces(Location(it.latitude,it.longitude), apiKey = PlacesapiKey)
-                                viewModel.addSelectedPlacesOnMap(Pair(it.latitude,it.longitude),places)
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(320.dp)
+                            .padding(16.dp)
+                            .background(
+                                color = Color.White,
+                                shape = RoundedCornerShape(16.dp)
+                            )
+                    ) {
+                        GoogleMap(modifier = Modifier
+                            .fillMaxWidth()
+                            .height(320.dp),
+                            cameraPositionState = cameraPositionState,
+                            onMapLongClick = {
+                                viewModel.viewModelScope.launch {
+                                    val places= viewModel.getNearbyPlaces(Location(it.latitude,it.longitude), apiKey = PlacesapiKey)
+                                    viewModel.addSelectedPlacesOnMap(Pair(it.latitude,it.longitude),places)
 
+                                }
+                                Log.d("SelectedPlacesOnMap",selectedPlacesOnMap.toString())
                             }
-                            Log.d("SelectedPlacesOnMap",selectedPlacesOnMap.toString())
-                        }
 
-                    ){
+                        ){
 
-                        Marker(
-                            state = MarkerState(position = selectedCityLocation.value),
-                            title = destCity.value,
-                            snippet = "Marker in ${destCity.value}"
+                            Marker(
+                                state = MarkerState(position = selectedCityLocation.value),
+                                title = destCity.value,
+                                snippet = "Marker in ${destCity.value}"
 
-                        )
-                        if(selectedPlacesOnMap.isNotEmpty()){
-                            selectedPlacesOnMap.forEach{place->
-                                Marker(
-                                    state=MarkerState(position=LatLng(place.key.first,place.key.second)),
-                                    snippet = "Marker in ($place.key.first},${place.key.second})",
-                                    icon=bitmapDescriptorFromVector(context, R.drawable.pin2),
-                                    onClick = {
-                                        if(selectedPlacesOnMap.containsKey(place.key)){
-                                            viewModel.delSelectedPlacesOnMap(place.key)
-                                        }
-                                        Log.d("selectedplacesOnMap", selectedPlacesOnMap.toString())
-                                        return@Marker true
-                                    }
-                                )
-                                place.value.forEach {attr->
+                            )
+                            if(selectedPlacesOnMap.isNotEmpty()){
+                                selectedPlacesOnMap.forEach{place->
                                     Marker(
-                                        state = MarkerState(position = LatLng(attr.location.lat,attr.location.lng)),
-                                        title = attr.name,
-                                        snippet = "Marker in ${attr.name}",
+                                        state=MarkerState(position=LatLng(place.key.first,place.key.second)),
+                                        snippet = "Marker in ($place.key.first},${place.key.second})",
+                                        icon=bitmapDescriptorFromVector(context, R.drawable.pin2),
+                                        onClick = {
+                                            if(selectedPlacesOnMap.containsKey(place.key)){
+                                                viewModel.delSelectedPlacesOnMap(place.key)
+                                            }
+                                            Log.d("selectedplacesOnMap", selectedPlacesOnMap.toString())
+                                            return@Marker true
+                                        }
+                                    )
+                                    place.value.forEach {attr->
+                                        Marker(
+                                            state = MarkerState(position = LatLng(attr.location.lat,attr.location.lng)),
+                                            title = attr.name,
+                                            snippet = "Marker in ${attr.name}",
+                                            icon = bitmapDescriptorFromVector(
+                                                context, R.drawable.pin
+                                            ),
+                                            onClick = {
+                                                if(!selectedAttractionList.value.contains(attr)){
+                                                    viewModel.addSelectedAttraction(attr)
+                                                }
+                                                Log.d("selectedAttractionList: ",viewModel.selectedAttractionList.value.toString())
+                                                return@Marker true
+                                            }
+
+                                        )
+                                    }
+
+                                }
+                            }
+
+                            if( attractionsList.value.isNotEmpty()){
+                                attractionsList.value.forEach{place ->
+                                    Marker(
+                                        state = MarkerState(position = LatLng(place.location.lat,place.location.lng),),
+                                        title = place.name,
+                                        snippet = "Marker in ${place.name}" ,
                                         icon = bitmapDescriptorFromVector(
                                             context, R.drawable.pin
                                         ),
-                                        onClick = {
-                                            if(!selectedAttractionList.value.contains(attr)){
-                                                viewModel.addSelectedAttraction(attr)
+                                        onInfoWindowClick = {
+                                            if(!selectedAttractionList.value.contains(place)){
+                                                viewModel.addSelectedAttraction(place)
                                             }
                                             Log.d("selectedAttractionList: ",viewModel.selectedAttractionList.value.toString())
-                                            return@Marker true
+
                                         }
-
-                                    )
-                                }
-
-                            }
-                        }
-
-                        if( attractionsList.value.isNotEmpty()){
-                            attractionsList.value.forEach{place ->
-                                Marker(
-                                    state = MarkerState(position = LatLng(place.location.lat,place.location.lng),),
-                                    title = place.name,
-                                    snippet = "Marker in ${place.name}" ,
-                                    icon = bitmapDescriptorFromVector(
-                                        context, R.drawable.pin
-                                    ),
-                                    onInfoWindowClick = {
-                                        if(!selectedAttractionList.value.contains(place)){
-                                            viewModel.addSelectedAttraction(place)
-                                        }
-                                        Log.d("selectedAttractionList: ",viewModel.selectedAttractionList.value.toString())
-
-                                    }
 //                                    onClick = {
 //                                        if(!selectedAttractionList.value.contains(place)){
 //                                            viewModel.addSelectedAttraction(place)
@@ -512,10 +522,13 @@ fun PlanChooseLocScreen(
 //                                        return@Marker true
 //                                    }
 
-                                )
+                                    )
+                                }
                             }
                         }
                     }
+
+
                     Spacer(modifier = Modifier.height(5.dp))
                     Box(
                         modifier = Modifier
