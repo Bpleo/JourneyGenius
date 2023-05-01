@@ -662,16 +662,16 @@ class JourneyGeniusViewModel(
         to: LatLng,
         apiKey: String,
         waypoints: List<LatLng>,
-        travelModeOption: String
+        travelModeOption: String,
+        context: Context
     ): List<List<LatLng>> = withContext(Dispatchers.IO) {
 
         val url = getURL(from, to, apiKey, waypoints, travelModeOption)
         val result = URL(url).readText()
         val jsonObject = JsonParser.parseString(result).asJsonObject
         val routes = jsonObject.getAsJsonArray("routes")
-
-
         val allRoutes = mutableListOf<List<LatLng>>()
+
 
 //    for (i in 0 until routes.size()) {
 //        val points = routes[i].asJsonObject
@@ -682,25 +682,64 @@ class JourneyGeniusViewModel(
 //            }
 //        allPoints.add(points)
 //    }
-        for (i in 0 until routes.size()) {
-            val allPoints = mutableListOf<LatLng>()
-            allPoints.clear()
-            for (j in 0 until routes[i].asJsonObject.getAsJsonArray("legs").size()) {
-                val points = routes[i].asJsonObject
-                    .getAsJsonArray("legs")[j].asJsonObject
+        if (routes.isEmpty) {
+            val newTravelMode = when (travelModeOption) {
+                "bicycling" -> "walking"
+                "transit" -> "driving"
+                else -> "driving"
+            }
+            val newUrl = getURL(from, to, apiKey, emptyList(), newTravelMode)
+            val newResult = URL(newUrl).readText()
+            val newJsonObj = JsonParser.parseString(newResult).asJsonObject
+            val newRoutes = newJsonObj.getAsJsonArray("routes")
+            if (newRoutes.isEmpty) {
+                CoroutineScope(Dispatchers.Main).launch {
+                    Toast.makeText(
+                        context,
+                        "No more travel mode matching",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                println("No more travel mode matching")
+                return@withContext emptyList()
+            }
+            for (i in 0 until newRoutes.size()) {
+                val points = newRoutes[i].asJsonObject
+                    .getAsJsonArray("legs")[0].asJsonObject
                     .getAsJsonArray("steps")
                     .flatMap {
-                        decodePoly(
-                            it.asJsonObject.getAsJsonObject("polyline").get("points").asString
-                        )
+                        decodePoly(it.asJsonObject.getAsJsonObject("polyline").get("points").asString)
                     }
-                allPoints.addAll(points)
+                allRoutes.add(points)
             }
-            allRoutes.add(allPoints)
-
+            println("$travelModeOption not exist, show $newTravelMode instead")
+            CoroutineScope(Dispatchers.Main).launch {
+                Toast.makeText(
+                    context,
+                    "$travelModeOption not exist, show $newTravelMode instead",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        } else {
+            for (i in 0 until routes.size()) {
+                val points = routes[i].asJsonObject
+                    .getAsJsonArray("legs")[0].asJsonObject
+                    .getAsJsonArray("steps")
+                    .flatMap {
+                        decodePoly(it.asJsonObject.getAsJsonObject("polyline").get("points").asString)
+                    }
+                allRoutes.add(points)
+            }
+            println("$travelModeOption exist")
+            CoroutineScope(Dispatchers.Main).launch {
+                Toast.makeText(
+                    context,
+                    "$travelModeOption exist",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }
-
-        allRoutes
+         allRoutes
     }
 
 

@@ -116,12 +116,7 @@ fun PlanHotelSelectionScreen(viewModel: JourneyGeniusViewModel, navController: N
     val cameraPositionState= CameraPositionState(position= CameraPosition.fromLatLngZoom(LatLng(startAttraction.location.lat,startAttraction.location.lng),15f))
     var polylinePoints by remember { mutableStateOf(emptyList<List<LatLng>>()) }
     val coroutineScope = rememberCoroutineScope()
-    LaunchedEffect(key1=context) {
-        selectedAttractionList.forEach {
-            val hotelList=viewModel.searchNearbyHotels(it.name,it.location, apiKey = PlacesapiKey, maxPriceLevel = sliderValue.value?:4, context = context)
-            viewModel.addAttractionToHotel(it,hotelList)
-        }
-    }
+
     val from =LatLng(startAttraction.location.lat,startAttraction.location.lng)
     val to=LatLng(endAttraction.location.lat,endAttraction.location.lng)
     val waypoints= selectedAttractionList.toMutableList()
@@ -139,9 +134,15 @@ fun PlanHotelSelectionScreen(viewModel: JourneyGeniusViewModel, navController: N
     }
 
     LaunchedEffect(key1 = from, key2 =to ) {
-        val points = viewModel.getRoutes(from, to, PlacesapiKey,waypointsLatLng,travelModeOption.value)
+        val points = viewModel.getRoutes(from, to, PlacesapiKey,waypointsLatLng,travelModeOption.value,context)
         coroutineScope.launch {
             polylinePoints = points
+        }
+    }
+    LaunchedEffect(key1=context) {
+        selectedAttractionList.forEach {
+            val hotelList=viewModel.searchNearbyHotels(it.name,it.location, apiKey = PlacesapiKey, maxPriceLevel = sliderValue.value?:4, context = context)
+            viewModel.addAttractionToHotel(it,hotelList)
         }
     }
     println(attractionToHotels)
