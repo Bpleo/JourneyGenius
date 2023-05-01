@@ -173,13 +173,6 @@ fun PlanList(navController: NavController, planViewModel: JourneyGeniusViewModel
                         planViewModel.updateSelectedHotelList(listOf())
                         planViewModel.updateStartAttraction(Place("", "", Location(0.0, 0.0), 0.0, "", emptyArray()))
                         planViewModel.updateEndAttraction(Place("", "", Location(0.0, 0.0), 0.0, "", emptyArray()))
-//                        planViewModel.planGroupList.value.forEach {
-//                            print("${it.title} ${it.description}")
-//                            println()
-//                            it.plans.forEach { single->
-//                                print(single.attractions.toString())
-//                            }
-//                        }
                                      }, modifier = Modifier
                         .width(100.dp)
                     ) {
@@ -187,16 +180,15 @@ fun PlanList(navController: NavController, planViewModel: JourneyGeniusViewModel
                     }
                     Spacer(modifier = Modifier.width(20.dp))
                     Button(onClick = { navController.navigate("Plan Menu")
+                        if (planViewModel.isPublic.value){
+                            //TODO update list to firestore and real-time db
+
+                        } else {
+                            //TODO update to firestore
+                        }
                         planViewModel.addPlanGroupToList(planGroup)
                         planViewModel.updateSelectedAttractionList(listOf())
                         planViewModel.updateSelectedHotelList(listOf())
-//                        planViewModel.planGroupList.value.forEach {
-//                            print("${it.title} ${it.description}")
-//                            println()
-//                            it.plans.forEach { single->
-//                                print(single.attractions.toString())
-//                            }
-//                        }
                         planViewModel.updatePlanList(emptyList())
                         planViewModel.updateSinglePlan(SinglePlan("", "", listOf(), 4, "extravagant", listOf(), ""))
                         planViewModel.updatePlanGroup(Plans("", "", isPublic,listOf()))

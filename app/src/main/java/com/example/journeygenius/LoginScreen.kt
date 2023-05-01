@@ -28,6 +28,8 @@ import com.example.journeygenius.ui.theme.JourneyGeniusTheme
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -36,7 +38,8 @@ import com.google.firebase.ktx.Firebase
 fun JourneyGenius(
     auth: FirebaseAuth,
     mainActivity: MainActivity,
-    db: FirebaseFirestore
+    db: FirebaseFirestore,
+    realtime: DatabaseReference
 ) {
     val navController = rememberNavController()
     val windowSize = rememberWindowSize()
@@ -92,7 +95,8 @@ fun JourneyGenius(
                 auth,
                 db,
                 viewModel,
-                navController
+                navController,
+                realtime
             )
         }
     }

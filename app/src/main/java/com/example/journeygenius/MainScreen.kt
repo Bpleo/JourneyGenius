@@ -11,9 +11,11 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
-import com.example.journeygenius.plan.PlanViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -26,6 +28,7 @@ fun MainScreen(
     db: FirebaseFirestore,
     viewModel: JourneyGeniusViewModel,
     navController: NavHostController,
+    realtime: DatabaseReference,
 ) {
     val bottomController = rememberNavController()
     viewModel.signIn()
@@ -37,7 +40,8 @@ fun MainScreen(
             bottomController = bottomController,
             db = db,
             viewModel = viewModel,
-            auth = auth
+            auth = auth,
+            realtime = realtime
         )
     }
 }
@@ -90,5 +94,11 @@ fun RowScope.AddItem(
 @Preview
 @Composable
 fun MainScreenPreview(){
-    MainScreen(Firebase.auth, Firebase.firestore, JourneyGeniusViewModel(Firebase.firestore, Firebase.auth), rememberNavController())
+    MainScreen(
+        Firebase.auth,
+        Firebase.firestore,
+        JourneyGeniusViewModel(Firebase.firestore, Firebase.auth),
+        rememberNavController(),
+        Firebase.database.reference
+    )
 }

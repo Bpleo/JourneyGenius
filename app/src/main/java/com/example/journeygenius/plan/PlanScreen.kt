@@ -42,7 +42,11 @@ import com.example.journeygenius.JourneyGeniusViewModel
 import com.example.journeygenius.rememberWindowSize
 import com.example.journeygenius.ui.theme.JourneyGeniusTheme
 import com.google.android.gms.maps.model.LatLng
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.maxkeppeker.sheets.core.models.base.UseCaseState
@@ -59,7 +63,10 @@ import kotlin.collections.HashMap
 @Composable
 fun PlanScreenGraph(
     viewModel: JourneyGeniusViewModel,
-    windowSize: WindowSize
+    windowSize: WindowSize,
+    auth: FirebaseAuth,
+    firestore: FirebaseFirestore,
+    realtime: DatabaseReference
 ){
     val planNavController= rememberNavController()
     NavHost(navController = planNavController,
@@ -74,7 +81,10 @@ fun PlanScreenGraph(
             PlanHotelSelectionScreen(viewModel = viewModel,planNavController)
         }
         composable("Plan List"){
-            PlanList(navController = planNavController, planViewModel = viewModel)
+            PlanList(
+                navController = planNavController,
+                planViewModel = viewModel,
+            )
         }
         composable("Plan Detail"){
             PlanDetail(planNavController,viewModel)
