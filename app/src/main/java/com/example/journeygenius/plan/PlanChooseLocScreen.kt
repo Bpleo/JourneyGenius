@@ -550,7 +550,7 @@ fun PlanChooseLocScreen(
                                 viewModel.sliderValue.value?:4,
                                 viewModel.sliderLabel.value?:"extravagant",
                                 listOf(),
-                                viewModel.travelType.value
+                                viewModel.travelModeOption.value
 
                             ))
 //                            if (selectedAttractionList.value.isNotEmpty()) {

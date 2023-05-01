@@ -497,14 +497,14 @@ class JourneyGeniusViewModel(
     }
 
     private val _travelModeOption = mutableStateOf("driving")
-    val travelModeOption: State<String> = _travelModeOption
+    val travelModeOption: MutableState<String> = _travelModeOption
 
     fun onTravelModeChanged(option: String) {
         _travelModeOption.value = option
     }
 
     private val _isPublic = mutableStateOf(false)
-    val isPublic: State<Boolean> = _isPublic
+    val isPublic: MutableState<Boolean> = _isPublic
 
     fun onPublicSwitched(isChecked: Boolean) {
         _isPublic.value = isChecked
