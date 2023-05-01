@@ -46,6 +46,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -63,10 +64,7 @@ import kotlin.collections.HashMap
 @Composable
 fun PlanScreenGraph(
     viewModel: JourneyGeniusViewModel,
-    windowSize: WindowSize,
-    auth: FirebaseAuth,
-    firestore: FirebaseFirestore,
-    realtime: DatabaseReference
+    windowSize: WindowSize
 ){
     val planNavController= rememberNavController()
     NavHost(navController = planNavController,
@@ -83,7 +81,7 @@ fun PlanScreenGraph(
         composable("Plan List"){
             PlanList(
                 navController = planNavController,
-                planViewModel = viewModel,
+                planViewModel = viewModel
             )
         }
         composable("Plan Detail"){
@@ -712,14 +710,14 @@ fun PlanScreen(
 @Preview(showBackground = true)
 @Composable
 fun PlanScreenPreview() {
-    PlanScreen(JourneyGeniusViewModel(Firebase.firestore, Firebase.auth),rememberWindowSize(),
+    PlanScreen(JourneyGeniusViewModel(Firebase.firestore, Firebase.auth, Firebase.database.reference),rememberWindowSize(),
         rememberNavController())
 }
 
 @Preview@Preview(showBackground = true, device = Devices.AUTOMOTIVE_1024p, heightDp = 320)
 @Composable
 fun PlanScreenLandscapePreview() {
-    val viewModel = JourneyGeniusViewModel(Firebase.firestore, Firebase.auth)
+    val viewModel = JourneyGeniusViewModel(Firebase.firestore, Firebase.auth, Firebase.database.reference)
     val selectedDateRange = remember {
         val value = viewModel.dateRange
         mutableStateOf(value)

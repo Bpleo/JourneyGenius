@@ -43,7 +43,7 @@ fun JourneyGenius(
 ) {
     val navController = rememberNavController()
     val windowSize = rememberWindowSize()
-    val viewModel : JourneyGeniusViewModel = viewModel(factory = JourneyGeniusViewModelFactory(db, auth))
+    val viewModel : JourneyGeniusViewModel = viewModel(factory = JourneyGeniusViewModelFactory(db, auth, realtime))
     val currentUser = auth.currentUser
     NavHost(
         navController = navController,
@@ -95,8 +95,7 @@ fun JourneyGenius(
                 auth,
                 db,
                 viewModel,
-                navController,
-                realtime
+                navController
             )
         }
     }
@@ -196,7 +195,7 @@ fun LoginTextPreview() {
     LoginTextField(
         email = mutableStateOf(TextFieldValue()).value,
         pwd = mutableStateOf(String()).value,
-        viewModel = JourneyGeniusViewModel(Firebase.firestore, Firebase.auth)
+        viewModel = JourneyGeniusViewModel(Firebase.firestore, Firebase.auth, FirebaseDatabase.getInstance().reference)
     )
 }
 

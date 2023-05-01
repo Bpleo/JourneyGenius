@@ -5,5 +5,5 @@ data class Place(
     val location: Location,
     val rating: Double,
     val place_id: String,
-    val photos: Array<Photo>
+    val photos: List<Photo>?
 )

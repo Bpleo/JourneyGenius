@@ -18,8 +18,7 @@ fun SetupNavGraph(
     bottomController: NavHostController,
     db: FirebaseFirestore,
     viewModel: JourneyGeniusViewModel,
-    auth: FirebaseAuth,
-    realtime: DatabaseReference
+    auth: FirebaseAuth
 ) {
     val windowSize = rememberWindowSize()
     NavHost(
@@ -31,10 +30,7 @@ fun SetupNavGraph(
         ){
             PlanScreenGraph(
                 viewModel = viewModel,
-                windowSize = windowSize,
-                auth = auth,
-                firestore = db,
-                realtime = realtime
+                windowSize = windowSize
             )
         }
         composable(

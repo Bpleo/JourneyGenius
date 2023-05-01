@@ -6,7 +6,6 @@ import android.util.Log
 import android.util.Range
 import android.widget.Toast
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.LiveData
@@ -21,7 +20,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import com.google.gson.JsonParser
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -31,27 +29,30 @@ import java.nio.charset.Charset
 import java.time.LocalDate
 import java.util.concurrent.CopyOnWriteArrayList
 import com.example.journeygenius.data.models.*
-import javax.inject.Inject
+import com.google.firebase.database.DatabaseReference
+import java.util.*
+import kotlin.collections.HashMap
 
-//@HiltViewModel
-//class PersonalViewModel @Inject constructor(
-//    private val personalRepository: PersonalRepository
-//) : ViewModel() {
-//    private val _allProfiles = MutableStateFlow<List<Personal>>(emptyList())
-//    val allProfiles: StateFlow<List<Personal>> = _allProfiles
-//
-//    fun getAllProfiles() {
-//        viewModelScope.launch {
-//            personalRepository.getAllProfile.collect {
-//                _allProfiles.value = it
-//            }
-//        }
-//    }
-//}
+const val PlacesapiKey = "AIzaSyCNcLRKVJXQ8TL3WRiSujLRVD_qTLMxj8E"
+
 class JourneyGeniusViewModel(
     private val db: FirebaseFirestore,
-    private val auth : FirebaseAuth
+    private val auth : FirebaseAuth,
+    private val realtime : DatabaseReference
 ) : ViewModel() {
+
+    fun uploadList(shareable: Boolean){
+        if (shareable) {
+            val plans = Plans(title = planTitle.value, description = planDescription.value, isPublic = isPublic.value, plans = planList.value)
+            val planId = UUID.randomUUID()
+            realtime.child("planList").child(planId.toString()).setValue(plans)
+        }
+        val user = auth.currentUser
+        if (user != null){
+            Log.d("PLAN", "Upload ${planTitle.value} to firestore")
+            db.collection("users").document(user.uid).update("Plan_List", planGroupList.value)
+        }
+    }
 
     fun signOut() {
         Firebase.auth.signOut()
@@ -60,7 +61,7 @@ class JourneyGeniusViewModel(
         updatePwd("")
         updateVerifyPwd("")
     }
-
+    //TODO pull plan list from firestore and add to local vm
     fun signIn(){
         val user = auth.currentUser
         if (user != null) {
@@ -449,14 +450,14 @@ class JourneyGeniusViewModel(
     }
 
     private var _startAttraction =
-        mutableStateOf(Place("", "", Location(0.0, 0.0), 0.0, "", emptyArray()))
+        mutableStateOf(Place("", "", Location(0.0, 0.0), 0.0, "", listOf()))
     val startAttraction: MutableState<Place> = _startAttraction
     fun updateStartAttraction(value: Place) {
         _startAttraction.value = value
     }
 
     private var _endAttraction =
-        mutableStateOf(Place("", "", Location(0.0, 0.0), 0.0, "", emptyArray()))
+        mutableStateOf(Place("", "", Location(0.0, 0.0), 0.0, "", listOf()))
     val endAttraction: MutableState<Place> = _endAttraction
     fun updateEndAttraction(value: Place) {
         _endAttraction.value = value
@@ -543,7 +544,7 @@ class JourneyGeniusViewModel(
                     location = Location(result.geometry.location.lat, result.geometry.location.lng),
                     rating = result.rating,
                     place_id = result.place_id,
-                    photos = result.photos?: emptyArray()
+                    photos = result.photos?.toList()
                 )
             })
             Log.d("attractionlist", attractionsList.toString())
@@ -568,7 +569,7 @@ class JourneyGeniusViewModel(
                     location = Location(result.geometry.location.lat, result.geometry.location.lng),
                     rating = result.rating,
                     place_id = result.place_id,
-                    photos = result.photos?: emptyArray()
+                    photos = result.photos?.toList()
                 )
             }
         }
@@ -629,7 +630,7 @@ class JourneyGeniusViewModel(
                         ),
                         rating = result.rating,
                         place_id = result.place_id,
-                        photos = result.photos?: emptyArray()
+                        photos = result.photos?.toList()
                     ),
                     priceLevel = result.price_level,
 
@@ -647,7 +648,7 @@ class JourneyGeniusViewModel(
                         ),
                         rating = result.rating,
                         place_id = result.place_id,
-                        photos = result.photos?: emptyArray()
+                        photos = result.photos?.toList()
                     ),
                     priceLevel = result.price_level,
 
@@ -701,4 +702,6 @@ class JourneyGeniusViewModel(
 
         allRoutes
     }
+
+
 }

@@ -16,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -26,11 +25,16 @@ import androidx.navigation.compose.rememberNavController
 import com.example.journeygenius.JourneyGeniusViewModel
 import com.example.journeygenius.data.models.*
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PlanList(navController: NavController, planViewModel: JourneyGeniusViewModel) {
+fun PlanList(
+    navController: NavController,
+    planViewModel: JourneyGeniusViewModel
+) {
     val planTitle by remember{
         planViewModel.planTitle
     }
@@ -171,8 +175,8 @@ fun PlanList(navController: NavController, planViewModel: JourneyGeniusViewModel
                     Button(onClick = { navController.navigate("Plan Menu")
                         planViewModel.updateSelectedAttractionList(listOf())
                         planViewModel.updateSelectedHotelList(listOf())
-                        planViewModel.updateStartAttraction(Place("", "", Location(0.0, 0.0), 0.0, "", emptyArray()))
-                        planViewModel.updateEndAttraction(Place("", "", Location(0.0, 0.0), 0.0, "", emptyArray()))
+                        planViewModel.updateStartAttraction(Place("", "", Location(0.0, 0.0), 0.0, "", emptyList()))
+                        planViewModel.updateEndAttraction(Place("", "", Location(0.0, 0.0), 0.0, "", emptyList()))
                                      }, modifier = Modifier
                         .width(100.dp)
                     ) {
@@ -180,20 +184,19 @@ fun PlanList(navController: NavController, planViewModel: JourneyGeniusViewModel
                     }
                     Spacer(modifier = Modifier.width(20.dp))
                     Button(onClick = { navController.navigate("Plan Menu")
-                        if (planViewModel.isPublic.value){
-                            //TODO update list to firestore and real-time db
 
-                        } else {
-                            //TODO update to firestore
-                        }
+
                         planViewModel.addPlanGroupToList(planGroup)
+                        //update to firestore
+                        planViewModel.uploadList(isPublic)
+
                         planViewModel.updateSelectedAttractionList(listOf())
                         planViewModel.updateSelectedHotelList(listOf())
                         planViewModel.updatePlanList(emptyList())
                         planViewModel.updateSinglePlan(SinglePlan("", "", listOf(), 4, "extravagant", listOf(), ""))
                         planViewModel.updatePlanGroup(Plans("", "", isPublic,listOf()))
-                        planViewModel.updateStartAttraction(Place("", "", Location(0.0, 0.0), 0.0, "", emptyArray()))
-                        planViewModel.updateEndAttraction(Place("", "", Location(0.0, 0.0), 0.0, "", emptyArray()))
+                        planViewModel.updateStartAttraction(Place("", "", Location(0.0, 0.0), 0.0, "", emptyList()))
+                        planViewModel.updateEndAttraction(Place("", "", Location(0.0, 0.0), 0.0, "", emptyList()))
                         planViewModel.updatePlanDescription("")
                         planViewModel.updatePlanTitle("")
                         Toast.makeText(
@@ -217,6 +220,6 @@ fun PlanList(navController: NavController, planViewModel: JourneyGeniusViewModel
 @Composable
 fun PlanListPreview(){
     PlanList(navController = rememberNavController(), planViewModel = JourneyGeniusViewModel(
-        FirebaseFirestore.getInstance(), FirebaseAuth.getInstance())
+        FirebaseFirestore.getInstance(), FirebaseAuth.getInstance(), FirebaseDatabase.getInstance().reference)
     )
 }

@@ -27,8 +27,7 @@ fun MainScreen(
     auth: FirebaseAuth,
     db: FirebaseFirestore,
     viewModel: JourneyGeniusViewModel,
-    navController: NavHostController,
-    realtime: DatabaseReference,
+    navController: NavHostController
 ) {
     val bottomController = rememberNavController()
     viewModel.signIn()
@@ -41,7 +40,6 @@ fun MainScreen(
             db = db,
             viewModel = viewModel,
             auth = auth,
-            realtime = realtime
         )
     }
 }
@@ -97,8 +95,7 @@ fun MainScreenPreview(){
     MainScreen(
         Firebase.auth,
         Firebase.firestore,
-        JourneyGeniusViewModel(Firebase.firestore, Firebase.auth),
-        rememberNavController(),
-        Firebase.database.reference
+        JourneyGeniusViewModel(Firebase.firestore, Firebase.auth, Firebase.database.reference),
+        rememberNavController()
     )
 }

@@ -31,6 +31,7 @@ import com.example.journeygenius.JourneyGeniusViewModel
 import com.example.journeygenius.rememberWindowSize
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -289,7 +290,7 @@ private fun prepareOptionsData() {
 fun PersonalScreenPreview() {
     PersonalMenu(
         LocalContext.current,
-        JourneyGeniusViewModel(Firebase.firestore, Firebase.auth),
+        JourneyGeniusViewModel(Firebase.firestore, Firebase.auth, Firebase.database.reference),
         rememberNavController(),
         rememberNavController()
     )

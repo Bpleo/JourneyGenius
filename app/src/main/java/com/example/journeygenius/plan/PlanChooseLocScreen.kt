@@ -32,6 +32,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.journeygenius.JourneyGeniusViewModel
+import com.example.journeygenius.PlacesapiKey
 import com.example.journeygenius.R
 import com.google.android.gms.maps.model.*
 import com.google.firebase.auth.ktx.auth
@@ -40,6 +41,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.maps.android.compose.*
 import kotlinx.coroutines.launch
 import com.example.journeygenius.data.models.*
+import com.google.firebase.database.ktx.database
 
 
 import java.util.*
@@ -637,7 +639,7 @@ fun dropDownMenu() {
 @Preview(showBackground = true)
 @Composable
 fun PlanChooseLocScreenPreview() {
-    PlanChooseLocScreen(JourneyGeniusViewModel(Firebase.firestore, Firebase.auth), rememberNavController())
+    PlanChooseLocScreen(JourneyGeniusViewModel(Firebase.firestore, Firebase.auth, Firebase.database.reference), rememberNavController())
 //    dropDownMenu()
 //    Tag(title = "Shenzhen", onClose = {})
 }
