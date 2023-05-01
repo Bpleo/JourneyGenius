@@ -12,6 +12,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -29,6 +30,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -143,7 +146,12 @@ fun TravelDateComponent(
                                 text = AnnotatedString(
                                     selectedDateRange.component1().component1().lower.format(
                                         sdf
-                                    ), spanStyle = SpanStyle(fontSize = 34.sp)
+                                    ), spanStyle = SpanStyle(
+                                        fontSize = 28.sp,
+                                        color = Color.DarkGray,
+                                        background = Color.White,
+                                        textDecoration = TextDecoration.None
+                                    )
                                 ),
                                 onClick = {
                                     calenderState.show()
@@ -176,7 +184,12 @@ fun TravelDateComponent(
                                 text = AnnotatedString(
                                     selectedDateRange.component1().component1().upper.format(
                                         sdf
-                                    ), spanStyle = SpanStyle(fontSize = 34.sp)
+                                    ), spanStyle = SpanStyle(
+                                        fontSize = 28.sp,
+                                        color = Color.DarkGray,
+                                        background = Color.White,
+                                        textDecoration = TextDecoration.None
+                                    )
                                 ),
                                 onClick = {
                                     calenderState.show()
@@ -214,7 +227,7 @@ fun BudgetComponent(viewModel: JourneyGeniusViewModel){
         val sliderValue: Int by viewModel.sliderValue.observeAsState(0)
         val sliderLabel: String by viewModel.sliderLabel.observeAsState("cheap")
 
-        Column {
+        Row(verticalAlignment = Alignment.CenterVertically) {
             Slider(
                 value = sliderValue.toFloat(),
                 onValueChange = { viewModel.onSliderValueChanged(it.toInt()) },
@@ -222,10 +235,23 @@ fun BudgetComponent(viewModel: JourneyGeniusViewModel){
                 steps = 3,
                 modifier = Modifier
                     .height(50.dp)
-                    .width(300.dp)
+                    .width(220.dp)
+                    .padding(end = 16.dp)
             )
             Spacer(modifier = Modifier.height(16.dp))
-            Text(text = sliderLabel, style = MaterialTheme.typography.bodyLarge)
+            Box(
+                modifier = Modifier
+                    .background(Color.LightGray, RoundedCornerShape(16.dp))
+            ) {
+                Text(
+                    text = sliderLabel,
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .fillMaxWidth(),
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+            }
         }
     }
 }
