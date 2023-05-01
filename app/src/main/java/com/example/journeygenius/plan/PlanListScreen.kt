@@ -1,16 +1,20 @@
 package com.example.journeygenius.plan
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -58,7 +62,18 @@ fun PlanList(navController: NavController, planViewModel: JourneyGeniusViewModel
                     label = {
                         Text("Title: ")
                     },
-                    maxLines = 1,
+                    textStyle = MaterialTheme.typography.bodyMedium,
+                    singleLine = true,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(MaterialTheme.colorScheme.surface)
+                        .border(
+                            width = 1.dp,
+                            color = MaterialTheme.colorScheme.primaryContainer,
+                            shape = RoundedCornerShape(8.dp)
+                        ),
                     keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
                 )
 //                Text(
@@ -69,7 +84,7 @@ fun PlanList(navController: NavController, planViewModel: JourneyGeniusViewModel
 
             }
             Column(
-                modifier = Modifier.padding(30.dp,200.dp)
+                modifier = Modifier.padding(30.dp,170.dp)
             ) {
 //                Text(
 //                    text = planViewModel.planGroup.value.description,
@@ -78,18 +93,28 @@ fun PlanList(navController: NavController, planViewModel: JourneyGeniusViewModel
 //                )
                 TextField(
                     value = planDescription.value,
-                    onValueChange = {
-                        planViewModel.updatePlanDescription(it)
-                    },
+                    onValueChange = { planViewModel.updatePlanDescription(it) },
                     label = {
-                        Text("Description: ")
+                        Text("Description:")
                     },
-                    maxLines = 1,
+                    singleLine = true,
+                    textStyle = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(MaterialTheme.colorScheme.surface)
+                        .border(
+                            width = 1.dp,
+                            color = MaterialTheme.colorScheme.primaryContainer,
+                            shape = RoundedCornerShape(8.dp)
+                        ),
                     keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
                 )
+
             }
             Box(modifier = Modifier
-                .padding(30.dp, 300.dp)
+                .padding(30.dp, 250.dp)
                 .fillMaxSize()){
                 if(planList.value.isNotEmpty()) {
                     LazyColumn(
@@ -99,7 +124,7 @@ fun PlanList(navController: NavController, planViewModel: JourneyGeniusViewModel
                             Text(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .background(MaterialTheme.colorScheme.primaryContainer)
+                                    .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(16.dp))
                                     .padding(24.dp)
                                     .clickable {
                                         planViewModel.updatePlanOnDetail(plan)
@@ -110,8 +135,6 @@ fun PlanList(navController: NavController, planViewModel: JourneyGeniusViewModel
                                 fontWeight = MaterialTheme.typography.titleLarge.fontWeight,
                             )
                         }
-
-
                     }
                 }else{
                     Text(color = Color.DarkGray
