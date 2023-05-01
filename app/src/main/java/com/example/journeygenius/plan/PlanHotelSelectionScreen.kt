@@ -235,7 +235,7 @@ fun PlanHotelSelectionScreen(viewModel: JourneyGeniusViewModel, navController: N
                         viewModel.addHotelsToSinglePlan(selectedHotelList)
                         viewModel.addSinglePlan(singlePlan)
 
-                        viewModel.updatePlanGroup(Plans(viewModel.planGroup.value.title,viewModel.planGroup.value.description,planList))
+                        viewModel.updatePlanGroup(Plans(viewModel.planGroup.value.title,viewModel.planGroup.value.description,viewModel.planGroup.value.isPublic,planList))
                         navController.navigate("Plan List")
                         Log.d("Plan",planGroup.toString())
                         Log.d("PlanList",viewModel.planGroupList.value.toString())

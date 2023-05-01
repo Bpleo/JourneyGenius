@@ -208,7 +208,7 @@ class PlanViewModel : ViewModel() {
         }
     }
 
-    private var _planGroup = mutableStateOf(Plans("", "", listOf()))
+    private var _planGroup = mutableStateOf(Plans("", "",true, listOf()))
     val planGroup: MutableState<Plans> = _planGroup
     fun updatePlanGroup(value: Plans) {
         _planGroup.value = value
@@ -224,7 +224,8 @@ class PlanViewModel : ViewModel() {
     private fun updatePlanTitleToPlanGroup() {
         val description = planGroup.value.description
         val planList = planGroup.value.plans
-        updatePlanGroup(Plans(planTitle.value, description, planList))
+        val isPublic=planGroup.value.isPublic
+        updatePlanGroup(Plans(planTitle.value, description, isPublic,planList))
         Log.d("updatePlanGroup", planGroup.value.toString())
     }
 
@@ -238,7 +239,8 @@ class PlanViewModel : ViewModel() {
     private fun updatePlanDescripToPlanGroup() {
         val title = planGroup.value.title
         val planList = planGroup.value.plans
-        updatePlanGroup(Plans(title, planDescription.value, planList))
+        val isPublic=planGroup.value.isPublic
+        updatePlanGroup(Plans(title, planDescription.value, isPublic,planList))
         Log.d("updatePlanGroup", planGroup.value.toString())
     }
 
