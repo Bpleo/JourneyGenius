@@ -1,5 +1,6 @@
 package com.example.journeygenius.plan
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -14,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
@@ -22,24 +24,26 @@ import com.example.journeygenius.ui.theme.JourneyGeniusTheme
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.journeygenius.JourneyGeniusViewModel
+import com.example.journeygenius.data.models.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlanList(navController: NavController, planViewModel: JourneyGeniusViewModel) {
-    val planTitle =remember{
+    val planTitle by remember{
         planViewModel.planTitle
     }
-    val planDescription=remember{
+    val planDescription by remember{
         planViewModel.planDescription
     }
-    val planList = remember{
+    val planList by  remember{
         planViewModel.planList
     }
-    val planGroup=remember{
+    val planGroup by remember{
         planViewModel.planGroup
     }
+    val context= LocalContext.current
     JourneyGeniusTheme {
         Box(
             modifier = Modifier.fillMaxSize(),
@@ -55,7 +59,7 @@ fun PlanList(navController: NavController, planViewModel: JourneyGeniusViewModel
                 modifier = Modifier.padding(30.dp,100.dp)
             ) {
                 TextField(
-                    value = planTitle.value,
+                    value = planTitle,
                     onValueChange = {
                         planViewModel.updatePlanTitle(it)
                     },
@@ -92,7 +96,7 @@ fun PlanList(navController: NavController, planViewModel: JourneyGeniusViewModel
 //                    fontSize = MaterialTheme.typography.headlineMedium.fontSize
 //                )
                 TextField(
-                    value = planDescription.value,
+                    value = planDescription,
                     onValueChange = { planViewModel.updatePlanDescription(it) },
                     label = {
                         Text("Description:")
@@ -116,11 +120,11 @@ fun PlanList(navController: NavController, planViewModel: JourneyGeniusViewModel
             Box(modifier = Modifier
                 .padding(30.dp, 250.dp)
                 .fillMaxSize()){
-                if(planList.value.isNotEmpty()) {
+                if(planList.isNotEmpty()) {
                     LazyColumn(
                         verticalArrangement = Arrangement.spacedBy(10.dp),
                     ) {
-                        itemsIndexed(planList.value) { index, plan ->
+                        itemsIndexed(planList) { index, plan ->
                             Text(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -161,15 +165,45 @@ fun PlanList(navController: NavController, planViewModel: JourneyGeniusViewModel
                     Button(onClick = { navController.navigate("Plan Menu")
                         planViewModel.updateSelectedAttractionList(listOf())
                         planViewModel.updateSelectedHotelList(listOf())
-                    }, modifier = Modifier
+                        planViewModel.updateStartAttraction(Place("", "", Location(0.0, 0.0), 0.0, "", emptyArray()))
+                        planViewModel.updateEndAttraction(Place("", "", Location(0.0, 0.0), 0.0, "", emptyArray()))
+//                        planViewModel.planGroupList.value.forEach {
+//                            print("${it.title} ${it.description}")
+//                            println()
+//                            it.plans.forEach { single->
+//                                print(single.attractions.toString())
+//                            }
+//                        }
+                                     }, modifier = Modifier
                         .width(100.dp)
                     ) {
                         Text(text = "ADD")
                     }
                     Spacer(modifier = Modifier.width(20.dp))
                     Button(onClick = { navController.navigate("Plan Menu")
+
                         planViewModel.updateSelectedAttractionList(listOf())
                         planViewModel.updateSelectedHotelList(listOf())
+                        planViewModel.addPlanGroupToList(planGroup)
+//                        planViewModel.planGroupList.value.forEach {
+//                            print("${it.title} ${it.description}")
+//                            println()
+//                            it.plans.forEach { single->
+//                                print(single.attractions.toString())
+//                            }
+//                        }
+                        planViewModel.updatePlanList(emptyList())
+                        planViewModel.updateSinglePlan(SinglePlan("", "", listOf(), 4, "extravagant", listOf(), ""))
+                        planViewModel.updatePlanGroup(Plans("", "", listOf()))
+                        planViewModel.updateStartAttraction(Place("", "", Location(0.0, 0.0), 0.0, "", emptyArray()))
+                        planViewModel.updateEndAttraction(Place("", "", Location(0.0, 0.0), 0.0, "", emptyArray()))
+                        planViewModel.updatePlanDescription("")
+                        planViewModel.updatePlanTitle("")
+                        Toast.makeText(
+                            context,
+                            "Save successfully !",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }, modifier = Modifier
                         .width(120.dp)
                     ) {

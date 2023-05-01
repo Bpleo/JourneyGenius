@@ -81,49 +81,49 @@ fun decodePoly(encoded: String): List<LatLng> {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlanHotelSelectionScreen(viewModel: JourneyGeniusViewModel, navController: NavController) {
-    val attractionToHotels=remember{
+    val attractionToHotels by remember{
         viewModel.attractionToHotels
     }
-    val selectedHotelList= remember {
+    val selectedHotelList by remember {
         viewModel.selectedHotelList
     }
-    val selectedAttractionList =  remember{
+    val selectedAttractionList by remember{
         viewModel.selectedAttractionList
     }
-    val startAttraction = remember{
+    val startAttraction by remember{
         viewModel.startAttraction
     }
-    val endAttraction = remember {
+    val endAttraction by remember {
         viewModel.endAttraction
     }
     val sliderValue = remember{
         viewModel.sliderValue
     }
-    val singlePlan = remember {
+    val singlePlan by remember {
         viewModel.singlePlan
     }
     val planList by remember {
         viewModel.planList
     }
-    val planGroup= remember {
+    val planGroup by remember {
         viewModel.planGroup
     }
     val travelModeOption = remember{
         viewModel.travelModeOption
     }
     val context = LocalContext.current
-    val cameraPositionState= CameraPositionState(position= CameraPosition.fromLatLngZoom(LatLng(startAttraction.value.location.lat,startAttraction.value.location.lng),15f))
+    val cameraPositionState= CameraPositionState(position= CameraPosition.fromLatLngZoom(LatLng(startAttraction.location.lat,startAttraction.location.lng),15f))
     var polylinePoints by remember { mutableStateOf(emptyList<List<LatLng>>()) }
     val coroutineScope = rememberCoroutineScope()
     LaunchedEffect(key1=context) {
-        selectedAttractionList.value.forEach {
+        selectedAttractionList.forEach {
             val hotelList=viewModel.searchNearbyHotels(it.name,it.location, apiKey = PlacesapiKey, maxPriceLevel = sliderValue.value?:4, context = context)
             viewModel.addAttractionToHotel(it,hotelList)
         }
     }
-    val from =LatLng(startAttraction.value.location.lat,startAttraction.value.location.lng)
-    val to=LatLng(endAttraction.value.location.lat,endAttraction.value.location.lng)
-    val waypoints= selectedAttractionList.value.toMutableList()
+    val from =LatLng(startAttraction.location.lat,startAttraction.location.lng)
+    val to=LatLng(endAttraction.location.lat,endAttraction.location.lng)
+    val waypoints= selectedAttractionList.toMutableList()
     println(waypoints.toString())
     if (waypoints.isNotEmpty()){
         val first=waypoints[0]
@@ -145,8 +145,6 @@ fun PlanHotelSelectionScreen(viewModel: JourneyGeniusViewModel, navController: N
     }
     println(attractionToHotels)
 
-    var showDialog by remember { mutableStateOf(false) }
-
     JourneyGeniusTheme{
         Box(
             modifier = Modifier.fillMaxSize(),
@@ -164,29 +162,29 @@ fun PlanHotelSelectionScreen(viewModel: JourneyGeniusViewModel, navController: N
                     .height(550.dp),
                     cameraPositionState = cameraPositionState,
                     onMapLongClick = {
-                        Log.d("selectedHotelOnMap",selectedHotelList.value.toString())
+                        Log.d("selectedHotelOnMap",selectedHotelList.toString())
                     },
                     onMapClick = {}
                 ){
-                    if(selectedAttractionList.value.isNotEmpty()){
-                        selectedAttractionList.value.forEach {
+                    if(selectedAttractionList.isNotEmpty()){
+                        selectedAttractionList.forEach {
                             Marker(
                                 state= MarkerState(position=LatLng(it.location.lat,it.location.lng)),
                                 snippet = "Marker in ${it.name}",
                             )
 
-                            if(attractionToHotels.value.containsKey(it) && !attractionToHotels.value[it].isNullOrEmpty()){
-                                attractionToHotels.value[it]!!.forEach {hotel->
+                            if(attractionToHotels.containsKey(it) && !attractionToHotels[it].isNullOrEmpty()){
+                                attractionToHotels[it]!!.forEach {hotel->
                                     Marker(
                                         state= MarkerState(position=LatLng(hotel.place.location.lat,hotel.place.location.lng)),
                                         snippet = "Marker in ${hotel.place.name}",
                                         icon = BitmapDescriptorFactory.defaultMarker(
                                             BitmapDescriptorFactory.HUE_GREEN),
                                         onClick={
-                                            if(!selectedHotelList.value.contains(hotel)){
+                                            if(!selectedHotelList.contains(hotel)){
                                                 viewModel.addSelectedHotel(hotel)
                                             }
-                                            Log.d("selectedHotel",selectedHotelList.value.toString())
+                                            Log.d("selectedHotel",selectedHotelList.toString())
                                             return@Marker true
 
                                         }
@@ -220,10 +218,10 @@ fun PlanHotelSelectionScreen(viewModel: JourneyGeniusViewModel, navController: N
                     LazyColumn(
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        items(selectedHotelList.value,key={it.place.name}){
+                        items(selectedHotelList,key={it.place.name}){
                             Tag(title=it.place.name, onClose = {
                                 viewModel.delSelectedHotel(it)
-                                Log.d("selectedHotel",selectedHotelList.value.toString())
+                                Log.d("selectedHotel",selectedHotelList.toString())
                             })
                         }
                     }
@@ -234,11 +232,13 @@ fun PlanHotelSelectionScreen(viewModel: JourneyGeniusViewModel, navController: N
                     contentAlignment = Alignment.BottomCenter
                 ){
                     Button(onClick = {
-                        viewModel.addHotelsToSinglePlan(selectedHotelList.value)
-                        viewModel.addSinglePlan(singlePlan.value)
+                        viewModel.addHotelsToSinglePlan(selectedHotelList)
+                        viewModel.addSinglePlan(singlePlan)
+
                         viewModel.updatePlanGroup(Plans(viewModel.planGroup.value.title,viewModel.planGroup.value.description,planList))
                         navController.navigate("Plan List")
-                        Log.d("Plan",planGroup.value.toString())
+                        Log.d("Plan",planGroup.toString())
+                        Log.d("PlanList",viewModel.planGroupList.value.toString())
                     }, modifier = Modifier
                         .width(130.dp)
                     ) {

@@ -548,7 +548,7 @@ fun PlanChooseLocScreen(
                                 "${destCountry.value}  ${destState.value}  ${destCity.value}",
                                 selectedAttractionList.value,
                                 viewModel.sliderValue.value?:4,
-                                viewModel.sliderLabel.value?:"luxury",
+                                viewModel.sliderLabel.value?:"extravagant",
                                 listOf(),
                                 viewModel.travelType.value
 
@@ -561,9 +561,6 @@ fun PlanChooseLocScreen(
 //
 //                                         viewModel.updatePlanGroup(Plans(viewModel.planGroup.value.title,viewModel.planGroup.value.description,planList))
                             navController.navigate("Plan Hotel")
-                            Log.d("startAttraction",startAttraction.value.toString())
-                            Log.d("endAttraction",endAttraction.value.toString())
-                            Log.d("Plan",planGroup.toString())
                         }, modifier = Modifier
                             .width(130.dp)
                         ) {
