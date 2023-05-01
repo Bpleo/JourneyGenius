@@ -12,10 +12,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.journeygenius.data.models.*
 import com.example.journeygenius.plan.*
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
@@ -27,28 +29,30 @@ import kotlinx.coroutines.withContext
 import java.net.URL
 import java.nio.charset.Charset
 import java.time.LocalDate
-import java.util.concurrent.CopyOnWriteArrayList
-import com.example.journeygenius.data.models.*
-import com.google.firebase.database.DatabaseReference
 import java.util.*
-import kotlin.collections.HashMap
+import java.util.concurrent.CopyOnWriteArrayList
 
 const val PlacesapiKey = "AIzaSyCNcLRKVJXQ8TL3WRiSujLRVD_qTLMxj8E"
 
 class JourneyGeniusViewModel(
     private val db: FirebaseFirestore,
-    private val auth : FirebaseAuth,
-    private val realtime : DatabaseReference
+    private val auth: FirebaseAuth,
+    private val realtime: DatabaseReference
 ) : ViewModel() {
 
-    fun uploadList(shareable: Boolean){
+    fun uploadList(shareable: Boolean) {
         if (shareable) {
-            val plans = Plans(title = planTitle.value, description = planDescription.value, isPublic = isPublic.value, plans = planList.value)
+            val plans = Plans(
+                title = planTitle.value,
+                description = planDescription.value,
+                isPublic = isPublic.value,
+                plans = planList.value
+            )
             val planId = UUID.randomUUID()
             realtime.child("planList").child(planId.toString()).setValue(plans)
         }
         val user = auth.currentUser
-        if (user != null){
+        if (user != null) {
             Log.d("PLAN", "Upload ${planTitle.value} to firestore")
             db.collection("users").document(user.uid).update("Plan_List", planGroupList.value)
         }
@@ -61,13 +65,14 @@ class JourneyGeniusViewModel(
         updatePwd("")
         updateVerifyPwd("")
     }
+
     //TODO pull plan list from firestore and add to local vm
-    fun signIn(){
+    fun signIn() {
         val user = auth.currentUser
         if (user != null) {
             Log.d("USER", user.email.toString())
             db.collection("users").document(user.uid).get()
-                .addOnSuccessListener {documentSnapshot ->
+                .addOnSuccessListener { documentSnapshot ->
                     if (documentSnapshot != null) {
                         val data = documentSnapshot.data
                         if (data != null) {
@@ -75,6 +80,160 @@ class JourneyGeniusViewModel(
                             updateEmail(TextFieldValue(data["email"].toString()))
                             updatePwd(data["password"].toString())
                             updateOldEmail(TextFieldValue(data["email"].toString()))
+                            // get a list of plans
+                            val groupListData =
+                                documentSnapshot.get("Plan_List") as? List<Map<String, Any>>
+                            val groupList: List<Plans> = groupListData?.mapNotNull { planListData ->
+                                val description = planListData["description"] as? String
+                                val public = planListData["public"] as? Boolean
+                                val title = planListData["title"] as? String
+                                // get a list of single plans
+                                val plansData = planListData["plans"] as? List<Map<String, Any>>
+                                val plans: List<SinglePlan> = plansData?.mapNotNull { planData ->
+                                    val date = planData["date"] as? String
+                                    val destination = planData["destination"] as? String
+                                    val priceLevel = planData["priceLevel"] as? Int
+                                    val priceLevelLabel = planData["priceLevelLabel"] as? String
+                                    val travelType = planData["travelType"] as? String
+                                    // get a list of attractions
+                                    val attractionsData =
+                                        planData["attractions"] as? List<Map<String, Any>>
+                                    val attractions: List<Place> =
+                                        attractionsData?.mapNotNull { attraction ->
+                                            val name = attraction["name"] as? String
+                                            val vicinity = attraction["vicinity"] as? String
+                                            // get a location object
+                                            val locationData =
+                                                attraction["location"] as? Map<String, Any>
+                                            val location = locationData?.let {
+                                                Location(
+                                                    lat = it["lat"] as? Double ?: 0.0,
+                                                    lng = it["lng"] as? Double ?: 0.0
+                                                )
+                                            }
+                                            val rating = attraction["rating"] as? Double
+                                            val place_id = attraction["place_id"] as? String
+                                            // get a list of photos
+                                            val photosData =
+                                                attraction["photos"] as? List<Map<String, Any>>
+                                            val photos: List<Photo>? =
+                                                photosData?.mapNotNull { photo ->
+                                                    val height = photo["height"] as? Int
+                                                    val width = photo["width"] as? Int
+                                                    val photo_reference =
+                                                        photo["photo_reference"] as? String
+                                                    val html_attributions =
+                                                        photo["html_attributions"] as? List<String>
+                                                    if (height != null && width != null && photo_reference != null && html_attributions != null) {
+                                                        Log.d("DATA", "attraction photo pulled")
+                                                        Photo(
+                                                            height,
+                                                            html_attributions,
+                                                            photo_reference,
+                                                            width
+                                                        )
+                                                    } else
+                                                        null//get a photo object
+                                                }
+                                            if (name != null && vicinity != null && location != null && rating != null && place_id != null && photos != null) {
+                                                Log.d("DATA", "attraction pulled")
+                                                Place(
+                                                    name,
+                                                    vicinity,
+                                                    location,
+                                                    rating,
+                                                    place_id,
+                                                    photos
+                                                )
+                                            } else
+                                                null // get a Place Object
+                                        } ?: emptyList()
+                                    // get a list of hotels
+                                    val hotelsData = planData["hotel"] as? List<Map<String, Any>>
+                                    val hotel: List<Hotel> = hotelsData?.mapNotNull { hotelData ->
+                                        val priceLevel = hotelData["priceLevel"] as? Int
+                                        val placeData = hotelData["place"] as? Map<String, Any>
+                                        val place: Place? = placeData?.let {
+                                            val name = it["name"] as? String
+                                            val vicinity = it["vicinity"] as? String
+                                            // get a location object
+                                            val locationData = it["location"] as? Map<String, Any>
+                                            val location = locationData?.let {
+                                                Location(
+                                                    lat = it["lat"] as? Double ?: 0.0,
+                                                    lng = it["lng"] as? Double ?: 0.0
+                                                )
+                                            }
+                                            val rating = it["rating"] as? Double
+                                            val place_id = it["place_id"] as? String
+                                            // get a list of photos
+                                            val photosData = it["photos"] as? List<Map<String, Any>>
+                                            val photos: List<Photo>? =
+                                                photosData?.mapNotNull { photo ->
+                                                    val height = photo["height"] as? Int
+                                                    val width = photo["width"] as? Int
+                                                    val photo_reference =
+                                                        photo["photo_reference"] as? String
+                                                    val html_attributions =
+                                                        photo["html_attributions"] as? List<String>
+                                                    if (height != null && width != null && photo_reference != null && html_attributions != null) {
+                                                        Log.d("DATA", "hotel photo pulled")
+                                                        Photo(
+                                                            height,
+                                                            html_attributions,
+                                                            photo_reference,
+                                                            width
+                                                        )
+                                                    } else
+                                                        null//get a photo object
+                                                }
+                                            if (name != null && vicinity != null && location != null && rating != null && place_id != null && photos != null) {
+                                                Log.d("DATA", "hotel place pulled")
+                                                Place(
+                                                    name,
+                                                    vicinity,
+                                                    location,
+                                                    rating,
+                                                    place_id,
+                                                    photos
+                                                )
+                                            } else
+                                                null // get a place Object
+                                        }
+                                        // get a hotel object
+                                        if (priceLevel != null && place != null) {
+                                            Log.d("DATA", "hotel pulled")
+                                            Hotel(place, priceLevel)
+                                        } else
+                                            null
+                                    } ?: emptyList()
+                                    // get a SinglePlan Object
+                                    if (date != null && destination != null && attractions != null && priceLevel != null
+                                        && priceLevelLabel != null && hotel != null && travelType != null
+                                    ) {
+                                        Log.d("DATA", "single plan pulled")
+                                        SinglePlan(
+                                            date,
+                                            destination,
+                                            attractions,
+                                            priceLevel,
+                                            priceLevelLabel,
+                                            hotel,
+                                            travelType
+                                        )
+                                    } else
+                                        null
+                                } ?: emptyList()
+                                // get a Plans object
+                                if (title != null && description != null && public != null && plans != null) {
+                                    Log.d("DATA", "plan list pulled")
+                                    Plans(title, description, public, plans)
+                                } else
+                                    null
+                            } ?: emptyList()
+                            // append groupList to current vm
+                            updatePlanGroupList(groupList)
+                            print(groupList)
                         } else {
                             Log.d("FIRESTORE", "No data found")
                         }
@@ -93,22 +252,22 @@ class JourneyGeniusViewModel(
     private var _userName = mutableStateOf(TextFieldValue())
     val userName: MutableState<TextFieldValue> = _userName
 
-    fun updateUserName(userName : TextFieldValue) {
+    fun updateUserName(userName: TextFieldValue) {
         _userName.value = userName
     }
 
     fun resetUserName(userName: TextFieldValue) {
         val user = auth.currentUser
-        if (user != null){
-            db.collection("users").document(user.uid).update("name",userName.text)
+        if (user != null) {
+            db.collection("users").document(user.uid).update("name", userName.text)
         }
     }
 
     private var _email = mutableStateOf(TextFieldValue())
     val email: MutableState<TextFieldValue> = _email
-    private var oldEmail  = TextFieldValue()
+    private var oldEmail = TextFieldValue()
 
-    fun updateEmail(email : TextFieldValue) {
+    fun updateEmail(email: TextFieldValue) {
         _email.value = email
     }
 
@@ -116,8 +275,8 @@ class JourneyGeniusViewModel(
         oldEmail = email
     }
 
-    fun resetEmail(newEmail : TextFieldValue) {
-        Log.i("USER","oldemail: $oldEmail")
+    fun resetEmail(newEmail: TextFieldValue) {
+        Log.i("USER", "oldemail: $oldEmail")
         auth.signOut()
         auth.signInWithEmailAndPassword(oldEmail.text, pwd.value).addOnSuccessListener {
             val user = auth.currentUser
@@ -139,16 +298,16 @@ class JourneyGeniusViewModel(
     }
 
     private var _pwd = mutableStateOf(String())
-    val pwd : MutableState<String> = _pwd
+    val pwd: MutableState<String> = _pwd
 
-    fun updatePwd(pwd : String) {
+    fun updatePwd(pwd: String) {
         _pwd.value = pwd
     }
 
-    fun resetPwd(){
+    fun resetPwd() {
         val newPwd = _pwd.value
         auth.sendPasswordResetEmail(_email.value.text)
-            .addOnCompleteListener{task ->
+            .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     db.collection("users").document(auth.currentUser!!.uid)
                         .update("password", newPwd)
@@ -160,60 +319,60 @@ class JourneyGeniusViewModel(
     }
 
     private var _verifyPwd = mutableStateOf(String())
-    val verifyPwd : MutableState<String> = _verifyPwd
+    val verifyPwd: MutableState<String> = _verifyPwd
 
-    fun updateVerifyPwd(pwd : String) {
+    fun updateVerifyPwd(pwd: String) {
         _verifyPwd.value = pwd
     }
 
     private var _dateRange = mutableStateOf(Range(LocalDate.now().minusDays(3), LocalDate.now()))
     val dateRange: MutableState<Range<LocalDate>> = _dateRange
 
-    fun updateRange(start: LocalDate, end: LocalDate){
+    fun updateRange(start: LocalDate, end: LocalDate) {
         _dateRange.value = Range(start, end)
     }
 
     private var _budget = mutableStateOf(TextFieldValue())
     val budget: MutableState<TextFieldValue> = _budget
 
-    fun updateBudget(value: TextFieldValue){
+    fun updateBudget(value: TextFieldValue) {
         _budget.value = value
     }
 
-    private var _departCountry= mutableStateOf("US")
-    val departCountry:MutableState<String> = _departCountry
-    fun updateDepartCountry(value: String){
-        _departCountry.value=value
+    private var _departCountry = mutableStateOf("US")
+    val departCountry: MutableState<String> = _departCountry
+    fun updateDepartCountry(value: String) {
+        _departCountry.value = value
     }
 
-    private var _departState= mutableStateOf("MA")
-    val departState:MutableState<String> =_departState
-    fun updateDepartState(value:String){
-        _departState.value=value
+    private var _departState = mutableStateOf("MA")
+    val departState: MutableState<String> = _departState
+    fun updateDepartState(value: String) {
+        _departState.value = value
     }
 
-    private var _departCity= mutableStateOf("Boston")
-    val departCity:MutableState<String> =_departCity
-    fun updateDepartCity(value:String){
-        _departCity.value=value
+    private var _departCity = mutableStateOf("Boston")
+    val departCity: MutableState<String> = _departCity
+    fun updateDepartCity(value: String) {
+        _departCity.value = value
     }
 
-    private var _destCountry= mutableStateOf("")
-    val destCountry:MutableState<String> = _destCountry
-    fun updateDestCountry(value: String){
-        _destCountry.value=value
+    private var _destCountry = mutableStateOf("")
+    val destCountry: MutableState<String> = _destCountry
+    fun updateDestCountry(value: String) {
+        _destCountry.value = value
     }
 
-    private var _destState= mutableStateOf("")
-    val destState:MutableState<String> =_destState
-    fun updateDestState(value:String){
-        _destState.value=value
+    private var _destState = mutableStateOf("")
+    val destState: MutableState<String> = _destState
+    fun updateDestState(value: String) {
+        _destState.value = value
     }
 
-    private var _destCity= mutableStateOf("")
-    val destCity:MutableState<String> =_destCity
-    fun updateDestCity(value:String){
-        _destCity.value=value
+    private var _destCity = mutableStateOf("")
+    val destCity: MutableState<String> = _destCity
+    fun updateDestCity(value: String) {
+        _destCity.value = value
     }
 
     private var _selectedCityLocation = mutableStateOf(LatLng(42.36, -71.05))
@@ -286,7 +445,7 @@ class JourneyGeniusViewModel(
         _selectedPlacesOnMap
 
     fun updateSelectedPlacesOnMap(value: HashMap<Pair<Double, Double>, List<Place>>) {
-        _selectedPlacesOnMap.value = value;
+        _selectedPlacesOnMap.value = value
     }
 
     fun addSelectedPlacesOnMap(latlng: Pair<Double, Double>, places: List<Place>) {
@@ -340,7 +499,7 @@ class JourneyGeniusViewModel(
         }
     }
 
-    private var _planGroup = mutableStateOf(Plans("", "", true,listOf()))
+    private var _planGroup = mutableStateOf(Plans("", "", true, listOf()))
     val planGroup: MutableState<Plans> = _planGroup
     fun updatePlanGroup(value: Plans) {
         _planGroup.value = value
@@ -359,7 +518,7 @@ class JourneyGeniusViewModel(
         val isPublic = planGroup.value.isPublic
         val description = planGroup.value.description
         val planList = planGroup.value.plans
-        updatePlanGroup(Plans(planTitle.value, description,isPublic ,planList))
+        updatePlanGroup(Plans(planTitle.value, description, isPublic, planList))
         Log.d("updatePlanGroup", planGroup.value.toString())
     }
 
@@ -375,7 +534,7 @@ class JourneyGeniusViewModel(
         val title = planGroup.value.title
         val isPublic = planGroup.value.isPublic
         val planList = planGroup.value.plans
-        updatePlanGroup(Plans(title, planDescription.value, isPublic,planList))
+        updatePlanGroup(Plans(title, planDescription.value, isPublic, planList))
         Log.d("updatePlanGroup", planGroup.value.toString())
     }
 
@@ -388,20 +547,22 @@ class JourneyGeniusViewModel(
     }
 
     private var _planGroupList = mutableStateOf(listOf<Plans>())
-    val planGroupList : MutableState<List<Plans>> =_planGroupList
-    fun updatePlanGroupList(value: List<Plans>){
-        _planGroupList.value=value
+    val planGroupList: MutableState<List<Plans>> = _planGroupList
+    fun updatePlanGroupList(value: List<Plans>) {
+        _planGroupList.value = value
     }
-    fun addPlanGroupToList(value:Plans){
-        if(!_planGroupList.value.contains(value)){
-            val updatedGroupList=_planGroupList.value.toMutableList()
+
+    fun addPlanGroupToList(value: Plans) {
+        if (!_planGroupList.value.contains(value)) {
+            val updatedGroupList = _planGroupList.value.toMutableList()
             updatedGroupList.add(value)
             updatePlanGroupList(updatedGroupList)
         }
     }
-    fun delPlanGroupToList(value:Plans){
-        if(_planGroupList.value.contains(value)){
-            val updatedGroupList=_planGroupList.value.toMutableList()
+
+    fun delPlanGroupToList(value: Plans) {
+        if (_planGroupList.value.contains(value)) {
+            val updatedGroupList = _planGroupList.value.toMutableList()
             updatedGroupList.remove(value)
             updatePlanGroupList(updatedGroupList)
         }
@@ -434,19 +595,19 @@ class JourneyGeniusViewModel(
 
     private val countryList = listOf<String>("Afghanistan", "Albania")
     fun getCountryList(): List<String> {
-        return countryList;
+        return countryList
     }
 
     private var _StateList = mutableStateOf(listOf<String>())
-    val StateList: MutableState<List<String>> = _StateList;
+    val StateList: MutableState<List<String>> = _StateList
     fun updateStateList(value: List<String>) {
-        _StateList.value = value;
+        _StateList.value = value
     }
 
     private var _CityList = mutableStateOf(listOf<String>())
     val CityList: MutableState<List<String>> = _CityList
     fun updateCityList(value: List<String>) {
-        _CityList.value = value;
+        _CityList.value = value
     }
 
     private var _startAttraction =
@@ -489,7 +650,7 @@ class JourneyGeniusViewModel(
     private var _attractionToHotels = mutableStateOf(mapOf<Place, List<Hotel>>())
     val attractionToHotels: MutableState<Map<Place, List<Hotel>>> = _attractionToHotels
     fun updateAttractionToHotel(value: Map<Place, List<Hotel>>) {
-        _attractionToHotels.value = value;
+        _attractionToHotels.value = value
     }
 
     fun addAttractionToHotel(key: Place, value: List<Hotel>) {
@@ -514,11 +675,12 @@ class JourneyGeniusViewModel(
         _isPublic.value = isChecked
         updatePlanIsPublicToPlanGroup(isChecked)
     }
+
     private fun updatePlanIsPublicToPlanGroup(isChecked: Boolean) {
         val title = planGroup.value.title
         val description = planGroup.value.description
         val planList = planGroup.value.plans
-        updatePlanGroup(Plans(title, description, isChecked,planList))
+        updatePlanGroup(Plans(title, description, isChecked, planList))
         Log.d("updatePlanGroup", planGroup.value.toString())
     }
 
@@ -544,7 +706,7 @@ class JourneyGeniusViewModel(
                     location = Location(result.geometry.location.lat, result.geometry.location.lng),
                     rating = result.rating,
                     place_id = result.place_id,
-                    photos = result.photos?.toList()
+                    photos = result.photos.toList()
                 )
             })
             Log.d("attractionlist", attractionsList.toString())
@@ -569,7 +731,7 @@ class JourneyGeniusViewModel(
                     location = Location(result.geometry.location.lat, result.geometry.location.lng),
                     rating = result.rating,
                     place_id = result.place_id,
-                    photos = result.photos?.toList()
+                    photos = result.photos.toList()
                 )
             }
         }
@@ -630,7 +792,7 @@ class JourneyGeniusViewModel(
                         ),
                         rating = result.rating,
                         place_id = result.place_id,
-                        photos = result.photos?.toList()
+                        photos = result.photos.toList()
                     ),
                     priceLevel = result.price_level,
 
@@ -648,7 +810,7 @@ class JourneyGeniusViewModel(
                         ),
                         rating = result.rating,
                         place_id = result.place_id,
-                        photos = result.photos?.toList()
+                        photos = result.photos.toList()
                     ),
                     priceLevel = result.price_level,
 
@@ -708,7 +870,9 @@ class JourneyGeniusViewModel(
                     .getAsJsonArray("legs")[0].asJsonObject
                     .getAsJsonArray("steps")
                     .flatMap {
-                        decodePoly(it.asJsonObject.getAsJsonObject("polyline").get("points").asString)
+                        decodePoly(
+                            it.asJsonObject.getAsJsonObject("polyline").get("points").asString
+                        )
                     }
                 allRoutes.add(points)
             }
@@ -726,7 +890,9 @@ class JourneyGeniusViewModel(
                     .getAsJsonArray("legs")[0].asJsonObject
                     .getAsJsonArray("steps")
                     .flatMap {
-                        decodePoly(it.asJsonObject.getAsJsonObject("polyline").get("points").asString)
+                        decodePoly(
+                            it.asJsonObject.getAsJsonObject("polyline").get("points").asString
+                        )
                     }
                 allRoutes.add(points)
             }
@@ -739,7 +905,7 @@ class JourneyGeniusViewModel(
                 ).show()
             }
         }
-         allRoutes
+        allRoutes
     }
 
 
