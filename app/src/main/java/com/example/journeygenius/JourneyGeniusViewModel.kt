@@ -339,7 +339,7 @@ class JourneyGeniusViewModel(
         }
     }
 
-    private var _planGroup = mutableStateOf(Plans("", "", listOf()))
+    private var _planGroup = mutableStateOf(Plans("", "", true,listOf()))
     val planGroup: MutableState<Plans> = _planGroup
     fun updatePlanGroup(value: Plans) {
         _planGroup.value = value
@@ -355,9 +355,10 @@ class JourneyGeniusViewModel(
     }
 
     private fun updatePlanTitleToPlanGroup() {
+        val isPublic = planGroup.value.isPublic
         val description = planGroup.value.description
         val planList = planGroup.value.plans
-        updatePlanGroup(Plans(planTitle.value, description, planList))
+        updatePlanGroup(Plans(planTitle.value, description,isPublic ,planList))
         Log.d("updatePlanGroup", planGroup.value.toString())
     }
 
@@ -371,10 +372,12 @@ class JourneyGeniusViewModel(
 
     private fun updatePlanDescripToPlanGroup() {
         val title = planGroup.value.title
+        val isPublic = planGroup.value.isPublic
         val planList = planGroup.value.plans
-        updatePlanGroup(Plans(title, planDescription.value, planList))
+        updatePlanGroup(Plans(title, planDescription.value, isPublic,planList))
         Log.d("updatePlanGroup", planGroup.value.toString())
     }
+
 
     //value change when user click different plan on Plan List page
     private var _planOnDetail = mutableStateOf(singlePlan.value)
@@ -503,11 +506,19 @@ class JourneyGeniusViewModel(
         _travelModeOption.value = option
     }
 
-    private val _isPublic = mutableStateOf(false)
+    private val _isPublic = mutableStateOf(true)
     val isPublic: MutableState<Boolean> = _isPublic
 
     fun onPublicSwitched(isChecked: Boolean) {
         _isPublic.value = isChecked
+        updatePlanIsPublicToPlanGroup(isChecked)
+    }
+    private fun updatePlanIsPublicToPlanGroup(isChecked: Boolean) {
+        val title = planGroup.value.title
+        val description = planGroup.value.description
+        val planList = planGroup.value.plans
+        updatePlanGroup(Plans(title, description, isChecked,planList))
+        Log.d("updatePlanGroup", planGroup.value.toString())
     }
 
     suspend fun getLatLng(city: String, apiKey: String): Location? = withContext(Dispatchers.IO) {

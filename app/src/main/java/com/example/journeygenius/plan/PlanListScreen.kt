@@ -43,6 +43,9 @@ fun PlanList(navController: NavController, planViewModel: JourneyGeniusViewModel
     val planGroup by remember{
         planViewModel.planGroup
     }
+    val isPublic by remember {
+        planViewModel.isPublic
+    }
     val context= LocalContext.current
     JourneyGeniusTheme {
         Box(
@@ -128,7 +131,10 @@ fun PlanList(navController: NavController, planViewModel: JourneyGeniusViewModel
                             Text(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(16.dp))
+                                    .background(
+                                        MaterialTheme.colorScheme.primaryContainer,
+                                        RoundedCornerShape(16.dp)
+                                    )
                                     .padding(24.dp)
                                     .clickable {
                                         planViewModel.updatePlanOnDetail(plan)
@@ -181,10 +187,9 @@ fun PlanList(navController: NavController, planViewModel: JourneyGeniusViewModel
                     }
                     Spacer(modifier = Modifier.width(20.dp))
                     Button(onClick = { navController.navigate("Plan Menu")
-
+                        planViewModel.addPlanGroupToList(planGroup)
                         planViewModel.updateSelectedAttractionList(listOf())
                         planViewModel.updateSelectedHotelList(listOf())
-                        planViewModel.addPlanGroupToList(planGroup)
 //                        planViewModel.planGroupList.value.forEach {
 //                            print("${it.title} ${it.description}")
 //                            println()
@@ -194,7 +199,7 @@ fun PlanList(navController: NavController, planViewModel: JourneyGeniusViewModel
 //                        }
                         planViewModel.updatePlanList(emptyList())
                         planViewModel.updateSinglePlan(SinglePlan("", "", listOf(), 4, "extravagant", listOf(), ""))
-                        planViewModel.updatePlanGroup(Plans("", "", listOf()))
+                        planViewModel.updatePlanGroup(Plans("", "", isPublic,listOf()))
                         planViewModel.updateStartAttraction(Place("", "", Location(0.0, 0.0), 0.0, "", emptyArray()))
                         planViewModel.updateEndAttraction(Place("", "", Location(0.0, 0.0), 0.0, "", emptyArray()))
                         planViewModel.updatePlanDescription("")
