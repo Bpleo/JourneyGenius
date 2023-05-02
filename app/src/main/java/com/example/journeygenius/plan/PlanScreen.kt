@@ -465,8 +465,8 @@ fun ChooseDropdownMenu(viewModel: JourneyGeniusViewModel) {
                 OutlinedTextField(value = departCountry.value,
                     onValueChange = { viewModel.updateDepartCountry(it) },
                     modifier = Modifier
-                        .width(150.dp)
-                        .height(60.dp),
+                        .width(160.dp)
+                        .height(64.dp),
                     label = { Text(text = "Country") },
                     trailingIcon = {
                         Icon(
@@ -479,7 +479,7 @@ fun ChooseDropdownMenu(viewModel: JourneyGeniusViewModel) {
                 DropdownMenu(
                     expanded = departCountryExpanded,
                     onDismissRequest = { departCountryExpanded = false },
-                    modifier = Modifier.width(150.dp),
+//                    modifier = Modifier.width(150.dp),
 //                            modifier = Modifier.width(with(LocalDensity.current) { textFiledSize.width.toDp() })
                 ) {
                     countries.forEach { country ->
@@ -567,8 +567,6 @@ fun ChooseDropdownMenu(viewModel: JourneyGeniusViewModel) {
             Spacer(modifier = Modifier.height(5.dp))
             Column {
                 Box {
-
-
                     //Destination Country
                     OutlinedTextField(value = destCountry.value,
                         onValueChange = { viewModel.updateDestCountry(it) },
@@ -679,7 +677,6 @@ fun DestinationButton(navController: NavController) {
             onClick = {
                 navController.navigate("Plan Map")
             }, modifier = Modifier
-                .width(220.dp)
                 .align(Alignment.CenterHorizontally)
         ) {
             Text(text = "CHOOSE YOUR ROUTE")
@@ -737,22 +734,25 @@ fun PlanScreen(
                     }
                 }
                 else -> {
-                    Row(
-                        modifier = Modifier.padding(32.dp, 0.dp)
-                    ){
-                        Column {
-                            TravelDateComponent(selectedDateRange, calenderState, windowSize)
-                            Spacer(modifier = Modifier.height(30.dp))
-                            Box(
-                                modifier = Modifier
-                                    .width(200.dp)
-                            ) {
-                                BudgetLandComponent(viewModel = viewModel)
+                    Column {
+                        Row(
+                            modifier = Modifier.padding(64.dp, 32.dp)
+                        ) {
+                            Column {
+                                TravelDateComponent(selectedDateRange, calenderState, windowSize)
+                                Spacer(modifier = Modifier.height(30.dp))
+                                Box(
+                                    modifier = Modifier
+                                        .width(200.dp)
+                                ) {
+                                    BudgetLandComponent(viewModel = viewModel)
+                                }
                             }
+                            Spacer(modifier = Modifier.width(5.dp))
+                            ChooseDropdownMenu(viewModel = viewModel)
                         }
-                        Spacer(modifier = Modifier.width(5.dp))
-                        ChooseDropdownMenu(viewModel = viewModel)
                         DestinationButton(navController)
+
                     }
 //                    Box(
 //                        modifier = Modifier
