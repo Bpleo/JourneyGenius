@@ -3,8 +3,11 @@ package com.example.journeygenius
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.example.journeygenius.community.CommunityScreen
+import com.example.journeygenius.components.CardDetailScreen
 import com.example.journeygenius.personal.PersonalScreen
 import com.example.journeygenius.plan.PlanScreenGraph
 import com.google.firebase.auth.FirebaseAuth
