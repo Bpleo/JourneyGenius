@@ -87,75 +87,75 @@ fun Tag(title: String, onClose: () -> Unit) {
         )
     }
 }
-@Composable
-fun MarkerContent(name:String,vicinity:String, rating:Double){
-    Box(
-        modifier = Modifier
-            .background(
-                color = MaterialTheme.colorScheme.onPrimary,
-                shape = RoundedCornerShape(35.dp, 35.dp, 35.dp, 35.dp)
-            )
-        ,
-    ) {
-
-        Column(
-            modifier = Modifier.padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-//            AsyncImage(model = getPhotoUrl("AZose0kKkd8V2iQJF3rZH9c73oQ6cWgAqR5Q4KbHbPRYhOl-EC17xQccIJ8dugpEiIgJ_QcgpRaDRc_6p5ZwLkUzzQunXbqIqDWtaeoUSMYbwp-ss735WfjNOZR8PUf9OLDVSvB4_8NauLlNamZYSXXw152PzA8nr2I1kvaDTb8RjaVImcWD",
-//                PlacesapiKey), contentDescription = null,
+//@Composable
+//fun MarkerContent(name:String,vicinity:String, rating:Double){
+//    Box(
+//        modifier = Modifier
+//            .background(
+//                color = MaterialTheme.colorScheme.onPrimary,
+//                shape = RoundedCornerShape(35.dp, 35.dp, 35.dp, 35.dp)
+//            )
+//        ,
+//    ) {
+//
+//        Column(
+//            modifier = Modifier.padding(16.dp),
+//            horizontalAlignment = Alignment.CenterHorizontally
+//        ) {
+////            AsyncImage(model = getPhotoUrl("AZose0kKkd8V2iQJF3rZH9c73oQ6cWgAqR5Q4KbHbPRYhOl-EC17xQccIJ8dugpEiIgJ_QcgpRaDRc_6p5ZwLkUzzQunXbqIqDWtaeoUSMYbwp-ss735WfjNOZR8PUf9OLDVSvB4_8NauLlNamZYSXXw152PzA8nr2I1kvaDTb8RjaVImcWD",
+////                PlacesapiKey), contentDescription = null,
+////                modifier = Modifier
+////                    .height(80.dp)
+////                    .fillMaxWidth(), )
+//            Image(
+//                painter = painterResource(id = R.drawable.map),
+//                contentDescription = null,
+//                contentScale = ContentScale.Fit,
 //                modifier = Modifier
 //                    .height(80.dp)
-//                    .fillMaxWidth(), )
-            Image(
-                painter = painterResource(id = R.drawable.map),
-                contentDescription = null,
-                contentScale = ContentScale.Fit,
-                modifier = Modifier
-                    .height(80.dp)
-                    .fillMaxWidth(),
-
-                )
-            //.........................Spacer
-//            Spacer(modifier = Modifier.height(10.dp))
-            //.........................Text: title
-            Text(
-                text = name,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .padding(top = 10.dp)
-                    .fillMaxWidth(),
-                style = MaterialTheme.typography.headlineSmall,
-                color = MaterialTheme.colorScheme.primary,
-            )
+//                    .fillMaxWidth(),
+//
+//                )
+//            //.........................Spacer
+////            Spacer(modifier = Modifier.height(10.dp))
+//            //.........................Text: title
+//            Text(
+//                text = name,
+//                textAlign = TextAlign.Center,
+//                modifier = Modifier
+//                    .padding(top = 10.dp)
+//                    .fillMaxWidth(),
+//                style = MaterialTheme.typography.headlineSmall,
+//                color = MaterialTheme.colorScheme.primary,
+//            )
+////            Spacer(modifier = Modifier.height(5.dp))
+//            //.........................Text : description
+//            Text(
+//                text = vicinity,
+//                textAlign = TextAlign.Center,
+//                modifier = Modifier
+//                    .padding(top = 10.dp, start = 25.dp, end = 25.dp)
+//                    .fillMaxWidth(),
+//                style = MaterialTheme.typography.bodyLarge,
+//                color = MaterialTheme.colorScheme.primary,
+//            )
 //            Spacer(modifier = Modifier.height(5.dp))
-            //.........................Text : description
-            Text(
-                text = vicinity,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .padding(top = 10.dp, start = 25.dp, end = 25.dp)
-                    .fillMaxWidth(),
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.primary,
-            )
-            Spacer(modifier = Modifier.height(5.dp))
-            Text(
-                text = "Rating: $rating",
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .padding(top = 10.dp, start = 25.dp, end = 25.dp)
-                    .fillMaxWidth(),
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.primary,
-            )
-
-
-        }
-
-    }
-
-}
+//            Text(
+//                text = "Rating: $rating",
+//                textAlign = TextAlign.Center,
+//                modifier = Modifier
+//                    .padding(top = 10.dp, start = 25.dp, end = 25.dp)
+//                    .fillMaxWidth(),
+//                style = MaterialTheme.typography.bodyLarge,
+//                color = MaterialTheme.colorScheme.primary,
+//            )
+//
+//
+//        }
+//
+//    }
+//
+//}
 
 
 
