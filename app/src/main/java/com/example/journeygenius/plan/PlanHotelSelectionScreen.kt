@@ -179,16 +179,15 @@ fun PlanHotelSelectionScreen(viewModel: JourneyGeniusViewModel, navController: N
                                 attractionToHotels[it]!!.forEach {hotel->
                                     Marker(
                                         state= MarkerState(position=LatLng(hotel.place.location.lat,hotel.place.location.lng)),
-                                        snippet = "Marker in ${hotel.place.name}",
+                                        title=hotel.place.name,
+                                        snippet = hotel.place.vicinity,
                                         icon = BitmapDescriptorFactory.defaultMarker(
                                             BitmapDescriptorFactory.HUE_GREEN),
-                                        onClick={
+                                        onInfoWindowClick={
                                             if(!selectedHotelList.contains(hotel)){
                                                 viewModel.addSelectedHotel(hotel)
                                             }
                                             Log.d("selectedHotel",selectedHotelList.toString())
-                                            return@Marker true
-
                                         }
 
                                     )

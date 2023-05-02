@@ -66,7 +66,7 @@ class JourneyGeniusViewModel(
         updateVerifyPwd("")
     }
 
-    //TODO pull plan list from firestore and add to local vm
+    //pull plan list from firestore and add to local vm
     fun signIn() {
         val user = auth.currentUser
         if (user != null) {
@@ -706,7 +706,7 @@ class JourneyGeniusViewModel(
                     location = Location(result.geometry.location.lat, result.geometry.location.lng),
                     rating = result.rating,
                     place_id = result.place_id,
-                    photos = result.photos.toList()
+                    photos = result.photos?.toList()
                 )
             })
             Log.d("attractionlist", attractionsList.toString())
@@ -731,7 +731,7 @@ class JourneyGeniusViewModel(
                     location = Location(result.geometry.location.lat, result.geometry.location.lng),
                     rating = result.rating,
                     place_id = result.place_id,
-                    photos = result.photos.toList()
+                    photos = result.photos?.toList()
                 )
             }
         }
@@ -792,7 +792,7 @@ class JourneyGeniusViewModel(
                         ),
                         rating = result.rating,
                         place_id = result.place_id,
-                        photos = result.photos.toList()
+                        photos = result.photos?.toList()
                     ),
                     priceLevel = result.price_level,
 
@@ -810,7 +810,7 @@ class JourneyGeniusViewModel(
                         ),
                         rating = result.rating,
                         place_id = result.place_id,
-                        photos = result.photos.toList()
+                        photos = result.photos?.toList()
                     ),
                     priceLevel = result.price_level,
 
@@ -833,8 +833,6 @@ class JourneyGeniusViewModel(
         val jsonObject = JsonParser.parseString(result).asJsonObject
         val routes = jsonObject.getAsJsonArray("routes")
         val allRoutes = mutableListOf<List<LatLng>>()
-
-
 //    for (i in 0 until routes.size()) {
 //        val points = routes[i].asJsonObject
 //            .getAsJsonArray("legs")[0].asJsonObject

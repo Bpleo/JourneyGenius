@@ -20,13 +20,16 @@ import androidx.compose.ui.unit.toSize
 import com.example.journeygenius.ui.theme.JourneyGeniusTheme
 import androidx.compose.material.*
 import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
@@ -83,6 +86,75 @@ fun Tag(title: String, onClose: () -> Unit) {
                 .clickable { onClose() }
         )
     }
+}
+@Composable
+fun MarkerContent(name:String,vicinity:String, rating:Double){
+    Box(
+        modifier = Modifier
+            .background(
+                color = MaterialTheme.colorScheme.onPrimary,
+                shape = RoundedCornerShape(35.dp, 35.dp, 35.dp, 35.dp)
+            )
+        ,
+    ) {
+
+        Column(
+            modifier = Modifier.padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+//            AsyncImage(model = getPhotoUrl("AZose0kKkd8V2iQJF3rZH9c73oQ6cWgAqR5Q4KbHbPRYhOl-EC17xQccIJ8dugpEiIgJ_QcgpRaDRc_6p5ZwLkUzzQunXbqIqDWtaeoUSMYbwp-ss735WfjNOZR8PUf9OLDVSvB4_8NauLlNamZYSXXw152PzA8nr2I1kvaDTb8RjaVImcWD",
+//                PlacesapiKey), contentDescription = null,
+//                modifier = Modifier
+//                    .height(80.dp)
+//                    .fillMaxWidth(), )
+            Image(
+                painter = painterResource(id = R.drawable.map),
+                contentDescription = null,
+                contentScale = ContentScale.Fit,
+                modifier = Modifier
+                    .height(80.dp)
+                    .fillMaxWidth(),
+
+                )
+            //.........................Spacer
+//            Spacer(modifier = Modifier.height(10.dp))
+            //.........................Text: title
+            Text(
+                text = name,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .padding(top = 10.dp)
+                    .fillMaxWidth(),
+                style = MaterialTheme.typography.headlineSmall,
+                color = MaterialTheme.colorScheme.primary,
+            )
+//            Spacer(modifier = Modifier.height(5.dp))
+            //.........................Text : description
+            Text(
+                text = vicinity,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .padding(top = 10.dp, start = 25.dp, end = 25.dp)
+                    .fillMaxWidth(),
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.primary,
+            )
+            Spacer(modifier = Modifier.height(5.dp))
+            Text(
+                text = "Rating: $rating",
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .padding(top = 10.dp, start = 25.dp, end = 25.dp)
+                    .fillMaxWidth(),
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.primary,
+            )
+
+
+        }
+
+    }
+
 }
 
 
@@ -288,7 +360,9 @@ fun PlanChooseLocScreen(
                                 onValueChange = {
 
                                 },
-                                modifier = Modifier.width(170.dp).height(70.dp),
+                                modifier = Modifier
+                                    .width(170.dp)
+                                    .height(70.dp),
                                 label = { Text(text = "Choose") },
                                 trailingIcon = {
                                     Icon(
@@ -332,7 +406,9 @@ fun PlanChooseLocScreen(
                                 onValueChange = {
 
                                 },
-                                modifier = Modifier.width(170.dp).height(70.dp),
+                                modifier = Modifier
+                                    .width(170.dp)
+                                    .height(70.dp),
                                 label = { Text(text = "Choose") },
                                 trailingIcon = {
                                     Icon(
@@ -482,16 +558,15 @@ fun PlanChooseLocScreen(
                                         Marker(
                                             state = MarkerState(position = LatLng(attr.location.lat,attr.location.lng)),
                                             title = attr.name,
-                                            snippet = "Marker in ${attr.name}",
+                                            snippet = attr.vicinity,
                                             icon = bitmapDescriptorFromVector(
                                                 context, R.drawable.pin
                                             ),
-                                            onClick = {
+                                            onInfoWindowClick = {
                                                 if(!selectedAttractionList.value.contains(attr)){
                                                     viewModel.addSelectedAttraction(attr)
                                                 }
                                                 Log.d("selectedAttractionList: ",viewModel.selectedAttractionList.value.toString())
-                                                return@Marker true
                                             }
 
                                         )
@@ -505,7 +580,7 @@ fun PlanChooseLocScreen(
                                     Marker(
                                         state = MarkerState(position = LatLng(place.location.lat,place.location.lng),),
                                         title = place.name,
-                                        snippet = "Marker in ${place.name}" ,
+                                        snippet = place.vicinity ,
                                         icon = bitmapDescriptorFromVector(
                                             context, R.drawable.pin
                                         ),
@@ -525,6 +600,7 @@ fun PlanChooseLocScreen(
 //                                    }
 
                                     )
+
                                 }
                             }
                         }
