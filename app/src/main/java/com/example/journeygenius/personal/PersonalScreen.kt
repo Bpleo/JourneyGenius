@@ -28,6 +28,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.journeygenius.JourneyGeniusViewModel
+import com.example.journeygenius.components.CardDetailScreen
 import com.example.journeygenius.rememberWindowSize
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -70,6 +71,12 @@ fun PersonalScreen(
                 viewModel = viewModel,
                 db = db,
                 navController = personalNavController)
+        }
+        composable("card_detail/{planId}") { backStackEntry ->
+            CardDetailScreen(
+                planId = backStackEntry.arguments?.getString("planId") ?: "",
+                navController = personalNavController
+            )
         }
     }
 }
