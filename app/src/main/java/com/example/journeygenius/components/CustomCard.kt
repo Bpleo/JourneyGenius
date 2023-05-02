@@ -2,6 +2,7 @@ package com.example.journeygenius.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -24,7 +25,7 @@ import com.example.journeygenius.R
 import com.example.journeygenius.data.models.Plan
 
 @Composable
-fun CustomCard(data: Plan) {
+fun CustomCard(data: Plan, onCardClick: (String) -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -35,6 +36,7 @@ fun CustomCard(data: Plan) {
     ) {
         Card(
             modifier = Modifier
+                .clickable { onCardClick(data.planId) }
                 .width(200.dp)
                 .height(270.dp),
             shape = RoundedCornerShape(topStart = 16.dp, bottomEnd = 16.dp),

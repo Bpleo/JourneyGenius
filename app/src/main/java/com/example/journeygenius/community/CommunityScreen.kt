@@ -12,74 +12,113 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.journeygenius.components.CardDetailScreen
 import com.example.journeygenius.components.CustomCard
+import com.example.journeygenius.data.models.Plan
 import com.example.journeygenius.ui.theme.JourneyGeniusTheme
 import kotlinx.coroutines.launch
+import java.time.format.TextStyle
 
 @Composable
 fun CommunityScreen(communityViewModel: CommunityViewModel = viewModel()) {
     val plans = communityViewModel.plans
-    val scrollState = rememberLazyGridState()
-    val coroutineScope = rememberCoroutineScope()
+    val nestedNavController = rememberNavController()
 
     JourneyGeniusTheme {
-        Column {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 16.dp, end = 16.dp)
-                    .wrapContentWidth(align = Alignment.End)
-            ) {
-                IconButton(
-                    onClick = {
-                        communityViewModel.testRefresh()
-                        coroutineScope.launch {
-                            scrollState.animateScrollToItem(0)
-                        }
-                    },
-                    modifier = Modifier
-                        .background(
-                            color = Color.LightGray,
-                            shape = MaterialTheme.shapes.medium
-                        )
-                        .padding(8.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Refresh,
-                        contentDescription = "Refresh",
-                        tint = Color.White
-                    )
-                }
+        NavHost(
+            navController = nestedNavController,
+            startDestination = "community_list"
+        ) {
+            composable("community_list") {
+                CommunityList(communityViewModel, plans, nestedNavController)
             }
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = Modifier.padding(bottom = 75.dp),
-                state = scrollState
-            ) {
-                items(plans.size) { index ->
-                    CustomCard(
-                        data = plans[index],
-                    )
-                }
+            composable("card_detail/{planId}") { backStackEntry ->
+                CardDetailScreen(
+                    planId = backStackEntry.arguments?.getString("planId") ?: "",
+                    navController = nestedNavController
+                )
             }
         }
     }
 }
 
-
-
-
-@Preview(showBackground = true)
 @Composable
-fun CommunityScreenPreview(){
-    CommunityScreen()
+fun CommunityList(
+    communityViewModel: CommunityViewModel,
+    plans: List<Plan>,
+    navController: NavController
+) {
+    val scrollState = rememberLazyGridState()
+    val coroutineScope = rememberCoroutineScope()
+
+    Column {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp, end = 16.dp)
+                .wrapContentWidth(align = Alignment.End)
+        ) {
+            Text(
+                text = "Community",
+                style = androidx.compose.ui.text.TextStyle(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 24.sp
+                ),
+                modifier = Modifier
+                    .padding(start = 32.dp, top = 16.dp)
+                    .weight(1f)
+            )
+            IconButton(
+                onClick = {
+                    communityViewModel.testRefresh()
+                    coroutineScope.launch {
+                        scrollState.animateScrollToItem(0)
+                    }
+                },
+                modifier = Modifier
+                    .background(
+                        color = Color.LightGray,
+                        shape = MaterialTheme.shapes.medium
+                    )
+                    .padding(8.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Refresh,
+                    contentDescription = "Refresh",
+                    tint = Color.White
+                )
+            }
+        }
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier.padding(bottom = 75.dp),
+            state = scrollState
+        ) {
+            items(plans.size) { index ->
+                CustomCard(
+                    data = plans[index],
+                    onCardClick = { planId ->
+                        navController.navigate("card_detail/$planId")
+                    }
+                )
+            }
+        }
+    }
 }
+

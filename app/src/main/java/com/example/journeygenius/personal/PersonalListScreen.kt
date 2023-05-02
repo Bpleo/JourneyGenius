@@ -49,6 +49,10 @@ fun PersonalListScreen(
                         items(dummyPlans.size) { index ->
                             CustomCard(
                                 data = dummyPlans[index],
+                                onCardClick = { planId ->
+                                    // Navigate to the CardDetailScreen with the given plan ID
+                                    navController.navigate("card_detail/$planId")
+                                }
                             )
                         }
                     }
