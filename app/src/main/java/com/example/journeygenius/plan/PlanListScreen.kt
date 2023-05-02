@@ -177,8 +177,15 @@ fun PlanList(
                         planViewModel.updateSelectedHotelList(listOf())
                         planViewModel.updateStartAttraction(Place("", "", Location(0.0, 0.0), 0.0, "", emptyList()))
                         planViewModel.updateEndAttraction(Place("", "", Location(0.0, 0.0), 0.0, "", emptyList()))
-                                     }, modifier = Modifier
-                        .width(100.dp)
+                        planViewModel.updateDepartCountry(planViewModel.destCountry.value)
+                        planViewModel.updateDepartState(planViewModel.destState.value)
+                        planViewModel.updateDepartCity(planViewModel.destCity.value)
+                        planViewModel.updateDestCountry("")
+                        planViewModel.updateDestState("")
+                        planViewModel.updateDestCity("")
+                        planViewModel.updateSelectedPlacesOnMap(hashMapOf())
+                                     },
+                        modifier = Modifier.width(100.dp)
                     ) {
                         Text(text = "ADD")
                     }
@@ -199,6 +206,14 @@ fun PlanList(
                         planViewModel.updateEndAttraction(Place("", "", Location(0.0, 0.0), 0.0, "", emptyList()))
                         planViewModel.updatePlanDescription("")
                         planViewModel.updatePlanTitle("")
+                        planViewModel.onSliderValueChanged(0)
+                        planViewModel.updateDestCountry("")
+                        planViewModel.updateDestState("")
+                        planViewModel.updateDestCity("")
+                        planViewModel.updateDepartCountry("")
+                        planViewModel.updateDepartState("")
+                        planViewModel.updateDepartCity("")
+                        planViewModel.updateSelectedPlacesOnMap(hashMapOf())
                         Toast.makeText(
                             context,
                             "Save successfully !",
