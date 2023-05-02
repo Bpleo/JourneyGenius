@@ -833,8 +833,6 @@ class JourneyGeniusViewModel(
         val jsonObject = JsonParser.parseString(result).asJsonObject
         val routes = jsonObject.getAsJsonArray("routes")
         val allRoutes = mutableListOf<List<LatLng>>()
-
-
 //    for (i in 0 until routes.size()) {
 //        val points = routes[i].asJsonObject
 //            .getAsJsonArray("legs")[0].asJsonObject
