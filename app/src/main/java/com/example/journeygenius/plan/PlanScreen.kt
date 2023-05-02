@@ -7,10 +7,7 @@ import android.os.Build
 import android.util.Log
 import android.util.Range
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
@@ -229,7 +226,7 @@ fun BudgetComponent(viewModel: JourneyGeniusViewModel){
     Column {
         Text(
             text = "What is your budget: ",
-            fontSize = MaterialTheme.typography.headlineLarge.fontSize
+            fontSize = MaterialTheme.typography.bodyLarge.fontSize
         )
         Spacer(modifier = Modifier.height(15.dp))
         val sliderValue: Int by viewModel.sliderValue.observeAsState(0)
@@ -256,6 +253,47 @@ fun BudgetComponent(viewModel: JourneyGeniusViewModel){
                     modifier = Modifier
                         .padding(8.dp)
                         .fillMaxWidth(),
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun BudgetLandComponent(viewModel: JourneyGeniusViewModel){
+    Column {
+        Text(
+            text = "What is your budget: ",
+            fontSize = MaterialTheme.typography.bodyLarge.fontSize
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+        val sliderValue: Int by viewModel.sliderValue.observeAsState(0)
+        val sliderLabel: String by viewModel.sliderLabel.observeAsState("cheap")
+
+        Column() {
+            Slider(
+                value = sliderValue.toFloat(),
+                onValueChange = { viewModel.onSliderValueChanged(it.toInt()) },
+                valueRange = 0f..4f,
+                steps = 3,
+                modifier = Modifier
+                    .height(50.dp)
+                    .width(220.dp)
+                    .padding(end = 16.dp)
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            Box(
+                modifier = Modifier
+                    .background(Color.LightGray, RoundedCornerShape(16.dp))
+            ) {
+                Text(
+                    text = sliderLabel,
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .height(18.dp)
+                        .width(120.dp),
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.bodyLarge,
                 )
@@ -420,13 +458,15 @@ fun ChooseDropdownMenu(viewModel: JourneyGeniusViewModel) {
                 text = "Departure",
                 fontSize = MaterialTheme.typography.titleLarge.fontSize,
             )
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(5.dp))
             Column {
 
                 //Departure Country
                 OutlinedTextField(value = departCountry.value,
                     onValueChange = { viewModel.updateDepartCountry(it) },
-                    modifier = Modifier.width(150.dp).height(70.dp),
+                    modifier = Modifier
+                        .width(150.dp)
+                        .height(60.dp),
                     label = { Text(text = "Country") },
                     trailingIcon = {
                         Icon(
@@ -456,7 +496,9 @@ fun ChooseDropdownMenu(viewModel: JourneyGeniusViewModel) {
                 //Departure State
                 OutlinedTextField(value = departSate.value,
                     onValueChange = { viewModel.updateDepartState(it) },
-                    modifier = Modifier.width(150.dp).height(70.dp),
+                    modifier = Modifier
+                        .width(150.dp)
+                        .height(60.dp),
                     label = { Text(text = "State") },
                     trailingIcon = {
                         Icon(
@@ -482,7 +524,9 @@ fun ChooseDropdownMenu(viewModel: JourneyGeniusViewModel) {
                 //Departure City
                 OutlinedTextField(value = departCity.value,
                     onValueChange = { viewModel.updateDepartCity(it) },
-                    modifier = Modifier.width(150.dp).height(70.dp),
+                    modifier = Modifier
+                        .width(150.dp)
+                        .height(60.dp),
                     label = { Text(text = "City") },
                     trailingIcon = {
                         Icon(
@@ -520,7 +564,7 @@ fun ChooseDropdownMenu(viewModel: JourneyGeniusViewModel) {
                 text = "Destination",
                 fontSize = MaterialTheme.typography.titleLarge.fontSize,
             )
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(5.dp))
             Column {
                 Box {
 
@@ -528,7 +572,9 @@ fun ChooseDropdownMenu(viewModel: JourneyGeniusViewModel) {
                     //Destination Country
                     OutlinedTextField(value = destCountry.value,
                         onValueChange = { viewModel.updateDestCountry(it) },
-                        modifier = Modifier.width(150.dp).height(70.dp),
+                        modifier = Modifier
+                            .width(150.dp)
+                            .height(60.dp),
                         label = { Text(text = "Country") },
                         trailingIcon = {
                             Icon(
@@ -559,7 +605,9 @@ fun ChooseDropdownMenu(viewModel: JourneyGeniusViewModel) {
                 //Destination State
                 OutlinedTextField(value = destState.value,
                     onValueChange = { viewModel.updateDestState(it) },
-                    modifier = Modifier.width(150.dp).height(70.dp),
+                    modifier = Modifier
+                        .width(150.dp)
+                        .height(60.dp),
                     label = { Text(text = "State") },
                     trailingIcon = {
                         Icon(
@@ -586,7 +634,9 @@ fun ChooseDropdownMenu(viewModel: JourneyGeniusViewModel) {
                 //Destination City
                 OutlinedTextField(value = destCity.value,
                     onValueChange = { viewModel.updateDestCity(it) },
-                    modifier = Modifier.width(150.dp).height(70.dp),
+                    modifier = Modifier
+                        .width(150.dp)
+                        .height(60.dp),
 
                     label = { Text(text = "City") },
                     trailingIcon = {
@@ -629,7 +679,7 @@ fun DestinationButton(navController: NavController) {
             onClick = {
                 navController.navigate("Plan Map")
             }, modifier = Modifier
-                .fillMaxWidth()
+                .width(220.dp)
                 .align(Alignment.CenterHorizontally)
         ) {
             Text(text = "CHOOSE YOUR ROUTE")
@@ -687,17 +737,30 @@ fun PlanScreen(
                     }
                 }
                 else -> {
-                    Row(
-                        modifier = Modifier.padding(64.dp, 32.dp)
-                    ){
-                        Column {
-                            TravelDateComponent(selectedDateRange, calenderState, windowSize)
-                        }
-                        Spacer(modifier = Modifier.width(60.dp))
-                        Column{
-                            BudgetComponent(viewModel = viewModel)
-                            Spacer(modifier = Modifier.height(60.dp))
-                            DestinationButton(navController)
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .verticalScroll(rememberScrollState())
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(64.dp, 32.dp)
+                        ){
+                            Column {
+                                TravelDateComponent(selectedDateRange, calenderState, windowSize)
+                                Spacer(modifier = Modifier.height(30.dp))
+                                Box(
+                                    modifier = Modifier
+                                        .width(200.dp)
+                                ) {
+                                    BudgetLandComponent(viewModel = viewModel)
+                                }
+                            }
+                            Spacer(modifier = Modifier.width(5.dp))
+                            Column{
+                                ChooseDropdownMenu(viewModel = viewModel)
+                                Spacer(modifier = Modifier.height(5.dp))
+                                DestinationButton(navController)
+                            }
                         }
                     }
                 }
@@ -714,7 +777,7 @@ fun PlanScreenPreview() {
         rememberNavController())
 }
 
-@Preview@Preview(showBackground = true, device = Devices.AUTOMOTIVE_1024p, heightDp = 320)
+@Preview(showBackground = true, device = Devices.AUTOMOTIVE_1024p, heightDp = 320)
 @Composable
 fun PlanScreenLandscapePreview() {
     val viewModel = JourneyGeniusViewModel(Firebase.firestore, Firebase.auth, Firebase.database.reference)
