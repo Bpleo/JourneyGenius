@@ -737,32 +737,30 @@ fun PlanScreen(
                     }
                 }
                 else -> {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .verticalScroll(rememberScrollState())
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(64.dp, 32.dp)
-                        ){
-                            Column {
-                                TravelDateComponent(selectedDateRange, calenderState, windowSize)
-                                Spacer(modifier = Modifier.height(30.dp))
-                                Box(
-                                    modifier = Modifier
-                                        .width(200.dp)
-                                ) {
-                                    BudgetLandComponent(viewModel = viewModel)
-                                }
-                            }
-                            Spacer(modifier = Modifier.width(5.dp))
-                            Column{
-                                ChooseDropdownMenu(viewModel = viewModel)
-                                Spacer(modifier = Modifier.height(5.dp))
-                                DestinationButton(navController)
+                    Row(
+                        modifier = Modifier.padding(32.dp, 0.dp)
+                    ){
+                        Column {
+                            TravelDateComponent(selectedDateRange, calenderState, windowSize)
+                            Spacer(modifier = Modifier.height(30.dp))
+                            Box(
+                                modifier = Modifier
+                                    .width(200.dp)
+                            ) {
+                                BudgetLandComponent(viewModel = viewModel)
                             }
                         }
+                        Spacer(modifier = Modifier.width(5.dp))
+                        ChooseDropdownMenu(viewModel = viewModel)
+                        DestinationButton(navController)
                     }
+//                    Box(
+//                        modifier = Modifier
+//                            .fillMaxWidth()
+//                            .verticalScroll(rememberScrollState())
+//                    ) {
+//
+//                    }
                 }
             }
 
