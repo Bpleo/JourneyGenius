@@ -1,8 +1,10 @@
 package com.example.journeygenius.plan
 
 import android.content.Context
+import android.content.Intent
 import android.location.Address
 import android.location.Geocoder
+import android.net.Uri
 import android.os.Build
 import android.util.Log
 import android.util.Range
@@ -29,6 +31,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -84,6 +87,12 @@ fun PlanScreenGraph(
         composable("Plan Detail"){
             PlanDetail(planNavController,viewModel)
         }
+        composable("Google Map"){
+            val uri = Uri.parse("https://www.google.com/maps/dir/?api=1&origin=${viewModel.startAttraction.value.location.lat},${viewModel.startAttraction.value.location.lng}&destination=${viewModel.endAttraction.value.location.lat},${viewModel.endAttraction.value.location.lng}&travelmode=driving")
+            val intent = Intent(Intent.ACTION_VIEW, uri)
+            LocalContext.current.startActivity(intent)
+        }
+
     }
 }
 

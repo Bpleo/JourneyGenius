@@ -1,21 +1,30 @@
 package com.example.journeygenius.plan
 
+import android.net.Uri
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import coil.compose.rememberImagePainter
 import com.example.journeygenius.JourneyGeniusViewModel
+import com.example.journeygenius.PlacesapiKey
 import com.example.journeygenius.ui.theme.JourneyGeniusTheme
 
 @Composable
@@ -109,24 +118,49 @@ fun PlanDetail(navController: NavController, viewModel: JourneyGeniusViewModel){
                             fontSize = MaterialTheme.typography.titleLarge.fontSize
                         )
                         Spacer(modifier = Modifier.height(75.dp))
+                        Box(modifier = Modifier
+                            .fillMaxSize()
+                            .padding(bottom = 80.dp),
+                            contentAlignment = Alignment.BottomCenter
+                        ){
+                            Column(
+                                modifier = Modifier
+                                    .clickable(onClick = {
+                                        navController.navigate("Google Map")
+
+                                    })
+                            ) {
+                                Image(
+                                    painter = rememberImagePainter(
+                                        data = "https://maps.googleapis.com/maps/api/staticmap?center=${planOnDetail.value.destination}&markers=color:red%7C${planOnDetail.value.destination}&zoom=13&size=300x300&key=$PlacesapiKey"
+                                    ),
+                                    contentDescription = "Google Map Thumbnail",
+                                    modifier = Modifier
+                                        .height(200.dp)
+                                        .fillMaxWidth(),
+                                    contentScale = ContentScale.Crop
+                                )
+                                Text(
+                                    text = "Click on the map to open in Google Maps",
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(16.dp),
+                                    color = Color.Gray
+                                )
+                            }
+
+                            Button(onClick = { navController.navigate("Plan List") }, modifier = Modifier
+                                .width(100.dp)
+                            ) {
+                                Text(text = "Back")
+                            }
+                        }
                     }
 
 
                 }
-            }
 
-            Box(modifier = Modifier
-                .fillMaxSize()
-                .padding(bottom = 80.dp),
-                contentAlignment = Alignment.BottomCenter
-            ){
-                Button(onClick = { navController.navigate("Plan List") }, modifier = Modifier
-                    .width(100.dp)
-                ) {
-                    Text(text = "Back")
-                }
             }
-
 
         }
     }
