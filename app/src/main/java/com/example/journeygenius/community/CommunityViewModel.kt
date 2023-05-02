@@ -2,20 +2,38 @@ package com.example.journeygenius.community
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.journeygenius.data.models.Plan
+import kotlinx.coroutines.launch
 
 class CommunityViewModel : ViewModel(){
 
-    private var _plans = mutableStateListOf<Plan>()
+    private val _plans = mutableStateListOf<Plan>()
     val plans: List<Plan> = _plans
 
     init {
-        getData()
+        fetchDataFromDatabase()
     }
 
-    private fun getData() {
+    fun fetchDataFromDatabase() {
+        viewModelScope.launch {
+            _plans.clear()
+            _plans.addAll(getData())
+        }
+    }
+
+    fun testRefresh() {
+        viewModelScope.launch {
+            _plans.clear()
+            _plans.addAll(getRefreshedData())
+        }
+    }
+
+    private suspend fun getData(): List<Plan> {
+        val newPlans = mutableListOf<Plan>()
+
         for (number in 1 until 11) {
-            _plans.add(
+            newPlans.add(
                 element = Plan(
                     title = "Test Plan #$number",
                     userId = "0",
@@ -27,7 +45,7 @@ class CommunityViewModel : ViewModel(){
             )
         }
         for (number in 11 until 21) {
-            _plans.add(
+            newPlans.add(
                 element = Plan(
                     title = "Test Plan for a loooooooooooooooooog post #$number",
                     userId = "0",
@@ -40,5 +58,26 @@ class CommunityViewModel : ViewModel(){
                 )
             )
         }
+
+        return newPlans
+    }
+
+    private suspend fun getRefreshedData(): List<Plan> {
+        val newPlans = mutableListOf<Plan>()
+
+        for (number in 1 until 11) {
+            newPlans.add(
+                element = Plan(
+                    title = "Refreshed Plan #$number",
+                    userId = "0",
+                    planId = "$number",
+                    travels = mutableListOf(),
+                    likes = number * 100,
+                    description = "This is a test for Refreshed number $number post."
+                )
+            )
+        }
+
+        return newPlans
     }
 }
