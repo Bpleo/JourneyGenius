@@ -195,7 +195,6 @@ fun PlanList(
 
                         planViewModel.addPlanGroupToList(planGroup)
                         //update to firestore
-                        planViewModel.uploadList(isPublic)
 
                         planViewModel.updateSelectedAttractionList(listOf())
                         planViewModel.updateSelectedHotelList(listOf())
