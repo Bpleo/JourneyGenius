@@ -58,6 +58,61 @@ class JourneyGeniusViewModel(
         }
     }
 
+    private fun getPlace(attraction : Map<String, Any>) : Place? {
+        val name = attraction["name"] as? String
+        val vicinity =
+            attraction["vicinity"] as? String
+        // get a location object
+        val locationData =
+            attraction["location"] as? Map<String, Any>
+        val location = locationData?.let {
+            Location(
+                lat = it["lat"] as? Double ?: 0.0,
+                lng = it["lng"] as? Double ?: 0.0
+            )
+        }
+        val rating = attraction["rating"] as? Double
+        val place_id =
+            attraction["place_id"] as? String
+        // get a list of photos
+        val photosData =
+            attraction["photos"] as? List<Map<String, Any>>
+        val photos: List<Photo>? =
+            photosData?.mapNotNull { photo ->
+                val height = photo["height"] as? Int
+                val width = photo["width"] as? Int
+                val photo_reference =
+                    photo["photo_reference"] as? String
+                val html_attributions =
+                    photo["html_attributions"] as? List<String>
+                if (height != null && width != null && photo_reference != null && html_attributions != null) {
+                    Log.d(
+                        "DATA",
+                        "attraction photo pulled"
+                    )
+                    Photo(
+                        height,
+                        html_attributions,
+                        photo_reference,
+                        width
+                    )
+                } else
+                    null//get a photo object
+            }
+        if (name != null && vicinity != null && location != null && rating != null && place_id != null && photos != null) {
+            Log.d("DATA", "attraction pulled")
+            return Place(
+                name,
+                vicinity,
+                location,
+                rating,
+                place_id,
+                photos
+            )
+        } else
+            return null // get a Place Object
+    }
+
     fun signOut() {
         Firebase.auth.signOut()
         updateUserName(TextFieldValue(""))
@@ -105,59 +160,20 @@ class JourneyGeniusViewModel(
                                                     planData["attractions"] as? List<Map<String, Any>>
                                                 val attractions: List<Place> =
                                                     attractionsData?.mapNotNull { attraction ->
-                                                        val name = attraction["name"] as? String
-                                                        val vicinity =
-                                                            attraction["vicinity"] as? String
-                                                        // get a location object
-                                                        val locationData =
-                                                            attraction["location"] as? Map<String, Any>
-                                                        val location = locationData?.let {
-                                                            Location(
-                                                                lat = it["lat"] as? Double ?: 0.0,
-                                                                lng = it["lng"] as? Double ?: 0.0
-                                                            )
-                                                        }
-                                                        val rating = attraction["rating"] as? Double
-                                                        val place_id =
-                                                            attraction["place_id"] as? String
-                                                        // get a list of photos
-                                                        val photosData =
-                                                            attraction["photos"] as? List<Map<String, Any>>
-                                                        val photos: List<Photo>? =
-                                                            photosData?.mapNotNull { photo ->
-                                                                val height = photo["height"] as? Int
-                                                                val width = photo["width"] as? Int
-                                                                val photo_reference =
-                                                                    photo["photo_reference"] as? String
-                                                                val html_attributions =
-                                                                    photo["html_attributions"] as? List<String>
-                                                                if (height != null && width != null && photo_reference != null && html_attributions != null) {
-                                                                    Log.d(
-                                                                        "DATA",
-                                                                        "attraction photo pulled"
-                                                                    )
-                                                                    Photo(
-                                                                        height,
-                                                                        html_attributions,
-                                                                        photo_reference,
-                                                                        width
-                                                                    )
-                                                                } else
-                                                                    null//get a photo object
-                                                            }
-                                                        if (name != null && vicinity != null && location != null && rating != null && place_id != null && photos != null) {
-                                                            Log.d("DATA", "attraction pulled")
-                                                            Place(
-                                                                name,
-                                                                vicinity,
-                                                                location,
-                                                                rating,
-                                                                place_id,
-                                                                photos
-                                                            )
-                                                        } else
-                                                            null // get a Place Object
+                                                        getPlace(attraction = attraction)
                                                     } ?: emptyList()
+                                                // get startAttraction
+                                                val startAttractionData = planData["startAttraction"] as Map<String, Any>
+                                                val startAttraction = getPlace(startAttractionData)
+                                                // get endAttraction
+                                                val endAttractionData = planData["endAttraction"] as Map<String, Any>
+                                                val endAttraction = getPlace(endAttractionData)
+                                                // get attractionRoutes
+                                                val attractionRoutesData = planData["attractionRoutes"] as? List<Map<String, Any>>
+                                                val attractionRoutes: List<Place> =
+                                                    attractionRoutesData?.mapNotNull {attraction ->
+                                                        getPlace(attraction)
+                                                    }  ?: emptyList()
                                                 // get a list of hotels
                                                 val hotelsData =
                                                     planData["hotel"] as? List<Map<String, Any>>
@@ -166,63 +182,8 @@ class JourneyGeniusViewModel(
                                                         val priceLevel =
                                                             hotelData["priceLevel"] as? Int
                                                         val placeData =
-                                                            hotelData["place"] as? Map<String, Any>
-                                                        val place: Place? = placeData?.let {
-                                                            val name = it["name"] as? String
-                                                            val vicinity = it["vicinity"] as? String
-                                                            // get a location object
-                                                            val locationData =
-                                                                it["location"] as? Map<String, Any>
-                                                            val location = locationData?.let {
-                                                                Location(
-                                                                    lat = it["lat"] as? Double
-                                                                        ?: 0.0,
-                                                                    lng = it["lng"] as? Double
-                                                                        ?: 0.0
-                                                                )
-                                                            }
-                                                            val rating = it["rating"] as? Double
-                                                            val place_id = it["place_id"] as? String
-                                                            // get a list of photos
-                                                            val photosData =
-                                                                it["photos"] as? List<Map<String, Any>>
-                                                            val photos: List<Photo>? =
-                                                                photosData?.mapNotNull { photo ->
-                                                                    val height =
-                                                                        photo["height"] as? Int
-                                                                    val width =
-                                                                        photo["width"] as? Int
-                                                                    val photo_reference =
-                                                                        photo["photo_reference"] as? String
-                                                                    val html_attributions =
-                                                                        photo["html_attributions"] as? List<String>
-                                                                    if (height != null && width != null && photo_reference != null && html_attributions != null) {
-                                                                        Log.d(
-                                                                            "DATA",
-                                                                            "hotel photo pulled"
-                                                                        )
-                                                                        Photo(
-                                                                            height,
-                                                                            html_attributions,
-                                                                            photo_reference,
-                                                                            width
-                                                                        )
-                                                                    } else
-                                                                        null//get a photo object
-                                                                }
-                                                            if (name != null && vicinity != null && location != null && rating != null && place_id != null && photos != null) {
-                                                                Log.d("DATA", "hotel place pulled")
-                                                                Place(
-                                                                    name,
-                                                                    vicinity,
-                                                                    location,
-                                                                    rating,
-                                                                    place_id,
-                                                                    photos
-                                                                )
-                                                            } else
-                                                                null // get a place Object
-                                                        }
+                                                            hotelData["place"] as Map<String, Any>
+                                                        val place: Place? = getPlace(placeData)
                                                         // get a hotel object
                                                         if (priceLevel != null && place != null) {
                                                             Log.d("DATA", "hotel pulled")
@@ -232,6 +193,7 @@ class JourneyGeniusViewModel(
                                                     } ?: emptyList()
                                                 // get a SinglePlan Object
                                                 if (date != null && destination != null && attractions != null && priceLevel != null
+                                                    && startAttraction != null && endAttraction != null && attractionRoutes != null
                                                     && priceLevelLabel != null && hotel != null && travelType != null
                                                 ) {
                                                     Log.d("DATA", "single plan pulled")
@@ -239,6 +201,9 @@ class JourneyGeniusViewModel(
                                                         date,
                                                         destination,
                                                         attractions,
+                                                        startAttraction,
+                                                        endAttraction,
+                                                        attractionRoutes,
                                                         priceLevel,
                                                         priceLevelLabel,
                                                         hotel,
@@ -272,6 +237,35 @@ class JourneyGeniusViewModel(
         } else {
             Log.d("USER", "No User Logged In")
         }
+    }
+
+    fun updateLikes(likes: Int, planId: String){
+        val user = auth.currentUser
+        val fireStoreUpdates = mapOf(
+            "Plan_List.$planId.likes" to likes
+        )
+        val realtimeUpdates = mapOf<String, Any>(
+            "/planList/$planId/likes" to likes
+        )
+        if (user != null) {
+            db.collection("users").document(user.uid).update(fireStoreUpdates)
+                .addOnSuccessListener {
+                    realtime.updateChildren(realtimeUpdates)
+                        .addOnSuccessListener {
+                            Log.d("DATA", "$planId's like updates to $likes")
+                        }
+                        .addOnFailureListener { exception ->
+                            println("Error updating likes field: $exception")
+                        }
+                }
+                .addOnFailureListener { exception ->
+                    println("Error updating likes field: $exception")
+                }
+        }
+    }
+
+    fun getPlanById(planId: String){
+
     }
 
     private var _userName = mutableStateOf(TextFieldValue())
@@ -415,11 +409,6 @@ class JourneyGeniusViewModel(
         _selectedCityLatLng.value = value
     }
 
-    //    private var _attractionsList = mutableStateOf<List<Place>>(listOf())
-//    val attractionsList: MutableState<List<Place>> = _attractionsList
-//    fun updateAttractionsList(value: List<Place>) {
-//        _attractionsList.value = value
-//    }
     @SuppressLint("MutableCollectionMutableState")
     private var _attractionsList = mutableStateOf(CopyOnWriteArrayList<Place>())
     val attractionsList:
