@@ -172,7 +172,12 @@ fun TravelDateComponent(
                                 text = AnnotatedString(
                                     selectedDateRange.component1().component1().lower.format(
                                         sdf
-                                    ), spanStyle = SpanStyle(fontSize = 17.sp)
+                                    ), spanStyle = SpanStyle(
+                                        fontSize = 28.sp,
+                                        color = Color.DarkGray,
+                                        background = Color.White,
+                                        textDecoration = TextDecoration.None
+                                    )
                                 ),
                                 onClick = {
                                     calenderState.show()
@@ -210,7 +215,12 @@ fun TravelDateComponent(
                                 text = AnnotatedString(
                                     selectedDateRange.component1().component1().upper.format(
                                         sdf
-                                    ), spanStyle = SpanStyle(fontSize = 17.sp)
+                                    ), spanStyle = SpanStyle(
+                                        fontSize = 28.sp,
+                                        color = Color.DarkGray,
+                                        background = Color.White,
+                                        textDecoration = TextDecoration.None
+                                    )
                                 ),
                                 onClick = {
                                     calenderState.show()
@@ -469,8 +479,8 @@ fun ChooseDropdownMenu(viewModel: JourneyGeniusViewModel) {
                 OutlinedTextField(value = departCountry.value,
                     onValueChange = { viewModel.updateDepartCountry(it) },
                     modifier = Modifier
-                        .width(160.dp)
-                        .height(64.dp),
+                        .width(150.dp)
+                        .height(60.dp),
                     label = { Text(text = "Country") },
                     trailingIcon = {
                         Icon(
