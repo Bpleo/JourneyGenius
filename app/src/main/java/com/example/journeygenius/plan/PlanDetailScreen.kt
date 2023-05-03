@@ -1,5 +1,6 @@
 package com.example.journeygenius.plan
 
+import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
@@ -32,6 +34,7 @@ fun PlanDetail(navController: NavController, viewModel: JourneyGeniusViewModel){
     val planOnDetail= remember{
         viewModel.planOnDetail
     }
+    val content= LocalContext.current
     JourneyGeniusTheme {
         Box(
             modifier = Modifier.fillMaxSize(),
@@ -126,8 +129,9 @@ fun PlanDetail(navController: NavController, viewModel: JourneyGeniusViewModel){
                             Column(
                                 modifier = Modifier
                                     .clickable(onClick = {
-                                        navController.navigate("Google Map")
-
+                                        val uri = Uri.parse("https://www.google.com/maps/dir/?api=1&origin=${viewModel.startAttraction.value.location.lat},${viewModel.startAttraction.value.location.lng}&destination=${viewModel.endAttraction.value.location.lat},${viewModel.endAttraction.value.location.lng}&travelmode=driving")
+                                        val intent = Intent(Intent.ACTION_VIEW, uri)
+                                        content.startActivity(intent)
                                     })
                             ) {
                                 Image(
@@ -148,7 +152,6 @@ fun PlanDetail(navController: NavController, viewModel: JourneyGeniusViewModel){
                                     color = Color.Gray
                                 )
                                 Spacer(modifier = Modifier.height(20.dp))
-
                                     Button(onClick = { navController.navigate("Plan List") }, modifier = Modifier
                                         .width(100.dp)
                                     ) {

@@ -87,11 +87,6 @@ fun PlanScreenGraph(
         composable("Plan Detail"){
             PlanDetail(planNavController,viewModel)
         }
-        composable("Google Map"){
-            val uri = Uri.parse("https://www.google.com/maps/dir/?api=1&origin=${viewModel.startAttraction.value.location.lat},${viewModel.startAttraction.value.location.lng}&destination=${viewModel.endAttraction.value.location.lat},${viewModel.endAttraction.value.location.lng}&travelmode=driving")
-            val intent = Intent(Intent.ACTION_VIEW, uri)
-            LocalContext.current.startActivity(intent)
-        }
 
     }
 }
