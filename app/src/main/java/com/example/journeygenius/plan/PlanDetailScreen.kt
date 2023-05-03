@@ -147,13 +147,15 @@ fun PlanDetail(navController: NavController, viewModel: JourneyGeniusViewModel){
                                         .padding(16.dp),
                                     color = Color.Gray
                                 )
-                            }
+                                Spacer(modifier = Modifier.height(20.dp))
 
-                            Button(onClick = { navController.navigate("Plan List") }, modifier = Modifier
-                                .width(100.dp)
-                            ) {
-                                Text(text = "Back")
-                            }
+                                    Button(onClick = { navController.navigate("Plan List") }, modifier = Modifier
+                                        .width(100.dp)
+                                    ) {
+                                        Text(text = "Back")
+                                    }
+
+
                         }
                     }
 
@@ -164,7 +166,7 @@ fun PlanDetail(navController: NavController, viewModel: JourneyGeniusViewModel){
 
         }
     }
-}
+}}
 //@Preview(showBackground = true)
 //@Composable
 //fun PlanDetailPreview(){
