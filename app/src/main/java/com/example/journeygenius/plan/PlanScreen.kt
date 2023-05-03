@@ -750,7 +750,7 @@ fun PlanScreen(
                 else -> {
                     Column {
                         Row(
-                            modifier = Modifier.padding(64.dp, 32.dp)
+                            modifier = Modifier.padding(200.dp, 100.dp)
                         ) {
                             Column {
                                 TravelDateComponent(selectedDateRange, calenderState, windowSize)
@@ -762,7 +762,7 @@ fun PlanScreen(
                                     BudgetLandComponent(viewModel = viewModel)
                                 }
                             }
-                            Spacer(modifier = Modifier.width(5.dp))
+                            Spacer(modifier = Modifier.width(300.dp))
                             ChooseDropdownMenu(viewModel = viewModel)
                         }
                         DestinationButton(navController)
