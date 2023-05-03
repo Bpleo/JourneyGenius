@@ -493,7 +493,10 @@ class JourneyGeniusViewModel(
     }
 
     private var _singlePlan =
-        mutableStateOf(SinglePlan("", "", listOf(), 4, "luxury", listOf(), ""))
+        mutableStateOf(SinglePlan("", "", listOf(),
+            Place("", "", Location(0.0, 0.0), 0.0, "", listOf()),
+            Place("", "", Location(0.0, 0.0), 0.0, "", listOf()),
+            listOf(),4, "extravagant", listOf(), ""))
     val singlePlan: MutableState<SinglePlan> = _singlePlan
     fun updateSinglePlan(value: SinglePlan) {
         _singlePlan.value = value

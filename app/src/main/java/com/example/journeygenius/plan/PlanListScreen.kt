@@ -199,7 +199,10 @@ fun PlanList(
                         planViewModel.updateSelectedAttractionList(listOf())
                         planViewModel.updateSelectedHotelList(listOf())
                         planViewModel.updatePlanList(emptyList())
-                        planViewModel.updateSinglePlan(SinglePlan("", "", listOf(), 4, "extravagant", listOf(), ""))
+                        planViewModel.updateSinglePlan(SinglePlan("", "", listOf(),
+                            Place("", "", Location(0.0, 0.0), 0.0, "", listOf()),
+                            Place("", "", Location(0.0, 0.0), 0.0, "", listOf()),
+                            listOf(),4, "extravagant", listOf(), ""))
                         planViewModel.updatePlanGroup(Plans("", "", isPublic,listOf()))
                         planViewModel.updateStartAttraction(Place("", "", Location(0.0, 0.0), 0.0, "", emptyList()))
                         planViewModel.updateEndAttraction(Place("", "", Location(0.0, 0.0), 0.0, "", emptyList()))

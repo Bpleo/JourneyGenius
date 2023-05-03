@@ -638,6 +638,10 @@ fun PlanChooseLocScreen(
                                 "${viewModel.dateRange.value.lower} - ${viewModel.dateRange.value.upper}",
                                 "${destCountry.value}  ${destState.value}  ${destCity.value}",
                                 selectedAttractionList.value,
+                                startAttraction.value,
+                                endAttraction.value,
+                                // TODO: ADD ROUTES List
+                                listOf(),
                                 viewModel.sliderValue.value?:4,
                                 viewModel.sliderLabel.value?:"extravagant",
                                 listOf(),
