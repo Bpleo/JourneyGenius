@@ -495,6 +495,27 @@ class JourneyGeniusViewModel(
 
     }
 
+    private var _attractionRoutes = mutableStateOf<List<Place>>(listOf())
+    val attractionRoutes:MutableState<List<Place>> = _attractionRoutes
+    fun updateAttractionRoutes(value: List<Place>){
+        _attractionRoutes.value=value
+    }
+    fun addAttractionToRoutes(value: Place){
+        val updatedRoutes=_attractionRoutes.value.toMutableList()
+        if(!updatedRoutes.contains(value)){
+            updatedRoutes.add(value)
+            updateAttractionRoutes(updatedRoutes)
+        }
+    }
+    fun delAttractionToRoutes(value:Place){
+        val updatedRoutes=_attractionRoutes.value.toMutableList()
+        if(updatedRoutes.contains(value)){
+            updatedRoutes.remove(value)
+            updateAttractionRoutes(updatedRoutes)
+        }
+    }
+
+
     private var _singlePlan =
         mutableStateOf(SinglePlan("", "", listOf(),
             Place("", "", Location(0.0, 0.0), 0.0, "", listOf()),
@@ -507,6 +528,9 @@ class JourneyGeniusViewModel(
 
     fun addHotelsToSinglePlan(value: List<Hotel>) {
         singlePlan.value.hotel = value
+    }
+    fun addRoutesToSinglePlan(value:List<Place>){
+        singlePlan.value.attractionRoutes=value
     }
 
     private var _planList = mutableStateOf(listOf<SinglePlan>())
@@ -889,6 +913,7 @@ class JourneyGeniusViewModel(
         val jsonObject = JsonParser.parseString(result).asJsonObject
         val routes = jsonObject.getAsJsonArray("routes")
         val allRoutes = mutableListOf<List<LatLng>>()
+        val legs = mutableListOf<LatLng>()
 //    for (i in 0 until routes.size()) {
 //        val points = routes[i].asJsonObject
 //            .getAsJsonArray("legs")[0].asJsonObject
@@ -919,16 +944,29 @@ class JourneyGeniusViewModel(
                 println("No more travel mode matching")
                 return@withContext emptyList()
             }
+//            for (i in 0 until newRoutes.size()) {
+//                val points = newRoutes[i].asJsonObject
+//                    .getAsJsonArray("legs")[0].asJsonObject
+//                    .getAsJsonArray("steps")
+//                    .flatMap {
+//                        decodePoly(
+//                            it.asJsonObject.getAsJsonObject("polyline").get("points").asString
+//                        )
+//                    }
+//                allRoutes.add(points)
+//            }
             for (i in 0 until newRoutes.size()) {
-                val points = newRoutes[i].asJsonObject
-                    .getAsJsonArray("legs")[0].asJsonObject
-                    .getAsJsonArray("steps")
-                    .flatMap {
-                        decodePoly(
-                            it.asJsonObject.getAsJsonObject("polyline").get("points").asString
-                        )
+                val pointsLegs = newRoutes[i].asJsonObject
+                    .getAsJsonArray("legs")
+                for (j in 0 until pointsLegs.size()){
+                    val pointsSteps=pointsLegs[j].asJsonObject.getAsJsonArray("steps").flatMap {
+                        decodePoly(it.asJsonObject.getAsJsonObject("polyline").get("points").asString)
                     }
-                allRoutes.add(points)
+                    legs.addAll(pointsSteps)
+                }
+
+                allRoutes.add(legs.toList())
+                legs.clear()
             }
             println("$travelModeOption not exist, show $newTravelMode instead")
             CoroutineScope(Dispatchers.Main).launch {
@@ -939,16 +977,29 @@ class JourneyGeniusViewModel(
                 ).show()
             }
         } else {
+//            for (i in 0 until routes.size()) {
+//                val points = routes[i].asJsonObject
+//                    .getAsJsonArray("legs")[0].asJsonObject
+//                    .getAsJsonArray("steps")
+//                    .flatMap {
+//                        decodePoly(
+//                            it.asJsonObject.getAsJsonObject("polyline").get("points").asString
+//                        )
+//                    }
+//                allRoutes.add(points)
+//            }
             for (i in 0 until routes.size()) {
-                val points = routes[i].asJsonObject
-                    .getAsJsonArray("legs")[0].asJsonObject
-                    .getAsJsonArray("steps")
-                    .flatMap {
-                        decodePoly(
-                            it.asJsonObject.getAsJsonObject("polyline").get("points").asString
-                        )
+                val pointsLegs = routes[i].asJsonObject
+                    .getAsJsonArray("legs")
+                for (j in 0 until pointsLegs.size()){
+                    val pointsSteps=pointsLegs[j].asJsonObject.getAsJsonArray("steps").flatMap {
+                        decodePoly(it.asJsonObject.getAsJsonObject("polyline").get("points").asString)
                     }
-                allRoutes.add(points)
+                    legs.addAll(pointsSteps)
+                }
+
+                allRoutes.add(legs.toList())
+                legs.clear()
             }
             println("$travelModeOption exist")
             CoroutineScope(Dispatchers.Main).launch {

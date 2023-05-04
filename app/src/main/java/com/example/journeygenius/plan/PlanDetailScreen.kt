@@ -180,15 +180,14 @@ fun PlanDetail(navController: NavController, viewModel: JourneyGeniusViewModel){
                             Column(
                                 modifier = Modifier
                                     .clickable(onClick = {
-                                        val uri =
-                                            Uri.parse("https://www.google.com/maps/dir/?api=1&origin=${viewModel.startAttraction.value.location.lat},${viewModel.startAttraction.value.location.lng}&destination=${viewModel.endAttraction.value.location.lat},${viewModel.endAttraction.value.location.lng}&travelmode=driving")
+                                        val uri = Uri.parse("https://www.google.com/maps/dir/?api=1&origin=${planOnDetail.value.startAttraction.location.lat},${planOnDetail.value.startAttraction.location.lng}&destination=${planOnDetail.value.endAttraction.location.lat},${planOnDetail.value.endAttraction.location.lng}&travelmode=driving")
                                         val intent = Intent(Intent.ACTION_VIEW, uri)
                                         content.startActivity(intent)
                                     })
                             ) {
                                 Image(
                                     painter = rememberImagePainter(
-                                        data = "https://maps.googleapis.com/maps/api/staticmap?center=${planOnDetail.value.destination}&markers=color:red%7C${planOnDetail.value.destination}&zoom=13&size=300x300&key=$PlacesapiKey"
+                                        data = "https://maps.googleapis.com/maps/api/staticmap?center=${planOnDetail.value.startAttraction.location.lat},${planOnDetail.value.startAttraction.location.lng}&markers=color:red%7Clabel:A%7C${planOnDetail.value.startAttraction.location.lat},${planOnDetail.value.startAttraction.location.lng}&markers=color:red%7Clabel:B%7C${planOnDetail.value.endAttraction.location.lat},${planOnDetail.value.endAttraction.location.lng}&zoom=13&size=300x300&key=$PlacesapiKey"
                                     ),
                                     contentDescription = "Google Map Thumbnail",
                                     modifier = Modifier

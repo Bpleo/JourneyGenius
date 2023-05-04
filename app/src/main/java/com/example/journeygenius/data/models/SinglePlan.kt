@@ -6,7 +6,7 @@ data class SinglePlan(
     val attractions: List<Place>,
     val startAttraction: Place,
     val endAttraction:Place,
-    val attractionRoutes:List<Place>,
+    var attractionRoutes:List<Place>,
     val priceLevel: Int,
     val priceLevelLabel: String,
     var hotel: List<Hotel>,
