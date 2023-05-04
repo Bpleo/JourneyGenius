@@ -222,7 +222,7 @@ fun PlanList(
                             Toast.LENGTH_SHORT
                         ).show()
                     }, modifier = Modifier
-                        .width(120.dp)
+                        .width(125.dp)
                     ) {
                         Text(text = "COMPLETE")
                     }

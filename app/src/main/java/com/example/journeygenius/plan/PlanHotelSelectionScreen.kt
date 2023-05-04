@@ -1,4 +1,5 @@
 package com.example.journeygenius.plan
+
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.layout.*
@@ -17,6 +18,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.journeygenius.JourneyGeniusViewModel
 import com.example.journeygenius.PlacesapiKey
+import com.example.journeygenius.WindowSize
+import com.example.journeygenius.WindowType
 import com.example.journeygenius.data.models.Plans
 import com.example.journeygenius.ui.theme.JourneyGeniusTheme
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
@@ -26,16 +29,22 @@ import com.google.maps.android.compose.*
 import kotlinx.coroutines.launch
 import java.util.ArrayList
 
-fun getURL(from : LatLng, to : LatLng, apiKey:String, waypoints:List<LatLng>,travelModeOption:String) : String {
+fun getURL(
+    from: LatLng,
+    to: LatLng,
+    apiKey: String,
+    waypoints: List<LatLng>,
+    travelModeOption: String
+): String {
     val origin = "origin=" + from.latitude + "," + from.longitude
     val dest = "destination=" + to.latitude + "," + to.longitude
-    val Key= "key=$apiKey"
-    var waypointString= ""
-    if(waypoints.isNotEmpty()){
-        for (i in 0 until waypoints.size-1){
-            waypointString+="${waypoints[i].latitude}%2C${waypoints[i].longitude}%7C"
+    val Key = "key=$apiKey"
+    var waypointString = ""
+    if (waypoints.isNotEmpty()) {
+        for (i in 0 until waypoints.size - 1) {
+            waypointString += "${waypoints[i].latitude}%2C${waypoints[i].longitude}%7C"
         }
-        waypointString+="${waypoints[waypoints.size-1].latitude}%2C${waypoints[waypoints.size-1].longitude}"
+        waypointString += "${waypoints[waypoints.size - 1].latitude}%2C${waypoints[waypoints.size - 1].longitude}"
     }
     val params = "$origin&$dest&$Key&waypoints=$waypointString&mode=$travelModeOption"
     return "https://maps.googleapis.com/maps/api/directions/json?$params"
@@ -70,8 +79,10 @@ fun decodePoly(encoded: String): List<LatLng> {
         val dlng = if (result and 1 != 0) (result shr 1).inv() else result shr 1
         lng += dlng
 
-        val p = LatLng(lat.toDouble() / 1E5,
-            lng.toDouble() / 1E5)
+        val p = LatLng(
+            lat.toDouble() / 1E5,
+            lng.toDouble() / 1E5
+        )
         poly.add(p)
     }
 
@@ -81,23 +92,27 @@ fun decodePoly(encoded: String): List<LatLng> {
 @SuppressLint("SuspiciousIndentation")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PlanHotelSelectionScreen(viewModel: JourneyGeniusViewModel, navController: NavController) {
-    val attractionToHotels by remember{
+fun PlanHotelSelectionScreen(
+    viewModel: JourneyGeniusViewModel,
+    navController: NavController,
+    windowSize: WindowSize
+) {
+    val attractionToHotels by remember {
         viewModel.attractionToHotels
     }
     val selectedHotelList by remember {
         viewModel.selectedHotelList
     }
-    val selectedAttractionList by remember{
+    val selectedAttractionList by remember {
         viewModel.selectedAttractionList
     }
-    val startAttraction by remember{
+    val startAttraction by remember {
         viewModel.startAttraction
     }
     val endAttraction by remember {
         viewModel.endAttraction
     }
-    val sliderValue = remember{
+    val sliderValue = remember {
         viewModel.sliderValue
     }
     val singlePlan by remember {
@@ -109,146 +124,338 @@ fun PlanHotelSelectionScreen(viewModel: JourneyGeniusViewModel, navController: N
     val planGroup by remember {
         viewModel.planGroup
     }
-    val travelModeOption = remember{
+    val travelModeOption = remember {
         viewModel.travelModeOption
     }
     val context = LocalContext.current
-    val cameraPositionState= CameraPositionState(position= CameraPosition.fromLatLngZoom(LatLng(startAttraction.location.lat,startAttraction.location.lng),15f))
+    val cameraPositionState = CameraPositionState(
+        position = CameraPosition.fromLatLngZoom(
+            LatLng(
+                startAttraction.location.lat,
+                startAttraction.location.lng
+            ), 15f
+        )
+    )
     var polylinePoints by remember { mutableStateOf(emptyList<List<LatLng>>()) }
     val coroutineScope = rememberCoroutineScope()
 
-    val from =LatLng(startAttraction.location.lat,startAttraction.location.lng)
-    val to=LatLng(endAttraction.location.lat,endAttraction.location.lng)
-    val waypoints= selectedAttractionList.toMutableList()
+    val from = LatLng(startAttraction.location.lat, startAttraction.location.lng)
+    val to = LatLng(endAttraction.location.lat, endAttraction.location.lng)
+    val waypoints = selectedAttractionList.toMutableList()
     println(waypoints.toString())
-    if (waypoints.isNotEmpty()){
-        val first=waypoints[0]
-        val last=waypoints[waypoints.size-1]
+    if (waypoints.isNotEmpty()) {
+        val first = waypoints[0]
+        val last = waypoints[waypoints.size - 1]
         waypoints.remove(first)
         waypoints.remove(last)
     }
     println(waypoints.toString())
-    val waypointsLatLng:MutableList<LatLng> = mutableListOf();
-    waypoints.forEach{
-        waypointsLatLng.add(LatLng(it.location.lat,it.location.lng))
+    val waypointsLatLng: MutableList<LatLng> = mutableListOf();
+    waypoints.forEach {
+        waypointsLatLng.add(LatLng(it.location.lat, it.location.lng))
     }
 
-    LaunchedEffect(key1 = from, key2 =to ) {
-        val points = viewModel.getRoutes(from, to, PlacesapiKey,waypointsLatLng,travelModeOption.value,context)
+    LaunchedEffect(key1 = from, key2 = to) {
+        val points = viewModel.getRoutes(
+            from,
+            to,
+            PlacesapiKey,
+            waypointsLatLng,
+            travelModeOption.value,
+            context
+        )
         coroutineScope.launch {
             polylinePoints = points
         }
     }
-    LaunchedEffect(key1=context) {
+    LaunchedEffect(key1 = context) {
         selectedAttractionList.forEach {
-            val hotelList=viewModel.searchNearbyHotels(it.name,it.location, apiKey = PlacesapiKey, maxPriceLevel = sliderValue.value?:4, context = context)
-            viewModel.addAttractionToHotel(it,hotelList)
+            val hotelList = viewModel.searchNearbyHotels(
+                it.name,
+                it.location,
+                apiKey = PlacesapiKey,
+                maxPriceLevel = sliderValue.value ?: 4,
+                context = context
+            )
+            viewModel.addAttractionToHotel(it, hotelList)
         }
     }
     println(attractionToHotels)
 
-    JourneyGeniusTheme{
-        Box(
-            modifier = Modifier.fillMaxSize(),
-        ){
-            Column() {
-                Box(contentAlignment = Alignment.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(0.dp, 10.dp)){
-                    Text(text = "Choose your hotels",
-                        fontSize = MaterialTheme.typography.headlineLarge.fontSize)
-                }
-                GoogleMap(modifier = Modifier
-                    .fillMaxWidth()
-                    .height(550.dp),
-                    cameraPositionState = cameraPositionState,
-                    onMapLongClick = {
-                        Log.d("selectedHotelOnMap",selectedHotelList.toString())
-                    },
-                    onMapClick = {}
-                ){
-                    if(selectedAttractionList.isNotEmpty()){
-                        selectedAttractionList.forEach {
-                            Marker(
-                                state= MarkerState(position=LatLng(it.location.lat,it.location.lng)),
-                                snippet = "Marker in ${it.name}",
+    JourneyGeniusTheme {
+        when (windowSize.height) {
+            WindowType.Medium -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                ) {
+                    Column() {
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(0.dp, 10.dp)
+                        ) {
+                            Text(
+                                text = "Choose your hotels",
+                                fontSize = MaterialTheme.typography.headlineLarge.fontSize
                             )
-
-                            if(attractionToHotels.containsKey(it) && !attractionToHotels[it].isNullOrEmpty()){
-                                attractionToHotels[it]!!.forEach {hotel->
+                        }
+                        GoogleMap(modifier = Modifier
+                            .fillMaxWidth()
+                            .height(550.dp),
+                            cameraPositionState = cameraPositionState,
+                            onMapLongClick = {
+                                Log.d("selectedHotelOnMap", selectedHotelList.toString())
+                            },
+                            onMapClick = {}
+                        ) {
+                            if (selectedAttractionList.isNotEmpty()) {
+                                selectedAttractionList.forEach {
                                     Marker(
-                                        state= MarkerState(position=LatLng(hotel.place.location.lat,hotel.place.location.lng)),
-                                        title=hotel.place.name,
-                                        snippet = hotel.place.vicinity,
-                                        icon = BitmapDescriptorFactory.defaultMarker(
-                                            BitmapDescriptorFactory.HUE_GREEN),
-                                        onInfoWindowClick={
-                                            if(!selectedHotelList.contains(hotel)){
-                                                viewModel.addSelectedHotel(hotel)
-                                            }
-                                            Log.d("selectedHotel",selectedHotelList.toString())
-                                        }
-
+                                        state = MarkerState(
+                                            position = LatLng(
+                                                it.location.lat,
+                                                it.location.lng
+                                            )
+                                        ),
+                                        snippet = "Marker in ${it.name}",
                                     )
 
+                                    if (attractionToHotels.containsKey(it) && !attractionToHotels[it].isNullOrEmpty()) {
+                                        attractionToHotels[it]!!.forEach { hotel ->
+                                            Marker(
+                                                state = MarkerState(
+                                                    position = LatLng(
+                                                        hotel.place.location.lat,
+                                                        hotel.place.location.lng
+                                                    )
+                                                ),
+                                                title = hotel.place.name,
+                                                snippet = hotel.place.vicinity,
+                                                icon = BitmapDescriptorFactory.defaultMarker(
+                                                    BitmapDescriptorFactory.HUE_GREEN
+                                                ),
+                                                onInfoWindowClick = {
+                                                    if (!selectedHotelList.contains(hotel)) {
+                                                        viewModel.addSelectedHotel(hotel)
+                                                    }
+                                                    Log.d(
+                                                        "selectedHotel",
+                                                        selectedHotelList.toString()
+                                                    )
+                                                }
+
+                                            )
+
+                                        }
+                                    }
+                                }
+                            }
+                            if (polylinePoints.isNotEmpty()) {
+                                for (i in polylinePoints.indices) {
+                                    if (i == 0) {
+                                        Polyline(
+                                            points = polylinePoints.get(0),
+                                            color = Color.Blue,
+                                        )
+                                    } else {
+                                        Polyline(
+                                            points = polylinePoints.get(i),
+                                            color = Color.Cyan,
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(5.dp))
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(100.dp)
+                        ) {
+                            LazyColumn(
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                items(selectedHotelList, key = { it.place.name }) {
+                                    Tag(title = it.place.name, onClose = {
+                                        viewModel.delSelectedHotel(it)
+                                        Log.d("selectedHotel", selectedHotelList.toString())
+                                    })
+                                }
+                            }
+                        }
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(bottom = 85.dp),
+                            contentAlignment = Alignment.BottomCenter
+                        ) {
+                            Button(
+                                onClick = {
+                                    viewModel.addHotelsToSinglePlan(selectedHotelList)
+                                    viewModel.addSinglePlan(singlePlan)
+
+                                    viewModel.updatePlanGroup(
+                                        Plans(
+                                            viewModel.planGroup.value.title,
+                                            viewModel.planGroup.value.description,
+                                            viewModel.planGroup.value.isPublic,
+                                            planList
+                                        )
+                                    )
+                                    navController.navigate("Plan List")
+                                    Log.d("Plan", planGroup.toString())
+                                    Log.d("PlanList", viewModel.planGroupList.value.toString())
+                                }, modifier = Modifier
+                                    .width(130.dp)
+                            ) {
+                                Text(text = "Generate")
+                            }
+                        }
+
+                    }
+                }
+            }
+            else -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                ) {
+                    Row() {
+                        Column() {
+                            Box(
+                                contentAlignment = Alignment.Center,
+                                modifier = Modifier
+                                    .width(500.dp)
+                                    .padding(50.dp, 50.dp)
+                            ) {
+                                Text(
+                                    text = "Choose your hotels",
+                                    fontSize = MaterialTheme.typography.headlineLarge.fontSize
+                                )
+                            }
+                            GoogleMap(modifier = Modifier
+                                .width(500.dp)
+                                .height(550.dp).padding(50.dp, 0.dp),
+                                cameraPositionState = cameraPositionState,
+                                onMapLongClick = {
+                                    Log.d("selectedHotelOnMap", selectedHotelList.toString())
+                                },
+                                onMapClick = {}
+                            ) {
+                                if (selectedAttractionList.isNotEmpty()) {
+                                    selectedAttractionList.forEach {
+                                        Marker(
+                                            state = MarkerState(
+                                                position = LatLng(
+                                                    it.location.lat,
+                                                    it.location.lng
+                                                )
+                                            ),
+                                            snippet = "Marker in ${it.name}",
+                                        )
+
+                                        if (attractionToHotels.containsKey(it) && !attractionToHotels[it].isNullOrEmpty()) {
+                                            attractionToHotels[it]!!.forEach { hotel ->
+                                                Marker(
+                                                    state = MarkerState(
+                                                        position = LatLng(
+                                                            hotel.place.location.lat,
+                                                            hotel.place.location.lng
+                                                        )
+                                                    ),
+                                                    title = hotel.place.name,
+                                                    snippet = hotel.place.vicinity,
+                                                    icon = BitmapDescriptorFactory.defaultMarker(
+                                                        BitmapDescriptorFactory.HUE_GREEN
+                                                    ),
+                                                    onInfoWindowClick = {
+                                                        if (!selectedHotelList.contains(hotel)) {
+                                                            viewModel.addSelectedHotel(hotel)
+                                                        }
+                                                        Log.d(
+                                                            "selectedHotel",
+                                                            selectedHotelList.toString()
+                                                        )
+                                                    }
+
+                                                )
+
+                                            }
+                                        }
+                                    }
+                                }
+                                if (polylinePoints.isNotEmpty()) {
+                                    for (i in polylinePoints.indices) {
+                                        if (i == 0) {
+                                            Polyline(
+                                                points = polylinePoints.get(0),
+                                                color = Color.Blue,
+                                            )
+                                        } else {
+                                            Polyline(
+                                                points = polylinePoints.get(i),
+                                                color = Color.Cyan,
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(5.dp))
+
+                        Column() {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(100.dp)
+                                    .padding(top = 50.dp)
+                            ) {
+                                LazyColumn(
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    items(selectedHotelList, key = { it.place.name }) {
+                                        Tag(title = it.place.name, onClose = {
+                                            viewModel.delSelectedHotel(it)
+                                            Log.d("selectedHotel", selectedHotelList.toString())
+                                        })
+                                    }
+                                }
+                            }
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(bottom = 85.dp),
+                                contentAlignment = Alignment.BottomCenter
+                            ) {
+                                Button(
+                                    onClick = {
+                                        viewModel.addHotelsToSinglePlan(selectedHotelList)
+                                        viewModel.addSinglePlan(singlePlan)
+
+                                        viewModel.updatePlanGroup(
+                                            Plans(
+                                                viewModel.planGroup.value.title,
+                                                viewModel.planGroup.value.description,
+                                                viewModel.planGroup.value.isPublic,
+                                                planList
+                                            )
+                                        )
+                                        navController.navigate("Plan List")
+                                        Log.d("Plan", planGroup.toString())
+                                        Log.d("PlanList", viewModel.planGroupList.value.toString())
+                                    }, modifier = Modifier
+                                        .width(130.dp)
+                                ) {
+                                    Text(text = "Generate")
                                 }
                             }
                         }
                     }
-                    if (polylinePoints.isNotEmpty()){
-                        for (i in polylinePoints.indices){
-                            if(i==0){
-                                Polyline(points = polylinePoints.get(0),
-                                    color = Color.Blue,
-                                )
-                            }else{
-                                Polyline(points = polylinePoints.get(i),
-                                    color = Color.Cyan,
-                                )
-                            }
-                        }
-                    }
                 }
-                Spacer(modifier = Modifier.height(5.dp))
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(100.dp)
-                ) {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        items(selectedHotelList,key={it.place.name}){
-                            Tag(title=it.place.name, onClose = {
-                                viewModel.delSelectedHotel(it)
-                                Log.d("selectedHotel",selectedHotelList.toString())
-                            })
-                        }
-                    }
-                }
-                Box(modifier = Modifier
-                    .fillMaxSize()
-                    .padding(bottom = 85.dp),
-                    contentAlignment = Alignment.BottomCenter
-                ){
-                    Button(onClick = {
-                        viewModel.addHotelsToSinglePlan(selectedHotelList)
-                        viewModel.addSinglePlan(singlePlan)
-
-                        viewModel.updatePlanGroup(Plans(viewModel.planGroup.value.title,viewModel.planGroup.value.description,viewModel.planGroup.value.isPublic,planList))
-                        navController.navigate("Plan List")
-                        Log.d("Plan",planGroup.toString())
-                        Log.d("PlanList",viewModel.planGroupList.value.toString())
-                    }, modifier = Modifier
-                        .width(130.dp)
-                    ) {
-                        Text(text = "Generate")
-                    }
-                }
-
             }
         }
+
     }
 }
 
