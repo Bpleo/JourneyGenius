@@ -135,7 +135,7 @@ class JourneyGeniusViewModel(
         updateVerifyPwd("")
     }
 
-    //pull plan list from firestore and add to local vm
+    //pull plan list from firestore and add to local vm TODO
     fun signIn() {
         val user = auth.currentUser
         if (user != null) {

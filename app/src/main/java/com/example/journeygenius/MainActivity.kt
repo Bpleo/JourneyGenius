@@ -45,7 +45,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             JourneyGeniusTheme {
                 Scaffold{
-                    JourneyGenius(auth, this, db, realtime)
+                    Intro(auth, this, db, realtime)
                 }
             }
         }
