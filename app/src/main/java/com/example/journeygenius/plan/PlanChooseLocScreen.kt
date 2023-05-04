@@ -1,4 +1,5 @@
 package com.example.journeygenius.plan
+
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
@@ -34,8 +35,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.example.journeygenius.JourneyGeniusViewModel
-import com.example.journeygenius.PlacesapiKey
+import com.example.journeygenius.*
 import com.example.journeygenius.R
 import com.google.android.gms.maps.model.*
 import com.google.firebase.auth.ktx.auth
@@ -68,6 +68,7 @@ fun bitmapDescriptorFromVector(
     drawable.draw(canvas)
     return BitmapDescriptorFactory.fromBitmap(bm)
 }
+
 @Composable
 fun Tag(title: String, onClose: () -> Unit) {
     Row(
@@ -158,22 +159,29 @@ fun Tag(title: String, onClose: () -> Unit) {
 //}
 
 
-
 @SuppressLint("CoroutineCreationDuringComposition")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlanChooseLocScreen(
     viewModel: JourneyGeniusViewModel,
-    navController: NavController) {
+    windowSize: WindowSize,
+    navController: NavController
+) {
     val countries = listOf("China", "Japan", "Korea", "US", "UK")
-    val usStates = listOf("AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID",
-        "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN")
-    val chnStates = listOf("Guangdong", "Hainan", "Beijing", "Jiangsu", "Jiangxi", "Guangxi",
-        "Sichuan", "Yunan", "Fujian")
+    val usStates = listOf(
+        "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID",
+        "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN"
+    )
+    val chnStates = listOf(
+        "Guangdong", "Hainan", "Beijing", "Jiangsu", "Jiangxi", "Guangxi",
+        "Sichuan", "Yunan", "Fujian"
+    )
     val jpStates = listOf("Hokkaido", "Aomori", "Iwate", "Miyagi", "Akita", "Yamagata", "Fukushima")
-    val krStates = listOf( "Seoul", "Busan", "Daegu", "Incheon","Gwangju", "Daejeon", "Ulsan", "Sejong",)
+    val krStates =
+        listOf("Seoul", "Busan", "Daegu", "Incheon", "Gwangju", "Daejeon", "Ulsan", "Sejong")
     val ukStates = listOf(
-        "England", "Scotland", "Wales", "Northern Ireland")
+        "England", "Scotland", "Wales", "Northern Ireland"
+    )
 
     val countryToStateMap = mapOf(
         "China" to chnStates,
@@ -200,7 +208,7 @@ fun PlanChooseLocScreen(
     val bosCities = listOf(
         "Boston", "Worcester", "Springfield", "Lowell"
     )
-    val seoulCities= listOf("Seoul")
+    val seoulCities = listOf("Seoul")
     val stateToCityMap = mapOf(
         "England" to engCities,
         "Guangdong" to guangdongCities,
@@ -257,11 +265,11 @@ fun PlanChooseLocScreen(
     val destCity by remember {
         mutableStateOf(viewModel.destCity)
     }
-    val selectedCityLocation = remember { viewModel.selectedCityLocation  }
+    val selectedCityLocation = remember { viewModel.selectedCityLocation }
     val selectedCityLatLng = remember {
         viewModel.selectedCityLatLng
     }
-    val attractionsList = remember{viewModel.attractionsList }
+    val attractionsList = remember { viewModel.attractionsList }
     val selectedAttractionList = remember {
         viewModel.selectedAttractionList
     }
@@ -269,7 +277,7 @@ fun PlanChooseLocScreen(
     var textFiledSize by remember {
         mutableStateOf(Size.Zero)
     }
-    val selectedPlacesOnMap by remember{
+    val selectedPlacesOnMap by remember {
         viewModel.selectedPlacesOnMap
     }
     val singlePlan by remember {
@@ -326,271 +334,329 @@ fun PlanChooseLocScreen(
     }
     val context = LocalContext.current
 
-    val boston=LatLng(42.36, -71.05)
-    val cameraPositionState= CameraPositionState(position= CameraPosition.fromLatLngZoom(selectedCityLocation.value,10f))
+    val boston = LatLng(42.36, -71.05)
+    val cameraPositionState = CameraPositionState(
+        position = CameraPosition.fromLatLngZoom(
+            selectedCityLocation.value,
+            10f
+        )
+    )
     viewModel.viewModelScope.launch {
         val location = viewModel.selectedCityLatLng.value
-        viewModel.searchNearbyPlaces(Location(location[0],location[1]), apiKey = PlacesapiKey)
+        viewModel.searchNearbyPlaces(Location(location[0], location[1]), apiKey = PlacesapiKey)
     }
 
 
     JourneyGeniusTheme {
-        Box(
-            modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter
-        ) {
-            Column {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(20.dp, 15.dp)
-                ) {
-                    //Departure
-                    Column(
-                        modifier = Modifier.width(170.dp)
-                    ) {
-                        Text(
-                            text = "Departure",
-                            fontSize = MaterialTheme.typography.titleLarge.fontSize,
-                        )
-                        Spacer(modifier = Modifier.height(10.dp))
-                        Column {
-
-                            //Departure Sight
-                            OutlinedTextField(value = startAttraction.value.name,
-                                onValueChange = {
-
-                                },
-                                modifier = Modifier
-                                    .width(170.dp)
-                                    .height(70.dp),
-                                label = { Text(text = "Choose") },
-                                trailingIcon = {
-                                    Icon(
-                                        iconStartAttraction,
-                                        contentDescription = "",
-                                        Modifier.clickable {
-                                            startAttractionExpanded = !startAttractionExpanded
-                                        })
-                                })
-                            DropdownMenu(
-                                expanded = startAttractionExpanded,
-                                onDismissRequest = { startAttractionExpanded = false },
-                                modifier = Modifier.width(170.dp),
-//                            modifier = Modifier.width(with(LocalDensity.current) { textFiledSize.width.toDp() })
-                            ) {
-                                selectedAttractionList.value.filter { it != endAttraction.value }.forEach { attraction ->
-                                    DropdownMenuItem(text = { Text(attraction.name) }, onClick = {
-                                        viewModel.updateStartAttraction(attraction)
-                                        startAttractionExpanded = false
-                                    })
-
-                                }
-                            }
-                        }
-                    }
-                    Spacer(modifier = Modifier.width(15.dp))
-                    //Destination
-
-                    Column(
-                        modifier = Modifier.width(170.dp)
-                    ) {
-                        Text(
-                            text = "Destination",
-                            fontSize = MaterialTheme.typography.titleLarge.fontSize,
-                        )
-                        Spacer(modifier = Modifier.height(10.dp))
-                        Column {
-
-                            //Destination Sight
-                            OutlinedTextField(value = endAttraction.value.name,
-                                onValueChange = {
-
-                                },
-                                modifier = Modifier
-                                    .width(170.dp)
-                                    .height(70.dp),
-                                label = { Text(text = "Choose") },
-                                trailingIcon = {
-                                    Icon(
-                                        iconEndAttraction,
-                                        contentDescription = "",
-                                        Modifier.clickable {
-                                            endAttractionExpanded = !endAttractionExpanded
-                                        })
-                                })
-                            DropdownMenu(
-                                expanded = endAttractionExpanded,
-                                onDismissRequest = { endAttractionExpanded = false },
-                                modifier = Modifier.width(170.dp),
-//                            modifier = Modifier.width(with(LocalDensity.current) { textFiledSize.width.toDp() })
-                            ) {
-                                selectedAttractionList.value.filter { it != startAttraction.value }.forEach { attraction ->
-                                    DropdownMenuItem(text = { Text(attraction.name) }, onClick = {
-                                        viewModel.updateEndAttraction(attraction)
-                                        endAttractionExpanded = false
-                                    })
-                                }
-                            }
-                        }
-                    }
-                }
+        when (windowSize.height) {
+            WindowType.Medium -> {
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth(), contentAlignment = Alignment.TopCenter
+                    modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter
                 ) {
-                    Text(
-                        text = "Select your preferred travel mode:",
-                        fontSize = MaterialTheme.typography.bodyLarge.fontSize,
-                    )
-                }
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(12.dp)) {
+                    Column {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(20.dp, 15.dp)
+                        ) {
+                            //Departure
+                            Column(
+                                modifier = Modifier.width(170.dp)
+                            ) {
+                                Text(
+                                    text = "Departure",
+                                    fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                                )
+                                Spacer(modifier = Modifier.height(10.dp))
+                                Column {
 
-                    RadioButton(
-                        selected = viewModel.travelModeOption.value == "bicycling",
-                        onClick = { viewModel.onTravelModeChanged("bicycling") },
-                        modifier = Modifier
-                            .size(20.dp)
-                            .padding(end = 12.dp),
-                    )
-                    Text(
-                        text = label1,
-                        modifier = Modifier.padding(end = 16.dp)
-                    )
+                                    //Departure Sight
+                                    OutlinedTextField(value = startAttraction.value.name,
+                                        onValueChange = {
 
-                    RadioButton(
-                        selected = viewModel.travelModeOption.value == "walking",
-                        onClick = { viewModel.onTravelModeChanged("walking") },
-                        modifier = Modifier
-                            .size(20.dp)
-                            .padding(end = 12.dp),
-                    )
-                    Text(
-                        text = label2,
-                        modifier = Modifier.padding(end = 16.dp)
-                    )
+                                        },
+                                        modifier = Modifier
+                                            .width(170.dp)
+                                            .height(70.dp),
+                                        label = { Text(text = "Choose") },
+                                        trailingIcon = {
+                                            Icon(
+                                                iconStartAttraction,
+                                                contentDescription = "",
+                                                Modifier.clickable {
+                                                    startAttractionExpanded =
+                                                        !startAttractionExpanded
+                                                })
+                                        })
+                                    DropdownMenu(
+                                        expanded = startAttractionExpanded,
+                                        onDismissRequest = { startAttractionExpanded = false },
+                                        modifier = Modifier.width(170.dp),
+//                            modifier = Modifier.width(with(LocalDensity.current) { textFiledSize.width.toDp() })
+                                    ) {
+                                        selectedAttractionList.value.filter { it != endAttraction.value }
+                                            .forEach { attraction ->
+                                                DropdownMenuItem(
+                                                    text = { Text(attraction.name) },
+                                                    onClick = {
+                                                        viewModel.updateStartAttraction(attraction)
+                                                        startAttractionExpanded = false
+                                                    })
 
-                    RadioButton(
-                        selected = viewModel.travelModeOption.value == "driving",
-                        onClick = { viewModel.onTravelModeChanged("driving") },
-                        modifier = Modifier
-                            .size(20.dp)
-                            .padding(end = 12.dp),
-                    )
-                    Text(
-                        text = label3,
-                        modifier = Modifier.padding(end = 16.dp)
-                    )
-
-                    RadioButton(
-                        selected = viewModel.travelModeOption.value == "transit",
-                        onClick = { viewModel.onTravelModeChanged("transit") },
-                        modifier = Modifier
-                            .size(20.dp)
-                            .padding(end = 12.dp),
-                    )
-                    Text(
-                        text = label4,
-                        modifier = Modifier.padding(end = 16.dp)
-                    )
-                }
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth(), contentAlignment = Alignment.TopCenter
-                    ) {
-                        Text(
-                            text = "Choose Your Interests",
-                            fontSize = MaterialTheme.typography.headlineMedium.fontSize
-                        )
-                    }
-
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(320.dp)
-                            .padding(16.dp)
-                            .background(
-                                color = Color.White,
-                                shape = RoundedCornerShape(16.dp)
-                            )
-                    ) {
-                        GoogleMap(modifier = Modifier
-                            .fillMaxWidth()
-                            .height(320.dp),
-                            cameraPositionState = cameraPositionState,
-                            onMapLongClick = {
-                                viewModel.viewModelScope.launch {
-                                    val places= viewModel.getNearbyPlaces(Location(it.latitude,it.longitude), apiKey = PlacesapiKey)
-                                    viewModel.addSelectedPlacesOnMap(Pair(it.latitude,it.longitude),places)
-
+                                            }
+                                    }
                                 }
-                                Log.d("SelectedPlacesOnMap",selectedPlacesOnMap.toString())
+                            }
+                            Spacer(modifier = Modifier.width(15.dp))
+                            //Destination
+
+                            Column(
+                                modifier = Modifier.width(170.dp)
+                            ) {
+                                Text(
+                                    text = "Destination",
+                                    fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                                )
+                                Spacer(modifier = Modifier.height(10.dp))
+                                Column {
+
+                                    //Destination Sight
+                                    OutlinedTextField(value = endAttraction.value.name,
+                                        onValueChange = {
+
+                                        },
+                                        modifier = Modifier
+                                            .width(170.dp)
+                                            .height(70.dp),
+                                        label = { Text(text = "Choose") },
+                                        trailingIcon = {
+                                            Icon(
+                                                iconEndAttraction,
+                                                contentDescription = "",
+                                                Modifier.clickable {
+                                                    endAttractionExpanded = !endAttractionExpanded
+                                                })
+                                        })
+                                    DropdownMenu(
+                                        expanded = endAttractionExpanded,
+                                        onDismissRequest = { endAttractionExpanded = false },
+                                        modifier = Modifier.width(170.dp),
+//                            modifier = Modifier.width(with(LocalDensity.current) { textFiledSize.width.toDp() })
+                                    ) {
+                                        selectedAttractionList.value.filter { it != startAttraction.value }
+                                            .forEach { attraction ->
+                                                DropdownMenuItem(
+                                                    text = { Text(attraction.name) },
+                                                    onClick = {
+                                                        viewModel.updateEndAttraction(attraction)
+                                                        endAttractionExpanded = false
+                                                    })
+                                            }
+                                    }
+                                }
+                            }
+                        }
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth(), contentAlignment = Alignment.TopCenter
+                        ) {
+                            Text(
+                                text = "Select your preferred travel mode:",
+                                fontSize = MaterialTheme.typography.bodyLarge.fontSize,
+                            )
+                        }
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(12.dp)
+                        ) {
+
+                            RadioButton(
+                                selected = viewModel.travelModeOption.value == "bicycling",
+                                onClick = { viewModel.onTravelModeChanged("bicycling") },
+                                modifier = Modifier
+                                    .size(20.dp)
+                                    .padding(end = 12.dp),
+                            )
+                            Text(
+                                text = label1,
+                                modifier = Modifier.padding(end = 16.dp)
+                            )
+
+                            RadioButton(
+                                selected = viewModel.travelModeOption.value == "walking",
+                                onClick = { viewModel.onTravelModeChanged("walking") },
+                                modifier = Modifier
+                                    .size(20.dp)
+                                    .padding(end = 12.dp),
+                            )
+                            Text(
+                                text = label2,
+                                modifier = Modifier.padding(end = 16.dp)
+                            )
+
+                            RadioButton(
+                                selected = viewModel.travelModeOption.value == "driving",
+                                onClick = { viewModel.onTravelModeChanged("driving") },
+                                modifier = Modifier
+                                    .size(20.dp)
+                                    .padding(end = 12.dp),
+                            )
+                            Text(
+                                text = label3,
+                                modifier = Modifier.padding(end = 16.dp)
+                            )
+
+                            RadioButton(
+                                selected = viewModel.travelModeOption.value == "transit",
+                                onClick = { viewModel.onTravelModeChanged("transit") },
+                                modifier = Modifier
+                                    .size(20.dp)
+                                    .padding(end = 12.dp),
+                            )
+                            Text(
+                                text = label4,
+                                modifier = Modifier.padding(end = 16.dp)
+                            )
+                        }
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                        ) {
+                            //google map title
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth(), contentAlignment = Alignment.TopCenter
+                            ) {
+                                Text(
+                                    text = "Choose Your Interests",
+                                    fontSize = MaterialTheme.typography.headlineMedium.fontSize
+                                )
                             }
 
-                        ){
-
-                            Marker(
-                                state = MarkerState(position = selectedCityLocation.value),
-                                title = destCity.value,
-                                snippet = "Marker in ${destCity.value}"
-
-                            )
-                            if(selectedPlacesOnMap.isNotEmpty()){
-                                selectedPlacesOnMap.forEach{place->
-                                    Marker(
-                                        state=MarkerState(position=LatLng(place.key.first,place.key.second)),
-                                        snippet = "Marker in ($place.key.first},${place.key.second})",
-                                        icon=bitmapDescriptorFromVector(context, R.drawable.pin2),
-                                        onClick = {
-                                            if(selectedPlacesOnMap.containsKey(place.key)){
-                                                viewModel.delSelectedPlacesOnMap(place.key)
-                                            }
-                                            Log.d("selectedplacesOnMap", selectedPlacesOnMap.toString())
-                                            return@Marker true
-                                        }
+                            //Google Map
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(320.dp)
+                                    .padding(16.dp)
+                                    .background(
+                                        color = Color.White,
+                                        shape = RoundedCornerShape(16.dp)
                                     )
-                                    place.value.forEach {attr->
-                                        Marker(
-                                            state = MarkerState(position = LatLng(attr.location.lat,attr.location.lng)),
-                                            title = attr.name,
-                                            snippet = attr.vicinity,
-                                            icon = bitmapDescriptorFromVector(
-                                                context, R.drawable.pin
-                                            ),
-                                            onInfoWindowClick = {
-                                                if(!selectedAttractionList.value.contains(attr)){
-                                                    viewModel.addSelectedAttraction(attr)
-                                                }
-                                                Log.d("selectedAttractionList: ",viewModel.selectedAttractionList.value.toString())
-                                            }
+                            ) {
+                                GoogleMap(modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(320.dp),
+                                    cameraPositionState = cameraPositionState,
+                                    onMapLongClick = {
+                                        viewModel.viewModelScope.launch {
+                                            val places = viewModel.getNearbyPlaces(
+                                                Location(
+                                                    it.latitude,
+                                                    it.longitude
+                                                ), apiKey = PlacesapiKey
+                                            )
+                                            viewModel.addSelectedPlacesOnMap(
+                                                Pair(
+                                                    it.latitude,
+                                                    it.longitude
+                                                ), places
+                                            )
 
-                                        )
+                                        }
+                                        Log.d("SelectedPlacesOnMap", selectedPlacesOnMap.toString())
                                     }
 
-                                }
-                            }
+                                ) {
 
-                            if( attractionsList.value.isNotEmpty()){
-                                attractionsList.value.forEach{place ->
                                     Marker(
-                                        state = MarkerState(position = LatLng(place.location.lat,place.location.lng),),
-                                        title = place.name,
-                                        snippet = place.vicinity ,
-                                        icon = bitmapDescriptorFromVector(
-                                            context, R.drawable.pin
-                                        ),
-                                        onInfoWindowClick = {
-                                            if(!selectedAttractionList.value.contains(place)){
-                                                viewModel.addSelectedAttraction(place)
+                                        state = MarkerState(position = selectedCityLocation.value),
+                                        title = destCity.value,
+                                        snippet = "Marker in ${destCity.value}"
+
+                                    )
+                                    if (selectedPlacesOnMap.isNotEmpty()) {
+                                        selectedPlacesOnMap.forEach { place ->
+                                            Marker(
+                                                state = MarkerState(
+                                                    position = LatLng(
+                                                        place.key.first,
+                                                        place.key.second
+                                                    )
+                                                ),
+                                                snippet = "Marker in ($place.key.first},${place.key.second})",
+                                                icon = bitmapDescriptorFromVector(
+                                                    context,
+                                                    R.drawable.pin2
+                                                ),
+                                                onClick = {
+                                                    if (selectedPlacesOnMap.containsKey(place.key)) {
+                                                        viewModel.delSelectedPlacesOnMap(place.key)
+                                                    }
+                                                    Log.d(
+                                                        "selectedplacesOnMap",
+                                                        selectedPlacesOnMap.toString()
+                                                    )
+                                                    return@Marker true
+                                                }
+                                            )
+                                            place.value.forEach { attr ->
+                                                Marker(
+                                                    state = MarkerState(
+                                                        position = LatLng(
+                                                            attr.location.lat,
+                                                            attr.location.lng
+                                                        )
+                                                    ),
+                                                    title = attr.name,
+                                                    snippet = attr.vicinity,
+                                                    icon = bitmapDescriptorFromVector(
+                                                        context, R.drawable.pin
+                                                    ),
+                                                    onInfoWindowClick = {
+                                                        if (!selectedAttractionList.value.contains(
+                                                                attr
+                                                            )
+                                                        ) {
+                                                            viewModel.addSelectedAttraction(attr)
+                                                        }
+                                                        Log.d(
+                                                            "selectedAttractionList: ",
+                                                            viewModel.selectedAttractionList.value.toString()
+                                                        )
+                                                    }
+
+                                                )
                                             }
-                                            Log.d("selectedAttractionList: ",viewModel.selectedAttractionList.value.toString())
 
                                         }
+                                    }
+
+                                    if (attractionsList.value.isNotEmpty()) {
+                                        attractionsList.value.forEach { place ->
+                                            Marker(
+                                                state = MarkerState(
+                                                    position = LatLng(
+                                                        place.location.lat,
+                                                        place.location.lng
+                                                    ),
+                                                ),
+                                                title = place.name,
+                                                snippet = place.vicinity,
+                                                icon = bitmapDescriptorFromVector(
+                                                    context, R.drawable.pin
+                                                ),
+                                                onInfoWindowClick = {
+                                                    if (!selectedAttractionList.value.contains(place)) {
+                                                        viewModel.addSelectedAttraction(place)
+                                                    }
+                                                    Log.d(
+                                                        "selectedAttractionList: ",
+                                                        viewModel.selectedAttractionList.value.toString()
+                                                    )
+
+                                                }
 //                                    onClick = {
 //                                        if(!selectedAttractionList.value.contains(place)){
 //                                            viewModel.addSelectedAttraction(place)
@@ -599,55 +665,61 @@ fun PlanChooseLocScreen(
 //                                        return@Marker true
 //                                    }
 
-                                    )
+                                            )
 
+                                        }
+                                    }
                                 }
                             }
-                        }
-                    }
 
-
-                    Spacer(modifier = Modifier.height(5.dp))
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(100.dp)
-                    ) {
-                        LazyColumn(
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            items(selectedAttractionList.value,key={it.name}){
-                                Tag(title=it.name, onClose = {
-                                    viewModel.delSelectedAttraction(it)
-                                    Log.d("selectedAttractionList: ",viewModel.selectedAttractionList.value.toString())
-                                })
+                            //selected attractions
+                            Spacer(modifier = Modifier.height(5.dp))
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(100.dp)
+                            ) {
+                                LazyColumn(
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    items(selectedAttractionList.value, key = { it.name }) {
+                                        Tag(title = it.name, onClose = {
+                                            viewModel.delSelectedAttraction(it)
+                                            Log.d(
+                                                "selectedAttractionList: ",
+                                                viewModel.selectedAttractionList.value.toString()
+                                            )
+                                        })
+                                    }
+                                }
                             }
-                        }
-                    }
 
+                            //bottom button
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .padding(bottom = 85.dp),
+                                contentAlignment = Alignment.BottomCenter
+                            ) {
+                                Button(
+                                    onClick = {
 
+                                        viewModel.updateSinglePlan(
+                                            SinglePlan(
+                                                "${viewModel.dateRange.value.lower} - ${viewModel.dateRange.value.upper}",
+                                                "${destCountry.value}  ${destState.value}  ${destCity.value}",
+                                                selectedAttractionList.value,
+                                                startAttraction.value,
+                                                endAttraction.value,
+                                                // TODO: ADD ROUTES List
+                                                listOf(),
+                                                viewModel.sliderValue.value ?: 4,
+                                                viewModel.sliderLabel.value ?: "extravagant",
+                                                listOf(),
+                                                viewModel.travelModeOption.value
 
-                    Box(modifier = Modifier
-                        .fillMaxSize()
-                        .padding(bottom = 85.dp),
-                        contentAlignment = Alignment.BottomCenter
-                    ){
-                        Button(onClick = {
-
-                            viewModel.updateSinglePlan(SinglePlan(
-                                "${viewModel.dateRange.value.lower} - ${viewModel.dateRange.value.upper}",
-                                "${destCountry.value}  ${destState.value}  ${destCity.value}",
-                                selectedAttractionList.value,
-                                startAttraction.value,
-                                endAttraction.value,
-                                // TODO: ADD ROUTES List
-                                listOf(),
-                                viewModel.sliderValue.value?:4,
-                                viewModel.sliderLabel.value?:"extravagant",
-                                listOf(),
-                                viewModel.travelModeOption.value
-
-                            ))
+                                            )
+                                        )
 //                            if (selectedAttractionList.value.isNotEmpty()) {
 //                                viewModel.updateStartAttraction(selectedAttractionList.value[0])
 //                                viewModel.updateEndAttraction(selectedAttractionList.value[selectedAttractionList.value.size - 1])
@@ -655,18 +727,421 @@ fun PlanChooseLocScreen(
 //                                         viewModel.addSinglePlan(singlePlan)
 //
 //                                         viewModel.updatePlanGroup(Plans(viewModel.planGroup.value.title,viewModel.planGroup.value.description,planList))
-                            navController.navigate("Plan Hotel")
-                        }, modifier = Modifier
-                            .width(130.dp)
-                        ) {
-                            Text(text = "Generate")
+                                        navController.navigate("Plan Hotel")
+                                    }, modifier = Modifier
+                                        .width(130.dp)
+                                ) {
+                                    Text(text = "Generate")
+                                }
+                            }
+
+
                         }
                     }
+                }
+            }
+            else -> {
+                Box(
+                    modifier = Modifier.fillMaxSize()
+                        .padding(100.dp,100.dp),
+                    contentAlignment = Alignment.TopCenter
+                ) {
+                    Row {
+                        Column(
+                            modifier = Modifier
+                                .width(500.dp)
+                        ){
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(20.dp, 15.dp)
+                            ) {
+                                //Departure
+                                Column(
+                                    modifier = Modifier.width(170.dp)
+                                ) {
+                                    Text(
+                                        text = "Departure",
+                                        fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                                    )
+                                    Spacer(modifier = Modifier.height(10.dp))
+                                    Column {
+
+                                        //Departure Sight
+                                        OutlinedTextField(value = startAttraction.value.name,
+                                            onValueChange = {
+
+                                            },
+                                            modifier = Modifier
+                                                .width(170.dp)
+                                                .height(70.dp),
+                                            label = { Text(text = "Choose") },
+                                            trailingIcon = {
+                                                Icon(
+                                                    iconStartAttraction,
+                                                    contentDescription = "",
+                                                    Modifier.clickable {
+                                                        startAttractionExpanded =
+                                                            !startAttractionExpanded
+                                                    })
+                                            })
+                                        DropdownMenu(
+                                            expanded = startAttractionExpanded,
+                                            onDismissRequest = { startAttractionExpanded = false },
+                                            modifier = Modifier.width(170.dp),
+//                            modifier = Modifier.width(with(LocalDensity.current) { textFiledSize.width.toDp() })
+                                        ) {
+                                            selectedAttractionList.value.filter { it != endAttraction.value }
+                                                .forEach { attraction ->
+                                                    DropdownMenuItem(
+                                                        text = { Text(attraction.name) },
+                                                        onClick = {
+                                                            viewModel.updateStartAttraction(attraction)
+                                                            startAttractionExpanded = false
+                                                        })
+
+                                                }
+                                        }
+                                    }
+                                }
+                                Spacer(modifier = Modifier.width(15.dp))
+                                //Destination
+
+                                Column(
+                                    modifier = Modifier.width(170.dp)
+                                ) {
+                                    Text(
+                                        text = "Destination",
+                                        fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                                    )
+                                    Spacer(modifier = Modifier.height(10.dp))
+                                    Column {
+
+                                        //Destination Sight
+                                        OutlinedTextField(value = endAttraction.value.name,
+                                            onValueChange = {
+
+                                            },
+                                            modifier = Modifier
+                                                .width(170.dp)
+                                                .height(70.dp),
+                                            label = { Text(text = "Choose") },
+                                            trailingIcon = {
+                                                Icon(
+                                                    iconEndAttraction,
+                                                    contentDescription = "",
+                                                    Modifier.clickable {
+                                                        endAttractionExpanded = !endAttractionExpanded
+                                                    })
+                                            })
+                                        DropdownMenu(
+                                            expanded = endAttractionExpanded,
+                                            onDismissRequest = { endAttractionExpanded = false },
+                                            modifier = Modifier.width(170.dp),
+//                            modifier = Modifier.width(with(LocalDensity.current) { textFiledSize.width.toDp() })
+                                        ) {
+                                            selectedAttractionList.value.filter { it != startAttraction.value }
+                                                .forEach { attraction ->
+                                                    DropdownMenuItem(
+                                                        text = { Text(attraction.name) },
+                                                        onClick = {
+                                                            viewModel.updateEndAttraction(attraction)
+                                                            endAttractionExpanded = false
+                                                        })
+                                                }
+                                        }
+                                    }
+                                }
+                            }
+                            Spacer(modifier = Modifier.height(100.dp))
+                            Box(
+                                modifier = Modifier
+                                    .width(400.dp)
+                            ) {
+                                Text(
+                                    text = "Select your preferred travel mode:",
+                                    fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                                )
+                            }
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(12.dp)
+                            ) {
+
+                                RadioButton(
+                                    selected = viewModel.travelModeOption.value == "bicycling",
+                                    onClick = { viewModel.onTravelModeChanged("bicycling") },
+                                    modifier = Modifier
+                                        .size(20.dp)
+                                        .padding(end = 12.dp),
+                                )
+                                Text(
+                                    text = label1,
+                                    modifier = Modifier.padding(end = 16.dp)
+                                )
+
+                                RadioButton(
+                                    selected = viewModel.travelModeOption.value == "walking",
+                                    onClick = { viewModel.onTravelModeChanged("walking") },
+                                    modifier = Modifier
+                                        .size(20.dp)
+                                        .padding(end = 12.dp),
+                                )
+                                Text(
+                                    text = label2,
+                                    modifier = Modifier.padding(end = 16.dp)
+                                )
+
+                                RadioButton(
+                                    selected = viewModel.travelModeOption.value == "driving",
+                                    onClick = { viewModel.onTravelModeChanged("driving") },
+                                    modifier = Modifier
+                                        .size(20.dp)
+                                        .padding(end = 12.dp),
+                                )
+                                Text(
+                                    text = label3,
+                                    modifier = Modifier.padding(end = 16.dp)
+                                )
+
+                                RadioButton(
+                                    selected = viewModel.travelModeOption.value == "transit",
+                                    onClick = { viewModel.onTravelModeChanged("transit") },
+                                    modifier = Modifier
+                                        .size(20.dp)
+                                        .padding(end = 12.dp),
+                                )
+                                Text(
+                                    text = label4,
+                                    modifier = Modifier.padding(end = 16.dp)
+                                )
+                            }
+                        }
+                        Spacer(modifier = Modifier.width(30.dp))
+                        Column(
+                            modifier = Modifier
+                                .width(500.dp)
+                        ) {
+                            //google map title
+                            Box(
+                                modifier = Modifier
+                                    .width(500.dp)
+                            ) {
+                                Text(
+                                    text = "Choose Your Interests",
+                                    fontSize = MaterialTheme.typography.headlineMedium.fontSize
+                                )
+                            }
+
+                            //Google Map
+                            Box(
+                                modifier = Modifier
+                                    .width(500.dp)
+                                    .height(320.dp)
+                                    .padding(16.dp)
+                                    .background(
+                                        color = Color.White,
+                                        shape = RoundedCornerShape(16.dp)
+                                    )
+                            ) {
+                                GoogleMap(modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(320.dp),
+                                    cameraPositionState = cameraPositionState,
+                                    onMapLongClick = {
+                                        viewModel.viewModelScope.launch {
+                                            val places = viewModel.getNearbyPlaces(
+                                                Location(
+                                                    it.latitude,
+                                                    it.longitude
+                                                ), apiKey = PlacesapiKey
+                                            )
+                                            viewModel.addSelectedPlacesOnMap(
+                                                Pair(
+                                                    it.latitude,
+                                                    it.longitude
+                                                ), places
+                                            )
+
+                                        }
+                                        Log.d("SelectedPlacesOnMap", selectedPlacesOnMap.toString())
+                                    }
+
+                                ) {
+
+                                    Marker(
+                                        state = MarkerState(position = selectedCityLocation.value),
+                                        title = destCity.value,
+                                        snippet = "Marker in ${destCity.value}"
+
+                                    )
+                                    if (selectedPlacesOnMap.isNotEmpty()) {
+                                        selectedPlacesOnMap.forEach { place ->
+                                            Marker(
+                                                state = MarkerState(
+                                                    position = LatLng(
+                                                        place.key.first,
+                                                        place.key.second
+                                                    )
+                                                ),
+                                                snippet = "Marker in ($place.key.first},${place.key.second})",
+                                                icon = bitmapDescriptorFromVector(
+                                                    context,
+                                                    R.drawable.pin2
+                                                ),
+                                                onClick = {
+                                                    if (selectedPlacesOnMap.containsKey(place.key)) {
+                                                        viewModel.delSelectedPlacesOnMap(place.key)
+                                                    }
+                                                    Log.d(
+                                                        "selectedplacesOnMap",
+                                                        selectedPlacesOnMap.toString()
+                                                    )
+                                                    return@Marker true
+                                                }
+                                            )
+                                            place.value.forEach { attr ->
+                                                Marker(
+                                                    state = MarkerState(
+                                                        position = LatLng(
+                                                            attr.location.lat,
+                                                            attr.location.lng
+                                                        )
+                                                    ),
+                                                    title = attr.name,
+                                                    snippet = attr.vicinity,
+                                                    icon = bitmapDescriptorFromVector(
+                                                        context, R.drawable.pin
+                                                    ),
+                                                    onInfoWindowClick = {
+                                                        if (!selectedAttractionList.value.contains(
+                                                                attr
+                                                            )
+                                                        ) {
+                                                            viewModel.addSelectedAttraction(attr)
+                                                        }
+                                                        Log.d(
+                                                            "selectedAttractionList: ",
+                                                            viewModel.selectedAttractionList.value.toString()
+                                                        )
+                                                    }
+
+                                                )
+                                            }
+
+                                        }
+                                    }
+
+                                    if (attractionsList.value.isNotEmpty()) {
+                                        attractionsList.value.forEach { place ->
+                                            Marker(
+                                                state = MarkerState(
+                                                    position = LatLng(
+                                                        place.location.lat,
+                                                        place.location.lng
+                                                    ),
+                                                ),
+                                                title = place.name,
+                                                snippet = place.vicinity,
+                                                icon = bitmapDescriptorFromVector(
+                                                    context, R.drawable.pin
+                                                ),
+                                                onInfoWindowClick = {
+                                                    if (!selectedAttractionList.value.contains(place)) {
+                                                        viewModel.addSelectedAttraction(place)
+                                                    }
+                                                    Log.d(
+                                                        "selectedAttractionList: ",
+                                                        viewModel.selectedAttractionList.value.toString()
+                                                    )
+
+                                                }
+//                                    onClick = {
+//                                        if(!selectedAttractionList.value.contains(place)){
+//                                            viewModel.addSelectedAttraction(place)
+//                                        }
+//                                        Log.d("selectedAttractionList: ",viewModel.selectedAttractionList.value.toString())
+//                                        return@Marker true
+//                                    }
+
+                                            )
+
+                                        }
+                                    }
+                                }
+                            }
+
+                            //selected attractions
+                            Spacer(modifier = Modifier.height(5.dp))
+                            Box(
+                                modifier = Modifier
+                                    .width(500.dp)
+                                    .height(100.dp)
+                            ) {
+                                LazyColumn(
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    items(selectedAttractionList.value, key = { it.name }) {
+                                        Tag(title = it.name, onClose = {
+                                            viewModel.delSelectedAttraction(it)
+                                            Log.d(
+                                                "selectedAttractionList: ",
+                                                viewModel.selectedAttractionList.value.toString()
+                                            )
+                                        })
+                                    }
+                                }
+                            }
+
+                            //bottom button
+                            Box(
+                                modifier = Modifier
+                                    .width(500.dp)
+                                    .padding(bottom = 85.dp),
+                                contentAlignment = Alignment.BottomCenter
+                            ) {
+                                Button(
+                                    onClick = {
+
+                                        viewModel.updateSinglePlan(
+                                            SinglePlan(
+                                                "${viewModel.dateRange.value.lower} - ${viewModel.dateRange.value.upper}",
+                                                "${destCountry.value}  ${destState.value}  ${destCity.value}",
+                                                selectedAttractionList.value,
+                                                startAttraction.value,
+                                                endAttraction.value,
+                                                // TODO: ADD ROUTES List
+                                                listOf(),
+                                                viewModel.sliderValue.value ?: 4,
+                                                viewModel.sliderLabel.value ?: "extravagant",
+                                                listOf(),
+                                                viewModel.travelModeOption.value
+
+                                            )
+                                        )
+//                            if (selectedAttractionList.value.isNotEmpty()) {
+//                                viewModel.updateStartAttraction(selectedAttractionList.value[0])
+//                                viewModel.updateEndAttraction(selectedAttractionList.value[selectedAttractionList.value.size - 1])
+//                            }
+//                                         viewModel.addSinglePlan(singlePlan)
+//
+//                                         viewModel.updatePlanGroup(Plans(viewModel.planGroup.value.title,viewModel.planGroup.value.description,planList))
+                                        navController.navigate("Plan Hotel")
+                                    }, modifier = Modifier
+                                        .width(300.dp)
+                                ) {
+                                    Text(text = "Generate")
+                                }
+                            }
 
 
+                        }
+                    }
                 }
             }
         }
+
     }
 }
 
@@ -719,7 +1194,7 @@ fun dropDownMenu() {
 @Preview(showBackground = true)
 @Composable
 fun PlanChooseLocScreenPreview() {
-    PlanChooseLocScreen(JourneyGeniusViewModel(Firebase.firestore, Firebase.auth, Firebase.database.reference), rememberNavController())
+    //PlanChooseLocScreen(JourneyGeniusViewModel(Firebase.firestore, Firebase.auth, Firebase.database.reference), windowSize, rememberNavController())
 //    dropDownMenu()
 //    Tag(title = "Shenzhen", onClose = {})
 }
