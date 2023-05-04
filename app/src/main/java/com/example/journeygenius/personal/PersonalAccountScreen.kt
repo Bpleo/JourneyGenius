@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.journeygenius.*
+import com.example.journeygenius.ui.theme.JourneyGeniusTheme
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -33,35 +34,41 @@ fun PersonalAccountScreen(
     navController: NavHostController,
     windowSize: WindowSize
 ){
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        PersonalTopBar(context = LocalContext.current.applicationContext, title = "Details", navController = navController)
-        Box(
+    JourneyGeniusTheme {
+        Column(
             modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.TopCenter
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            when (windowSize.height) {
-                WindowType.Medium -> {
-                    Column(
-                        modifier = Modifier.padding(horizontal = 8.dp)
-                    ) {
-                        UserNameField(
-                            viewModel, db, auth
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        EmailField(
-                            viewModel, db, auth
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        PwdField(
-                            viewModel, db, auth
-                        )
+            PersonalTopBar(
+                context = LocalContext.current.applicationContext,
+                title = "Details",
+                navController = navController
+            )
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.TopCenter
+            ) {
+                when (windowSize.height) {
+                    WindowType.Medium -> {
+                        Column(
+                            modifier = Modifier.padding(horizontal = 8.dp)
+                        ) {
+                            UserNameField(
+                                viewModel, db, auth
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
+                            EmailField(
+                                viewModel, db, auth
+                            )
+                            Spacer(modifier = Modifier.height(16.dp))
+                            PwdField(
+                                viewModel, db, auth
+                            )
+                        }
                     }
-                }
-                else -> {
+                    else -> {
 
+                    }
                 }
             }
         }
@@ -192,7 +199,9 @@ fun PwdField(viewModel: JourneyGeniusViewModel, db: FirebaseFirestore, auth: Fir
                           viewModel.resetPwd()
                 },
                 contentPadding = PaddingValues(0.dp,8.dp),
-                modifier = Modifier.fillMaxWidth().padding(0.dp,8.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(0.dp, 8.dp)
             ){
                 Text(
                     text = "Reset Password",
