@@ -231,7 +231,7 @@ fun LoginScreen(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier.padding(5.dp)
                     ) {
-                        Image(painter = imagePainter, contentDescription = "Journey Genius Logo", modifier = Modifier.size(100.dp))
+                        Image(painter = imagePainter, contentDescription = "Journey Genius Logo", modifier = Modifier.size(200.dp))
                         LoginTextField(email = email, pwd = pwd, viewModel)
                         Spacer(modifier = Modifier.height(40.dp))
                         Button(onClick = {

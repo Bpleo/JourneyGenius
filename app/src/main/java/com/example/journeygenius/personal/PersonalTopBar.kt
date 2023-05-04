@@ -1,6 +1,7 @@
 package com.example.journeygenius.personal
 
 import android.content.Context
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -8,30 +9,35 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.navigation.NavHostController
+import com.example.journeygenius.ui.theme.JourneyGeniusTheme
+import com.example.journeygenius.ui.theme.md_theme_light_background
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PersonalTopBar(context: Context, title: String, navController: NavHostController) {
-    TopAppBar(
-        title = {
-            Text(
-                text = title,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-        },
-        navigationIcon = {
-            IconButton(onClick = {
-                navController.navigate("Personal Menu")
-            }) {
-                Icon(
-                    Icons.Filled.ArrowBack,
-                    contentDescription = "Go back",
+    JourneyGeniusTheme {
+        TopAppBar(
+            title = {
+                Text(
+                    text = title,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
+            },
+            navigationIcon = {
+                IconButton(onClick = {
+                    navController.navigate("Personal Menu")
+                }) {
+                    Icon(
+                        Icons.Filled.ArrowBack,
+                        contentDescription = "Go back",
+                    )
+                }
             }
-        }
-    )
+        )
+    }
 }
