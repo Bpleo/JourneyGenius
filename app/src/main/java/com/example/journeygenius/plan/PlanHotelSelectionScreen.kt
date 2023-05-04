@@ -124,8 +124,11 @@ fun PlanHotelSelectionScreen(
     val planGroup by remember {
         viewModel.planGroup
     }
-    val travelModeOption = remember {
+    val travelModeOption by remember {
         viewModel.travelModeOption
+    }
+    val attractionRoutes by remember {
+        viewModel.attractionRoutes
     }
     val context = LocalContext.current
     val cameraPositionState = CameraPositionState(
@@ -136,22 +139,14 @@ fun PlanHotelSelectionScreen(
             ), 15f
         )
     )
+    
     var polylinePoints by remember { mutableStateOf(emptyList<List<LatLng>>()) }
     val coroutineScope = rememberCoroutineScope()
 
     val from = LatLng(startAttraction.location.lat, startAttraction.location.lng)
     val to = LatLng(endAttraction.location.lat, endAttraction.location.lng)
-    val waypoints = selectedAttractionList.toMutableList()
-    println(waypoints.toString())
-    if (waypoints.isNotEmpty()) {
-        val first = waypoints[0]
-        val last = waypoints[waypoints.size - 1]
-        waypoints.remove(first)
-        waypoints.remove(last)
-    }
-    println(waypoints.toString())
     val waypointsLatLng: MutableList<LatLng> = mutableListOf();
-    waypoints.forEach {
+    attractionRoutes.forEach {
         waypointsLatLng.add(LatLng(it.location.lat, it.location.lng))
     }
 
@@ -161,7 +156,7 @@ fun PlanHotelSelectionScreen(
             to,
             PlacesapiKey,
             waypointsLatLng,
-            travelModeOption.value,
+            travelModeOption,
             context
         )
         coroutineScope.launch {
@@ -335,7 +330,8 @@ fun PlanHotelSelectionScreen(
                             }
                             GoogleMap(modifier = Modifier
                                 .width(500.dp)
-                                .height(550.dp).padding(50.dp, 0.dp),
+                                .height(550.dp)
+                                .padding(50.dp, 0.dp),
                                 cameraPositionState = cameraPositionState,
                                 onMapLongClick = {
                                     Log.d("selectedHotelOnMap", selectedHotelList.toString())

@@ -914,15 +914,6 @@ class JourneyGeniusViewModel(
         val routes = jsonObject.getAsJsonArray("routes")
         val allRoutes = mutableListOf<List<LatLng>>()
         val legs = mutableListOf<LatLng>()
-//    for (i in 0 until routes.size()) {
-//        val points = routes[i].asJsonObject
-//            .getAsJsonArray("legs")[0].asJsonObject
-//            .getAsJsonArray("steps")
-//            .flatMap {
-//                decodePoly(it.asJsonObject.getAsJsonObject("polyline").get("points").asString)
-//            }
-//        allPoints.add(points)
-//    }
         if (routes.isEmpty) {
             val newTravelMode = when (travelModeOption) {
                 "bicycling" -> "walking"

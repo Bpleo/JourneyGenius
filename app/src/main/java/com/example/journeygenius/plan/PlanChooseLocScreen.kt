@@ -703,7 +703,9 @@ fun PlanChooseLocScreen(
                             ) {
                                 Button(
                                     onClick = {
-
+                                        viewModel.updateAttractionRoutes(selectedAttractionList.value)
+                                        viewModel.delAttractionToRoutes(startAttraction.value)
+                                        viewModel.delAttractionToRoutes(endAttraction.value)
                                         viewModel.updateSinglePlan(
                                             SinglePlan(
                                                 "${viewModel.dateRange.value.lower} - ${viewModel.dateRange.value.upper}",
@@ -711,8 +713,7 @@ fun PlanChooseLocScreen(
                                                 selectedAttractionList.value,
                                                 startAttraction.value,
                                                 endAttraction.value,
-                                                // TODO: ADD ROUTES List
-                                                listOf(),
+                                                viewModel.attractionRoutes.value,
                                                 viewModel.sliderValue.value ?: 4,
                                                 viewModel.sliderLabel.value ?: "extravagant",
                                                 listOf(),
