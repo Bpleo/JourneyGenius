@@ -39,13 +39,7 @@ fun PlanDetail(navController: NavController, viewModel: JourneyGeniusViewModel){
         Box(
             modifier = Modifier.fillMaxSize(),
         ){
-            Box(contentAlignment = Alignment.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(0.dp, 20.dp)){
-                Text(text = "Summary",
-                    fontSize = MaterialTheme.typography.headlineLarge.fontSize)
-            }
+
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -53,36 +47,65 @@ fun PlanDetail(navController: NavController, viewModel: JourneyGeniusViewModel){
             ) {
                 Column(
                     modifier = Modifier
-                        .padding(25.dp, 70.dp)
                         .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.primaryContainer)
-                ){
-                    Column(modifier = Modifier.padding(15.dp,20.dp)) {
-                        Text(text = "Date: ",
+                ) {
+                    Column(modifier = Modifier.padding(15.dp, 20.dp)) {
+                        Box(contentAlignment = Alignment.Center,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(0.dp, 20.dp)){
+                            Text(text = "Summary",
+                                fontSize = MaterialTheme.typography.headlineLarge.fontSize)
+                        }
+                        Text(
+                            text = "Date: ",
                             fontSize = MaterialTheme.typography.titleLarge.fontSize,
                         )
                         Spacer(modifier = Modifier.height(10.dp))
-                        Text(text =planOnDetail.value.date,
+                        Box(
+                            modifier = Modifier
+                                .background(Color.LightGray, shape = RoundedCornerShape(8.dp))
+                                .padding(8.dp)
+                        ) {
+                            Text(
+                                text = planOnDetail.value.date,
+                                fontSize = MaterialTheme.typography.titleLarge.fontSize
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(25.dp))
+                        Text(
+                            text = "Destination: ",
                             fontSize = MaterialTheme.typography.titleLarge.fontSize
                         )
-                        Spacer(modifier = Modifier.height(25.dp))
-                        Text(text = "Destination: ",
-                            fontSize = MaterialTheme.typography.titleLarge.fontSize)
                         Spacer(modifier = Modifier.height(10.dp))
-                        Text(text =planOnDetail.value.destination,
+                        Box(
+                            modifier = Modifier
+                                .background(Color.LightGray, shape = RoundedCornerShape(8.dp))
+                                .padding(8.dp)
+                        ) {
+                            Text(
+                                text = planOnDetail.value.destination,
+                                fontSize = MaterialTheme.typography.titleLarge.fontSize
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(25.dp))
+                        Text(
+                            text = "Attractions: ",
                             fontSize = MaterialTheme.typography.titleLarge.fontSize
                         )
-                        Spacer(modifier = Modifier.height(25.dp))
-                        Text(text = "Attractions: ",
-                            fontSize = MaterialTheme.typography.titleLarge.fontSize)
                         Spacer(modifier = Modifier.height(10.dp))
-                        Box(modifier = Modifier
-                            .fillMaxWidth()
-                            .height(90.dp)){
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(90.dp)
+                                .background(Color.LightGray, shape = RoundedCornerShape(8.dp))
+                                .padding(8.dp)
+                        ) {
                             LazyColumn(modifier = Modifier.fillMaxWidth())
                             {
-                                items(planOnDetail.value.attractions,key={it.name}){
-                                    Text(text = it.name,
+                                items(planOnDetail.value.attractions, key = { it.name }) {
+                                    Text(
+                                        text = it.name,
                                         fontSize = MaterialTheme.typography.titleLarge.fontSize
                                     )
                                 }
@@ -90,46 +113,75 @@ fun PlanDetail(navController: NavController, viewModel: JourneyGeniusViewModel){
                         }
 
                         Spacer(modifier = Modifier.height(15.dp))
-                        Text(text = "Price Level: ",
-                            fontSize = MaterialTheme.typography.titleLarge.fontSize)
-                        Spacer(modifier = Modifier.height(10.dp))
-                        Text(text = "${planOnDetail.value.priceLevel}: ${planOnDetail.value.priceLevelLabel}",
+                        Text(
+                            text = "Price Level: ",
                             fontSize = MaterialTheme.typography.titleLarge.fontSize
                         )
+                        Spacer(modifier = Modifier.height(10.dp))
+                        Box(
+                            modifier = Modifier
+                                .background(Color.LightGray, shape = RoundedCornerShape(8.dp))
+                                .padding(8.dp)
+                        ) {
+                            Text(
+                                text = "${planOnDetail.value.priceLevel}: ${planOnDetail.value.priceLevelLabel}",
+                                fontSize = MaterialTheme.typography.titleLarge.fontSize
+                            )
+                        }
                         Spacer(modifier = Modifier.height(35.dp))
-                        Text(text = "Hotel: ",
-                            fontSize = MaterialTheme.typography.titleLarge.fontSize)
+                        Text(
+                            text = "Hotel: ",
+                            fontSize = MaterialTheme.typography.titleLarge.fontSize
+                        )
                         Spacer(modifier = Modifier.height(10.dp))
                         // TODO:
-                        Box(modifier = Modifier
-                            .fillMaxWidth()
-                            .height(90.dp)){
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(90.dp)
+                                .background(Color.LightGray, shape = RoundedCornerShape(8.dp))
+                                .padding(8.dp)
+                        ) {
                             LazyColumn(modifier = Modifier.fillMaxWidth())
                             {
-                                items(planOnDetail.value.hotel,key={it.place.name}){
-                                    Text(text = it.place.name,
+                                items(planOnDetail.value.hotel, key = { it.place.name }) {
+                                    Text(
+                                        text = it.place.name,
                                         fontSize = MaterialTheme.typography.titleLarge.fontSize
                                     )
                                 }
                             }
                         }
                         Spacer(modifier = Modifier.height(15.dp))
-                        Text(text = "Transport Mode: ",
-                            fontSize = MaterialTheme.typography.titleLarge.fontSize)
-                        Spacer(modifier = Modifier.height(10.dp))
-                        Text(text = planOnDetail.value.travelType,
+                        Text(
+                            text = "Transport Mode: ",
                             fontSize = MaterialTheme.typography.titleLarge.fontSize
                         )
+                        Spacer(modifier = Modifier.height(10.dp))
+                        Box(
+                            modifier = Modifier
+                                .background(Color.LightGray, shape = RoundedCornerShape(8.dp))
+                                .padding(8.dp)
+                        ) {
+                            Text(
+                                text = planOnDetail.value.travelType,
+                                fontSize = MaterialTheme.typography.titleLarge.fontSize
+                            )
+                        }
                         Spacer(modifier = Modifier.height(75.dp))
-                        Box(modifier = Modifier
-                            .fillMaxSize()
-                            .padding(bottom = 80.dp),
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(bottom = 80.dp)
+                                .background(Color.LightGray, shape = RoundedCornerShape(8.dp))
+                                .padding(8.dp),
                             contentAlignment = Alignment.BottomCenter
-                        ){
+                        ) {
                             Column(
                                 modifier = Modifier
                                     .clickable(onClick = {
-                                        val uri = Uri.parse("https://www.google.com/maps/dir/?api=1&origin=${viewModel.startAttraction.value.location.lat},${viewModel.startAttraction.value.location.lng}&destination=${viewModel.endAttraction.value.location.lat},${viewModel.endAttraction.value.location.lng}&travelmode=driving")
+                                        val uri =
+                                            Uri.parse("https://www.google.com/maps/dir/?api=1&origin=${viewModel.startAttraction.value.location.lat},${viewModel.startAttraction.value.location.lng}&destination=${viewModel.endAttraction.value.location.lat},${viewModel.endAttraction.value.location.lng}&travelmode=driving")
                                         val intent = Intent(Intent.ACTION_VIEW, uri)
                                         content.startActivity(intent)
                                     })
@@ -152,13 +204,15 @@ fun PlanDetail(navController: NavController, viewModel: JourneyGeniusViewModel){
                                     color = Color.Gray
                                 )
                                 Spacer(modifier = Modifier.height(20.dp))
-                                    Button(onClick = { navController.navigate("Plan List") }, modifier = Modifier
+                                Button(
+                                    onClick = { navController.navigate("Plan List") },
+                                    modifier = Modifier
                                         .width(100.dp)
-                                    ) {
-                                        Text(text = "Back")
-                                    }
+                                ) {
+                                    Text(text = "Back")
+                                }
 
-
+                            }
                         }
                     }
 
@@ -169,7 +223,7 @@ fun PlanDetail(navController: NavController, viewModel: JourneyGeniusViewModel){
 
         }
     }
-}}
+}
 //@Preview(showBackground = true)
 //@Composable
 //fun PlanDetailPreview(){
