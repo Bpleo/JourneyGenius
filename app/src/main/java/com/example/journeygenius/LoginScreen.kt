@@ -14,6 +14,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.Role.Companion.Image
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -33,6 +35,9 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import androidx.compose.foundation.Image
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.painterResource
 
 @Composable
 fun JourneyGenius(
@@ -214,6 +219,7 @@ fun LoginScreen(
         mutableStateOf(viewModel.pwd.value)
     }
     val context = LocalContext.current
+    val imagePainter = painterResource(id = R.drawable.logo)
     JourneyGeniusTheme {
         Box(
             modifier = Modifier.fillMaxSize(),
@@ -225,6 +231,7 @@ fun LoginScreen(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier.padding(5.dp)
                     ) {
+                        Image(painter = imagePainter, contentDescription = "Journey Genius Logo", modifier = Modifier.size(100.dp))
                         LoginTextField(email = email, pwd = pwd, viewModel)
                         Spacer(modifier = Modifier.height(40.dp))
                         Button(onClick = {
@@ -293,42 +300,47 @@ fun LoginScreen(
                     }
                 }
                 else -> {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        LoginTextField(email = email, pwd = pwd, viewModel)
-                        Spacer(modifier = Modifier.width(40.dp))
-                        Column {
-                            Button(onClick = {
-                                auth.signInWithEmailAndPassword(
-                                    viewModel.email.value.text,
-                                    viewModel.pwd.value
-                                )
-                                    .addOnCompleteListener(mainActivity) { task ->
-                                        if (task.isSuccessful) {
-                                            navController.navigate("Main") {
-                                                popUpTo(0)
-                                                launchSingleTop = true
+                        Image(painter = imagePainter, contentDescription = "Journey Genius Logo", modifier = Modifier.size(300.dp))
+                        Row(
+//                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            LoginTextField(email = email, pwd = pwd, viewModel)
+                            Spacer(modifier = Modifier.width(40.dp))
+                            Column {
+                                Button(onClick = {
+                                    auth.signInWithEmailAndPassword(
+                                        viewModel.email.value.text,
+                                        viewModel.pwd.value
+                                    )
+                                        .addOnCompleteListener(mainActivity) { task ->
+                                            if (task.isSuccessful) {
+                                                navController.navigate("Main") {
+                                                    popUpTo(0)
+                                                    launchSingleTop = true
+                                                }
+                                            } else {
+                                                Toast.makeText(
+                                                    context, "Authentication failed.",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
                                             }
-                                        } else {
-                                            Toast.makeText(
-                                                context, "Authentication failed.",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
                                         }
-                                    }
-                            }) {
-                                Text(text = "Login")
-                            }
-                            Spacer(modifier = Modifier.height(40.dp))
-                            Text(
-                                text = "Don't have an account yet? Sign up",
-                                color = MaterialTheme.colorScheme.primary,
-                                style = MaterialTheme.typography.bodyMedium,
-                                modifier = Modifier.clickable {
-                                    navController.navigate("SignUp")
+                                }) {
+                                    Text(text = "Login")
                                 }
-                            )
+                                Spacer(modifier = Modifier.height(40.dp))
+                                Text(
+                                    text = "Don't have an account yet? Sign up",
+                                    color = MaterialTheme.colorScheme.primary,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    modifier = Modifier.clickable {
+                                        navController.navigate("SignUp")
+                                    }
+                                )
+                            }
                         }
                     }
                 }

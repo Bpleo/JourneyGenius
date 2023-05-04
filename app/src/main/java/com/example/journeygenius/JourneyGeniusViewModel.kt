@@ -25,6 +25,7 @@ import com.google.gson.JsonParser
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import java.net.URL
 import java.nio.charset.Charset
@@ -99,9 +100,9 @@ class JourneyGeniusViewModel(
                 } else
                     null//get a photo object
             }
-        if (name != null && vicinity != null && location != null && rating != null && place_id != null && photos != null) {
+        return if (name != null && vicinity != null && location != null && rating != null && place_id != null && photos != null) {
             Log.d("DATA", "attraction pulled")
-            return Place(
+            Place(
                 name,
                 vicinity,
                 location,
@@ -110,7 +111,20 @@ class JourneyGeniusViewModel(
                 photos
             )
         } else
-            return null // get a Place Object
+            null // get a Place Object
+    }
+
+    fun getPlansById(planId: String, onSuccess: (Plans?) -> Unit, onError: (Exception) -> Unit){
+        viewModelScope.launch {
+            try{
+                val reference = realtime.child("planLit").child(planId)
+                val snapshot = reference.get().await()
+                val plans = snapshot.getValue(Plans::class.java)
+                onSuccess(plans)
+            } catch (e: Exception) {
+                onError(e)
+            }
+        }
     }
 
     fun signOut() {
