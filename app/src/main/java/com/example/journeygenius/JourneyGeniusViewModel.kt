@@ -54,8 +54,8 @@ class JourneyGeniusViewModel(
         }
         val user = auth.currentUser
         if (user != null) {
-            Log.d("PLAN", "Upload ${planTitle.value} to firestore")//todo 每次运行会覆盖上一次运行最后添加的plan
-            db.collection("users").document(user.uid).update("Plan_List", planGroupList.value)
+            Log.d("PLAN", "Upload ${planTitle.value} to firestore")
+            db.collection("users").document(user.uid).update("Plan_List", _planGroupList.value)
         }
     }
 
@@ -404,7 +404,6 @@ class JourneyGeniusViewModel(
                                 }!!.toMap()
                             // append groupList to current vm
                             updatePlanGroupList(groupList)
-                            print(groupList)
                         } else {
                             Log.d("FIRESTORE", "No data found")
                         }
