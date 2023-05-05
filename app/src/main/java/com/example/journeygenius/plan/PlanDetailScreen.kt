@@ -31,10 +31,17 @@ import com.google.android.gms.maps.model.LatLng
 
 fun generateWaypoints(viewModel: JourneyGeniusViewModel):String{
     val sb=StringBuilder()
-    for(i in 0 until  viewModel.attractionRoutes.value.size-1){
-        sb.append("${viewModel.attractionRoutes.value[i].location.lat}%2C${viewModel.attractionRoutes.value[i].location.lng}%7C")
+    val routesList=viewModel.attractionRoutes.value
+    if(routesList.isNotEmpty()){
+        if(routesList.size==1){
+            sb.append("${routesList[0].location.lat}%2C${routesList[0].location.lng}")
+        }else{
+            for(i in 0 until  routesList.size-1){
+                sb.append("${routesList[i].location.lat}%2C${routesList[i].location.lng}%7C")
+            }
+            sb.append("${routesList[routesList.size-1].location.lat}%2C${routesList[routesList.size-1].location.lng}")
+        }
     }
-    sb.append("${viewModel.attractionRoutes.value[viewModel.attractionRoutes.value.size-1].location.lat}%2C${viewModel.attractionRoutes.value[viewModel.attractionRoutes.value.size-1].location.lng}")
     Log.d("waypoints",sb.toString())
     return sb.toString()
 }
