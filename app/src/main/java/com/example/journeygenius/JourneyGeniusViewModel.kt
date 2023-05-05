@@ -54,8 +54,10 @@ class JourneyGeniusViewModel(
         }
         val user = auth.currentUser
         if (user != null) {
-            Log.d("PLAN", "Upload ${planTitle.value} to firestore")
             db.collection("users").document(user.uid).update("Plan_List", _planGroupList.value)
+                .addOnSuccessListener {
+                    Log.d("PLAN", "Upload ${planTitle.value} to firestore")
+                }
         }
     }
 
