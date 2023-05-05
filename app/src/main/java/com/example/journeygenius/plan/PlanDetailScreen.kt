@@ -218,6 +218,7 @@ fun PlanDetail(navController: NavController, viewModel: JourneyGeniusViewModel){
                                     onClick = { navController.navigate("Plan List") },
                                     modifier = Modifier
                                         .width(100.dp)
+                                        .align(Alignment.CenterHorizontally)
                                 ) {
                                     Text(text = "Back")
                                 }
