@@ -54,7 +54,7 @@ class JourneyGeniusViewModel(
         }
         val user = auth.currentUser
         if (user != null) {
-            Log.d("PLAN", "Upload ${planTitle.value} to firestore")
+            Log.d("PLAN", "Upload ${planTitle.value} to firestore")//todo 每次运行会覆盖上一次运行最后添加的plan
             db.collection("users").document(user.uid).update("Plan_List", planGroupList.value)
         }
     }
@@ -164,47 +164,273 @@ class JourneyGeniusViewModel(
                                         val plans: List<SinglePlan> =
                                             plansData?.mapNotNull { planData ->
                                                 val date = planData["date"] as? String
+                                                println("plan date: $date")
                                                 val destination = planData["destination"] as? String
-                                                val priceLevel = planData["priceLevel"] as? Int
+                                                println("plan destination: $destination")
+                                                val priceLevelData = planData["priceLevel"] as? Long
+                                                val priceLevel: Int = priceLevelData?.toInt() ?: 0
                                                 val priceLevelLabel =
                                                     planData["priceLevelLabel"] as? String
+                                                println("plan price level: $priceLevel: $priceLevelLabel")
                                                 val travelType = planData["travelType"] as? String
+                                                println("plan travel type: $travelType")
                                                 // get a list of attractions
-                                                val attractionsData =
-                                                    planData["attractions"] as? List<Map<String, Any>>
+                                                val attractionsData = planData["attractions"] as? List<Map<String, Any>>
                                                 val attractions: List<Place> =
-                                                    attractionsData?.mapNotNull { attraction ->
-                                                        getPlace(attraction = attraction)
+                                                    attractionsData?.mapNotNull { data ->
+                                                        val name = data["name"] as? String
+                                                        println("attraction name: $name")
+                                                        val vicinity = data["vicinity"] as? String
+                                                        println("attraction vicinity: $vicinity")
+                                                        val locationData = data["location"] as? Map<String, Any>
+                                                        val location = locationData?.let {
+                                                            Location(
+                                                                lat = it["lat"] as? Double ?: 0.0,
+                                                                lng = it["lng"] as? Double ?: 0.0
+                                                            )
+                                                        }
+                                                        println("attraction lat & lng: $location")
+                                                        val rating = data["rating"] as? Double
+                                                        println("attraction rating: $rating")
+                                                        val place_id = data["place_id"] as? String
+                                                        println("attraction place id: $place_id")
+                                                        // get a list of photos
+                                                        val photosData = data["photos"] as? List<Map<String, Any>>
+                                                        val photos: List<Photo>? = photosData?.mapNotNull { photo ->
+                                                            val heightData = photo["height"] as? Long
+                                                            val height = heightData?.toInt() ?: 0
+                                                            println("photo height: $height")
+                                                            val widthData = photo["width"] as? Long
+                                                            val width = widthData?.toInt() ?: 0
+                                                            println("photo width: $width")
+                                                            val photo_reference = photo["photo_reference"] as? String
+                                                            println("photo reference: $photo_reference")
+                                                            val html_attributions = photo["html_attributions"] as? List<String>
+                                                            println("photo html attribution: $html_attributions")
+                                                            if (height != null && width != null && photo_reference != null && html_attributions != null){
+                                                                Log.d("DATA", "attraction photo pulled")
+                                                                Photo(height, html_attributions, photo_reference, width)
+                                                            } else
+                                                                null
+                                                        }
+                                                        println("photos: $photos")
+                                                        if (name != null && vicinity != null && location != null && rating != null && place_id != null && photos != null) {
+                                                            Log.d("DATA", "attraction pulled")
+                                                            Place(
+                                                                name,
+                                                                vicinity,
+                                                                location,
+                                                                rating,
+                                                                place_id,
+                                                                photos
+                                                            )
+                                                        } else
+                                                            null // get a Place Object
                                                     } ?: emptyList()
+                                                println("attaractions: $attractions")
                                                 // get startAttraction
-                                                val startAttractionData = planData["startAttraction"] as Map<String, Any>
-                                                val startAttraction = getPlace(startAttractionData)
-                                                // get endAttraction
-                                                val endAttractionData = planData["endAttraction"] as Map<String, Any>
-                                                val endAttraction = getPlace(endAttractionData)
-                                                // get attractionRoutes
-                                                val attractionRoutesData = planData["attractionRoutes"] as? List<Map<String, Any>>
-                                                val attractionRoutes: List<Place> =
-                                                    attractionRoutesData?.mapNotNull {attraction ->
-                                                        getPlace(attraction)
-                                                    }  ?: emptyList()
-                                                // get a list of hotels
-                                                val hotelsData =
-                                                    planData["hotel"] as? List<Map<String, Any>>
-                                                val hotel: List<Hotel> =
-                                                    hotelsData?.mapNotNull { hotelData ->
-                                                        val priceLevel =
-                                                            hotelData["priceLevel"] as? Int
-                                                        val placeData =
-                                                            hotelData["place"] as Map<String, Any>
-                                                        val place: Place? = getPlace(placeData)
-                                                        // get a hotel object
-                                                        if (priceLevel != null && place != null) {
-                                                            Log.d("DATA", "hotel pulled")
-                                                            Hotel(place, priceLevel)
+                                                val startAttractionData = planData["startAttraction"] as? Map<String, Any>
+                                                val startAttraction = startAttractionData?.let {data ->
+                                                    val name = data["name"] as? String
+                                                    println("attraction name: $name")
+                                                    val vicinity = data["vicinity"] as? String
+                                                    println("attraction vicinity: $vicinity")
+                                                    val locationData = data["location"] as? Map<String, Any>
+                                                    val location = locationData?.let {
+                                                        Location(
+                                                            lat = it["lat"] as? Double ?: 0.0,
+                                                            lng = it["lng"] as? Double ?: 0.0
+                                                        )
+                                                    }
+                                                    println("attraction lat & lng: $location")
+                                                    val rating = data["rating"] as? Double
+                                                    println("attraction rating: $rating")
+                                                    val place_id = data["place_id"] as? String
+                                                    println("attraction place id: $place_id")
+                                                    // get a list of photos
+                                                    val photosData = data["photos"] as? List<Map<String, Any>>
+                                                    val photos: List<Photo>? = photosData?.mapNotNull { photo ->
+                                                        val heightData = photo["height"] as? Long
+                                                        val height = heightData?.toInt() ?: 0
+                                                        println("photo height: $height")
+                                                        val widthData = photo["width"] as? Long
+                                                        val width = widthData?.toInt() ?: 0
+                                                        println("photo width: $width")
+                                                        val photo_reference = photo["photo_reference"] as? String
+                                                        println("photo reference: $photo_reference")
+                                                        val html_attributions = photo["html_attributions"] as? List<String>
+                                                        println("photo html attribution: $html_attributions")
+                                                        if (height != null && width != null && photo_reference != null && html_attributions != null){
+                                                            Log.d("DATA", "attraction photo pulled")
+                                                            Photo(height, html_attributions, photo_reference, width)
                                                         } else
                                                             null
-                                                    } ?: emptyList()
+                                                    }
+                                                    println("photos: $photos")
+                                                    if (name != null && vicinity != null && location != null && rating != null && place_id != null && photos != null) {
+                                                        Log.d("DATA", "start attraction pulled")
+                                                        Place(name, vicinity, location, rating, place_id, photos)
+                                                    } else
+                                                        null // get a Place Object
+                                                }
+                                                println("startAttraction: $startAttraction")
+                                                // get endAttraction
+                                                val endAttractionData = planData["endAttraction"] as? Map<String, Any>
+                                                val endAttraction = endAttractionData?.let { data ->
+                                                    val name = data["name"] as? String
+                                                    println("attraction name: $name")
+                                                    val vicinity = data["vicinity"] as? String
+                                                    println("attraction vicinity: $vicinity")
+                                                    val locationData = data["location"] as? Map<String, Any>
+                                                    val location = locationData?.let {
+                                                        Location(
+                                                            lat = it["lat"] as? Double ?: 0.0,
+                                                            lng = it["lng"] as? Double ?: 0.0
+                                                        )
+                                                    }
+                                                    println("attraction lat & lng: $location")
+                                                    val rating = data["rating"] as? Double
+                                                    println("attraction rating: $rating")
+                                                    val place_id = data["place_id"] as? String
+                                                    println("attraction place id: $place_id")
+                                                    // get a list of photos
+                                                    val photosData = data["photos"] as? List<Map<String, Any>>
+                                                    val photos: List<Photo>? = photosData?.mapNotNull { photo ->
+                                                        val heightData = photo["height"] as? Long
+                                                        val height = heightData?.toInt()
+                                                        println("photo height: $height")
+                                                        val widthData = photo["width"] as? Long
+                                                        val width = widthData?.toInt()
+                                                        println("photo width: $width")
+                                                        val photo_reference = photo["photo_reference"] as? String
+                                                        println("photo reference: $photo_reference")
+                                                        val html_attributions = photo["html_attributions"] as? List<String>
+                                                        println("photo html attribution: $html_attributions")
+                                                        if (height != null && width != null && photo_reference != null && html_attributions != null){
+                                                            Log.d("DATA", "attraction photo pulled")
+                                                            Photo(height, html_attributions, photo_reference, width)
+                                                        } else
+                                                            null
+                                                    }
+                                                    println("photos: $photos")
+                                                    if (name != null && vicinity != null && location != null && rating != null && place_id != null && photos != null) {
+                                                        Log.d("DATA", "start attraction pulled")
+                                                        Place(name, vicinity, location, rating, place_id, photos)
+                                                    } else
+                                                        null // get a Place Object
+                                                }
+                                                println("endAttraction: $endAttraction")
+                                                // get attractionRoutes
+                                                val attractionRoutesDate = planData["attractionRoutes"] as? List<Map<String, Any>>
+                                                val attractionRoutes: List<Place> = attractionRoutesDate?.mapNotNull { data->
+                                                    val name = data["name"] as? String
+                                                    println("attraction name: $name")
+                                                    val vicinity = data["vicinity"] as? String
+                                                    println("attraction vicinity: $vicinity")
+                                                    val locationData = data["location"] as? Map<String, Any>
+                                                    val location = locationData?.let {
+                                                        Location(
+                                                            lat = it["lat"] as? Double ?: 0.0,
+                                                            lng = it["lng"] as? Double ?: 0.0
+                                                        )
+                                                    }
+                                                    println("attraction lat & lng: $location")
+                                                    val rating = data["rating"] as? Double
+                                                    println("attraction rating: $rating")
+                                                    val place_id = data["place_id"] as? String
+                                                    println("attraction place id: $place_id")
+                                                    // get a list of photos
+                                                    val photosData = data["photos"] as? List<Map<String, Any>>
+                                                    val photos: List<Photo>? = photosData?.mapNotNull { photo ->
+                                                        val heightData = photo["height"] as? Long
+                                                        val height = heightData?.toInt()
+                                                        println("photo height: $height")
+                                                        val widthData = photo["width"] as? Long
+                                                        val width = widthData?.toInt()
+                                                        println("photo width: $width")
+                                                        val photo_reference = photo["photo_reference"] as? String
+                                                        println("photo reference: $photo_reference")
+                                                        val html_attributions = photo["html_attributions"] as? List<String>
+                                                        println("photo html attribution: $html_attributions")
+                                                        if (height != null && width != null && photo_reference != null && html_attributions != null){
+                                                            Log.d("DATA", "attraction photo pulled")
+                                                            Photo(height, html_attributions, photo_reference, width)
+                                                        } else
+                                                            null
+                                                    }
+                                                    println("photos: $photos")
+                                                    if (name != null && vicinity != null && location != null && rating != null && place_id != null && photos != null) {
+                                                        Log.d("DATA", "attraction pulled")
+                                                        Place(
+                                                            name,
+                                                            vicinity,
+                                                            location,
+                                                            rating,
+                                                            place_id,
+                                                            photos
+                                                        )
+                                                    } else
+                                                        null // get a Place Object
+                                                } ?: emptyList()
+                                                println("attraction routes: $attractionRoutes")
+                                                // get a list of hotels
+                                                val hotelData = planData["hotel"] as? List<Map<String, Any>>
+                                                val hotel:List<Hotel> = hotelData?.mapNotNull { hotelData ->
+                                                    val priceLevelData = hotelData["priceLevel"] as? Long
+                                                    val priceLevel = priceLevelData?.toInt()
+                                                    val placeData = hotelData["place"] as? Map<String, Any>
+                                                    val place = placeData?.let{
+                                                            data ->
+                                                        val name = data["name"] as? String
+                                                        println("attraction name: $name")
+                                                        val vicinity = data["vicinity"] as? String
+                                                        println("attraction vicinity: $vicinity")
+                                                        val locationData = data["location"] as? Map<String, Any>
+                                                        val location = locationData?.let {
+                                                            Location(
+                                                                lat = it["lat"] as? Double ?: 0.0,
+                                                                lng = it["lng"] as? Double ?: 0.0
+                                                            )
+                                                        }
+                                                        println("attraction lat & lng: $location")
+                                                        val rating = data["rating"] as? Double
+                                                        println("attraction rating: $rating")
+                                                        val place_id = data["place_id"] as? String
+                                                        println("attraction place id: $place_id")
+                                                        // get a list of photos
+                                                        val photosData = data["photos"] as? List<Map<String, Any>>
+                                                        val photos: List<Photo>? = photosData?.mapNotNull { photo ->
+                                                            val heightData = photo["height"] as? Long
+                                                            val height = heightData?.toInt()
+                                                            println("photo height: $height")
+                                                            val widthData = photo["width"] as? Long
+                                                            val width = widthData?.toInt()
+                                                            println("photo width: $width")
+                                                            val photo_reference = photo["photo_reference"] as? String
+                                                            println("photo reference: $photo_reference")
+                                                            val html_attributions = photo["html_attributions"] as? List<String>
+                                                            println("photo html attribution: $html_attributions")
+                                                            if (height != null && width != null && photo_reference != null && html_attributions != null){
+                                                                Log.d("DATA", "hotel photo pulled")
+                                                                Photo(height, html_attributions, photo_reference, width)
+                                                            } else
+                                                                null
+                                                        }
+                                                        println("photos: $photos")
+                                                        if (name != null && vicinity != null && location != null && rating != null && place_id != null && photos != null) {
+                                                            Log.d("DATA", "hotel place pulled")
+                                                            Place(name, vicinity, location, rating, place_id, photos)
+                                                        } else
+                                                            null // get a Place Object
+                                                    }
+                                                    if (priceLevel != null && place != null){
+                                                        Log.d("DATA", "hotel pulled")
+                                                        Hotel(place, priceLevel)
+                                                    } else {
+                                                        null
+                                                    }
+                                                }?: emptyList()
+                                                println("hotel: $hotel")
                                                 // get a SinglePlan Object
                                                 if (date != null && destination != null && attractions != null && priceLevel != null
                                                     && startAttraction != null && endAttraction != null && attractionRoutes != null
@@ -914,6 +1140,15 @@ class JourneyGeniusViewModel(
         val routes = jsonObject.getAsJsonArray("routes")
         val allRoutes = mutableListOf<List<LatLng>>()
         val legs = mutableListOf<LatLng>()
+//    for (i in 0 until routes.size()) {
+//        val points = routes[i].asJsonObject
+//            .getAsJsonArray("legs")[0].asJsonObject
+//            .getAsJsonArray("steps")
+//            .flatMap {
+//                decodePoly(it.asJsonObject.getAsJsonObject("polyline").get("points").asString)
+//            }
+//        allPoints.add(points)
+//    }
         if (routes.isEmpty) {
             val newTravelMode = when (travelModeOption) {
                 "bicycling" -> "walking"
