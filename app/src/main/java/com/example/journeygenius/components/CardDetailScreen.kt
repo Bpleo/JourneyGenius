@@ -96,12 +96,10 @@ fun CardDetailScreen(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(bottom = 80.dp)
-                .border(1.dp, Color.Black, MaterialTheme.shapes.small)
-                .background(Color.White)
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.End
         ) {
-            TextButton(
+            OutlinedButton(
                 onClick = {navController.popBackStack()},
                 modifier = Modifier.padding(end = 16.dp)
             ) {
