@@ -28,6 +28,7 @@ fun PersonalTopBar(context: Context, title: String, navController: NavHostContro
                     overflow = TextOverflow.Ellipsis
                 )
             },
+            colors = TopAppBarDefaults.smallTopAppBarColors(MaterialTheme.colorScheme.background),
             navigationIcon = {
                 IconButton(onClick = {
                     navController.navigate("Personal Menu")
