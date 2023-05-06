@@ -111,6 +111,10 @@ class JourneyGeniusViewModel(
         }
     }
 
+    fun getPlanById(planId: String): Plans? {
+        return communityPlanList.value[planId]
+    }
+
     private fun getGroupList(groupListData: Map<String, Any>?): Map<String, Plans> {
         val groupList = groupListData?.mapNotNull { (key, value) ->
             val plans = (value as? Map<String, Any>)?.let { planListData ->
@@ -1202,4 +1206,7 @@ class JourneyGeniusViewModel(
             allStates
 
     }
+
+    // Community View Model
+    fun refreshCommunity() {}
 }

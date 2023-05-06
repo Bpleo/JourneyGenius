@@ -18,24 +18,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.journeygenius.JourneyGeniusViewModel
 import com.example.journeygenius.R
 import com.example.journeygenius.community.CommunityScreen
+import com.example.journeygenius.data.models.Plans
 
 @Composable
 fun CardDetailScreen(
     planId: String,
-    cardDetailViewModel: CardDetailViewModel = viewModel(),
+    viewModel: JourneyGeniusViewModel,
     navController: NavController) {
-    val plan = cardDetailViewModel.plan.value
 
-    val dummyTitle = "Exploring the Wonders of Tokyo"
-    val dummyDescription = "Welcome to Tokyo, the city that never sleeps! Get ready for a non-stop adventure through the bustling streets and neon-lit nightlife of Japan's capital. Start your day off with a visit to the ancient Sensō-ji temple in the historic Asakusa district, and then indulge in some retail therapy at the trendy shopping district of Shibuya. Take a break from the city's fast-paced lifestyle with a visit to the peaceful Shinjuku Gyoen National Garden, where you can unwind and enjoy the beauty of nature.\n" +
-            "\n" +
-            "For a taste of Tokyo's unique culinary culture, head to the Tsukiji Fish Market, the largest fish market in the world. Savor fresh sushi, sashimi, and other seafood delicacies while enjoying the vibrant atmosphere of the market.\n" +
-            "\n" +
-            "When night falls, immerse yourself in the vibrant nightlife of Tokyo's many districts. Dance the night away at one of the city's world-famous nightclubs, or enjoy a drink with friends at one of the many izakaya pubs scattered throughout the city.\n" +
-            "\n" +
-            "Experience the magic of Tokyo's traditional culture with a visit to the sumo wrestling tournaments, or catch a performance of the ancient art of kabuki theater. With so much to see and do, you'll never run out of things to explore in this dynamic and exciting city."
+    val plan = viewModel.getPlanById(planId)
 
     val scrollState = rememberScrollState()
 
@@ -62,7 +56,7 @@ fun CardDetailScreen(
                     .fillMaxWidth()
             ) {
                 Text(
-                    text = plan?.title ?: dummyTitle,
+                    text = plan?.title ?: "",
                     fontWeight = FontWeight.Bold,
                     fontSize = 20.sp,
                 )
@@ -73,13 +67,6 @@ fun CardDetailScreen(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        modifier = Modifier.weight(1f),
-                        text = "User ID: 1",
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.LightGray,
-                    )
                     Icon(
                         imageVector = Icons.Outlined.Favorite,
                         contentDescription = "Like",
@@ -98,7 +85,7 @@ fun CardDetailScreen(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Text(
-                    text = plan?.description ?: dummyDescription,
+                    text = plan?.description ?: "",
                     fontSize = 16.sp,
                 )
 

@@ -39,7 +39,7 @@ fun SetupNavGraph(
         composable(
             route = BottomBar.Community.route
         ){
-            CommunityScreen()
+            CommunityScreen(viewModel = viewModel)
         }
         composable(
             route = BottomBar.Personal.route

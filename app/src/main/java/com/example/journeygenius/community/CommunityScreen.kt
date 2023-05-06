@@ -26,6 +26,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.journeygenius.JourneyGeniusViewModel
 import com.example.journeygenius.components.CardDetailScreen
 import com.example.journeygenius.components.CustomCard
 import com.example.journeygenius.data.models.Plan
@@ -34,9 +35,12 @@ import kotlinx.coroutines.launch
 import java.time.format.TextStyle
 
 @Composable
-fun CommunityScreen(communityViewModel: CommunityViewModel = viewModel()) {
-    val plans = communityViewModel.plans
+fun CommunityScreen(viewModel: JourneyGeniusViewModel) {
     val nestedNavController = rememberNavController()
+
+    LaunchedEffect(Unit) {
+        viewModel.fetchGroupDataAndPrint(limit = 10)
+    }
 
     JourneyGeniusTheme {
         NavHost(
@@ -44,11 +48,12 @@ fun CommunityScreen(communityViewModel: CommunityViewModel = viewModel()) {
             startDestination = "community_list"
         ) {
             composable("community_list") {
-                CommunityList(communityViewModel, plans, nestedNavController)
+                CommunityList(viewModel, nestedNavController)
             }
             composable("card_detail/{planId}") { backStackEntry ->
                 CardDetailScreen(
                     planId = backStackEntry.arguments?.getString("planId") ?: "",
+                    viewModel = viewModel,
                     navController = nestedNavController
                 )
             }
@@ -58,8 +63,7 @@ fun CommunityScreen(communityViewModel: CommunityViewModel = viewModel()) {
 
 @Composable
 fun CommunityList(
-    communityViewModel: CommunityViewModel,
-    plans: List<Plan>,
+    viewModel: JourneyGeniusViewModel,
     navController: NavController
 ) {
     val scrollState = rememberLazyGridState()
@@ -84,7 +88,7 @@ fun CommunityList(
             )
             IconButton(
                 onClick = {
-                    communityViewModel.testRefresh()
+                    viewModel.refreshCommunity()
                     coroutineScope.launch {
                         scrollState.animateScrollToItem(0)
                     }
@@ -110,11 +114,18 @@ fun CommunityList(
             modifier = Modifier.padding(bottom = 75.dp),
             state = scrollState
         ) {
-            items(plans.size) { index ->
+            val plansList = viewModel.communityPlanList.value.entries
+                .filter { (_, plan) -> plan.isPublic }
+                .toList()
+
+            items(plansList.size) { index ->
+                val (planId, plan) = plansList[index]
+
                 CustomCard(
-                    data = plans[index],
-                    onCardClick = { planId ->
-                        navController.navigate("card_detail/$planId")
+                    id = planId,
+                    data = plan,
+                    onCardClick = { id ->
+                        navController.navigate("card_detail/$id")
                     }
                 )
             }

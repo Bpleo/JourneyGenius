@@ -23,9 +23,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.journeygenius.R
 import com.example.journeygenius.data.models.Plan
+import com.example.journeygenius.data.models.Plans
 
 @Composable
-fun CustomCard(data: Plan, onCardClick: (String) -> Unit) {
+fun CustomCard(
+    id: String,
+    data: Plans,
+    onCardClick: (String) -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -36,7 +40,7 @@ fun CustomCard(data: Plan, onCardClick: (String) -> Unit) {
     ) {
         Card(
             modifier = Modifier
-                .clickable { onCardClick(data.planId) }
+                .clickable { onCardClick(id) }
                 .width(200.dp)
                 .height(270.dp),
             shape = RoundedCornerShape(topStart = 16.dp, bottomEnd = 16.dp),
@@ -63,7 +67,7 @@ fun CustomCard(data: Plan, onCardClick: (String) -> Unit) {
                 ) {
                     Text(
                         text = data.title,
-                        fontSize = 16.sp,
+                        fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
@@ -71,22 +75,17 @@ fun CustomCard(data: Plan, onCardClick: (String) -> Unit) {
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
                         text = data.description,
-                        fontSize = 13.sp,
+                        fontSize = 16.sp,
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f)
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.End
                     ) {
-                        Text(
-                            modifier = Modifier.weight(1f),
-                            text = "User ID: ${data.userId}",
-                            fontSize = 10.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.LightGray,
-                        )
                         Icon(
                             imageVector = Icons.Outlined.Favorite,
                             contentDescription = "Like",
@@ -96,11 +95,12 @@ fun CustomCard(data: Plan, onCardClick: (String) -> Unit) {
                         )
                         Text(
                             text = formatLikesString(data.likes),
-                            fontSize = 10.sp,
+                            fontSize = 13.sp,
                             color = Color.LightGray,
                             fontWeight = FontWeight.Bold,
                         )
                     }
+                    Spacer(modifier = Modifier.height(8.dp))
                 }
             }
         }

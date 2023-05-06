@@ -10,9 +10,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.journeygenius.JourneyGeniusViewModel
-import com.example.journeygenius.WindowType
-import com.example.journeygenius.community.CommunityViewModel
 import com.example.journeygenius.components.CustomCard
+import com.example.journeygenius.data.models.Plans
 import com.example.journeygenius.rememberWindowSize
 import com.example.journeygenius.ui.theme.JourneyGeniusTheme
 import com.google.firebase.firestore.FirebaseFirestore
@@ -25,7 +24,7 @@ fun PersonalListScreen(
 ){
     val windowSize = rememberWindowSize()
 
-    val dummyPlans = CommunityViewModel().plans
+    val dummyPlans = mutableListOf<Plans>()
 //    TODO: get from db or viewModel
 //    val plans: List<Plan>
 
@@ -48,6 +47,7 @@ fun PersonalListScreen(
                     ) {
                         items(dummyPlans.size) { index ->
                             CustomCard(
+                                id = "0",
                                 data = dummyPlans[index],
                                 onCardClick = { planId ->
                                     // Navigate to the CardDetailScreen with the given plan ID
