@@ -510,6 +510,7 @@ fun ChooseDropdownMenu(viewModel: JourneyGeniusViewModel) {
                 DropdownMenu(
                     expanded = departCountryExpanded,
                     onDismissRequest = { departCountryExpanded = false },
+                    modifier = Modifier.width(150.dp).height(200.dp),
 //                    modifier = Modifier.width(150.dp),
 //                            modifier = Modifier.width(with(LocalDensity.current) { textFiledSize.width.toDp() })
                 ) {
@@ -558,7 +559,7 @@ fun ChooseDropdownMenu(viewModel: JourneyGeniusViewModel) {
                 DropdownMenu(
                     expanded = departStateExpanded,
                     onDismissRequest = { departStateExpanded = false },
-                    modifier = Modifier.width(150.dp),
+                    modifier = Modifier.width(150.dp).height(200.dp),
 //                            modifier = Modifier.width(with(LocalDensity.current) { textFiledSize.width.toDp() })
                 ) {
                     //For dummy data
@@ -599,7 +600,7 @@ fun ChooseDropdownMenu(viewModel: JourneyGeniusViewModel) {
                 DropdownMenu(
                     expanded = departCityExpanded,
                     onDismissRequest = { departCityExpanded = false },
-                    modifier = Modifier.width(150.dp),
+                    modifier = Modifier.width(150.dp).height(200.dp),
 //                            modifier = Modifier.width(with(LocalDensity.current) { textFiledSize.width.toDp() })
                 ) {
 //                    stateToCityMap[departSate.value]?.forEach { country ->
@@ -656,7 +657,7 @@ fun ChooseDropdownMenu(viewModel: JourneyGeniusViewModel) {
                     DropdownMenu(
                         expanded = destCountryExpanded,
                         onDismissRequest = { destCountryExpanded = false },
-                        modifier = Modifier.width(150.dp),
+                        modifier = Modifier.width(150.dp).height(200.dp),
 //                            modifier = Modifier.width(with(LocalDensity.current) { textFiledSize.width.toDp() })
                     ) {
 //                        countries.forEach { country ->
@@ -700,7 +701,7 @@ fun ChooseDropdownMenu(viewModel: JourneyGeniusViewModel) {
                 DropdownMenu(
                     expanded = destStateExpanded,
                     onDismissRequest = { destStateExpanded = false },
-                    modifier = Modifier.width(150.dp),
+                    modifier = Modifier.width(150.dp).height(200.dp),
 //                            modifier = Modifier.width(with(LocalDensity.current) { textFiledSize.width.toDp() })
                 ) {
                     countryToStateMap[destCountry.value]?.forEach { country ->
@@ -730,7 +731,7 @@ fun ChooseDropdownMenu(viewModel: JourneyGeniusViewModel) {
                 DropdownMenu(
                     expanded = destCityExpanded,
                     onDismissRequest = { destCityExpanded = false },
-                    modifier = Modifier.width(150.dp),
+                    modifier = Modifier.width(150.dp).height(200.dp),
 //                            modifier = Modifier.width(with(LocalDensity.current) { textFiledSize.width.toDp() })
                 ) {
                     stateToCityMap[destState.value]?.forEach { country ->
