@@ -32,6 +32,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.core.content.ContextCompat.startActivity
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -56,6 +57,7 @@ import com.maxkeppeler.sheets.calendar.CalendarDialog
 import com.maxkeppeler.sheets.calendar.models.CalendarConfig
 import com.maxkeppeler.sheets.calendar.models.CalendarSelection
 import com.maxkeppeler.sheets.calendar.models.CalendarStyle
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -361,6 +363,19 @@ fun ChooseDropdownMenu(viewModel: JourneyGeniusViewModel) {
         "MA" to bosCities,
         "Seoul" to seoulCities,
     )
+    val countryList by remember {
+        viewModel.countryList
+    }
+    val stateList by remember {
+        viewModel.stateList
+    }
+    val countyList by remember {
+        viewModel.countyList
+    }
+    val cityList by remember {
+        viewModel.cityList
+    }
+
     val departCountry by remember {
         mutableStateOf(viewModel.departCountry)
     }
@@ -477,7 +492,9 @@ fun ChooseDropdownMenu(viewModel: JourneyGeniusViewModel) {
 
                 //Departure Country
                 OutlinedTextField(value = departCountry.value,
-                    onValueChange = { viewModel.updateDepartCountry(it) },
+                    onValueChange = {
+                        viewModel.updateDepartCountry(it)
+                    },
                     modifier = Modifier
                         .width(150.dp)
                         .height(60.dp),
@@ -496,12 +513,26 @@ fun ChooseDropdownMenu(viewModel: JourneyGeniusViewModel) {
 //                    modifier = Modifier.width(150.dp),
 //                            modifier = Modifier.width(with(LocalDensity.current) { textFiledSize.width.toDp() })
                 ) {
-                    countries.forEach { country ->
-                        DropdownMenuItem(text = { Text(country) }, onClick = {
-                            viewModel.updateDepartCountry(country)
+
+                    //for country List dummy data
+//                    countries.forEach { country ->
+//                        DropdownMenuItem(text = { Text(country) }, onClick = {
+//                            viewModel.updateDepartCountry(country)
+//                            viewModel.updateDepartState("")
+//                            viewModel.updateDepartCity("")
+//                            departCountryExpanded = false
+//                        })
+//
+//                    }
+                    countryList.forEach { country ->
+                        DropdownMenuItem(text = { Text(country.key) }, onClick = {
+                            viewModel.updateDepartCountry(country.key)
                             viewModel.updateDepartState("")
                             viewModel.updateDepartCity("")
                             departCountryExpanded = false
+                            viewModel.viewModelScope.launch {
+                                viewModel.updateStateList(viewModel.getAllStatesAndCities(country.value))
+                            }
                         })
 
                     }
@@ -509,7 +540,9 @@ fun ChooseDropdownMenu(viewModel: JourneyGeniusViewModel) {
 
                 //Departure State
                 OutlinedTextField(value = departSate.value,
-                    onValueChange = { viewModel.updateDepartState(it) },
+                    onValueChange = { viewModel.updateDepartState(it)
+
+                                  },
                     modifier = Modifier
                         .width(150.dp)
                         .height(60.dp),
@@ -528,11 +561,24 @@ fun ChooseDropdownMenu(viewModel: JourneyGeniusViewModel) {
                     modifier = Modifier.width(150.dp),
 //                            modifier = Modifier.width(with(LocalDensity.current) { textFiledSize.width.toDp() })
                 ) {
-                    countryToStateMap[departCountry.value]?.forEach { country ->
-                        DropdownMenuItem(text = { Text(country) }, onClick = {
-                            viewModel.updateDepartState(country)
-                            departStateExpanded = false
-                        })
+                    //For dummy data
+//                    countryToStateMap[departCountry.value]?.forEach { country ->
+//                        DropdownMenuItem(text = { Text(country) }, onClick = {
+//                            viewModel.updateDepartState(country)
+//                            departStateExpanded = false
+//                        })
+//                    }
+
+                    if(stateList.isNotEmpty()){
+                        stateList.forEach{state->
+                            DropdownMenuItem(text = { Text(state.key) }, onClick = {
+                                viewModel.updateDepartState(state.key)
+                                departStateExpanded = false
+                                viewModel.viewModelScope.launch {
+                                    viewModel.updateCityList(viewModel.getAllStatesAndCities(state.value))
+                                }
+                            })
+                        }
                     }
                 }
                 //Departure City
@@ -556,12 +602,21 @@ fun ChooseDropdownMenu(viewModel: JourneyGeniusViewModel) {
                     modifier = Modifier.width(150.dp),
 //                            modifier = Modifier.width(with(LocalDensity.current) { textFiledSize.width.toDp() })
                 ) {
-                    stateToCityMap[departSate.value]?.forEach { country ->
-                        DropdownMenuItem(text = { Text(country) }, onClick = {
-                            viewModel.updateDepartCity(country)
-                            departCityExpanded = false
-                        })
+//                    stateToCityMap[departSate.value]?.forEach { country ->
+//                        DropdownMenuItem(text = { Text(country) }, onClick = {
+//                            viewModel.updateDepartCity(country)
+//                            departCityExpanded = false
+//                        })
+//                    }
+                    if(cityList.isNotEmpty()){
+                        cityList.forEach { city ->
+                            DropdownMenuItem(text = { Text(city.key) }, onClick = {
+                                viewModel.updateDepartCity(city.key)
+                                departCityExpanded = false
+                            })
+                        }
                     }
+
                 }
 
 
@@ -583,7 +638,9 @@ fun ChooseDropdownMenu(viewModel: JourneyGeniusViewModel) {
                 Box {
                     //Destination Country
                     OutlinedTextField(value = destCountry.value,
-                        onValueChange = { viewModel.updateDestCountry(it) },
+                        onValueChange = {
+                            viewModel.updateDestCountry(it)
+                        },
                         modifier = Modifier
                             .width(150.dp)
                             .height(60.dp),
@@ -602,9 +659,18 @@ fun ChooseDropdownMenu(viewModel: JourneyGeniusViewModel) {
                         modifier = Modifier.width(150.dp),
 //                            modifier = Modifier.width(with(LocalDensity.current) { textFiledSize.width.toDp() })
                     ) {
-                        countries.forEach { country ->
-                            DropdownMenuItem(text = { Text(country) }, onClick = {
-                                viewModel.updateDestCountry(country)
+//                        countries.forEach { country ->
+//                            DropdownMenuItem(text = { Text(country) }, onClick = {
+//                                viewModel.updateDestCountry(country)
+//                                viewModel.updateDestState("")
+//                                viewModel.updateDestCity("")
+//                                destCountryExpanded = false
+//                            })
+//
+//                        }
+                        countryList.forEach { country ->
+                            DropdownMenuItem(text = { Text(country.key) }, onClick = {
+                                viewModel.updateDestCountry(country.key)
                                 viewModel.updateDestState("")
                                 viewModel.updateDestCity("")
                                 destCountryExpanded = false
@@ -616,7 +682,9 @@ fun ChooseDropdownMenu(viewModel: JourneyGeniusViewModel) {
 
                 //Destination State
                 OutlinedTextField(value = destState.value,
-                    onValueChange = { viewModel.updateDestState(it) },
+                    onValueChange = {
+                        viewModel.updateDestState(it)
+                    },
                     modifier = Modifier
                         .width(150.dp)
                         .height(60.dp),
@@ -710,7 +778,7 @@ fun PlanScreen(
         val value = viewModel.dateRange
         mutableStateOf(value)
     }
-    val budget by remember { mutableStateOf(viewModel.budget) }
+
     val travelType by remember {
         mutableStateOf(viewModel.travelType)
     }
@@ -797,7 +865,6 @@ fun PlanScreenLandscapePreview() {
         val value = viewModel.dateRange
         mutableStateOf(value)
     }
-    val budget by remember { mutableStateOf(viewModel.budget) }
     val calenderState = rememberUseCaseState()
     JourneyGeniusTheme {
         Box {

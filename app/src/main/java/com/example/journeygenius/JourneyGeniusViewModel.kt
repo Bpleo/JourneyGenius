@@ -534,13 +534,6 @@ class JourneyGeniusViewModel(
         _dateRange.value = Range(start, end)
     }
 
-    private var _budget = mutableStateOf(TextFieldValue())
-    val budget: MutableState<TextFieldValue> = _budget
-
-    fun updateBudget(value: TextFieldValue) {
-        _budget.value = value
-    }
-
     private var _departCountry = mutableStateOf("US")
     val departCountry: MutableState<String> = _departCountry
     fun updateDepartCountry(value: String) {
@@ -840,21 +833,33 @@ class JourneyGeniusViewModel(
         _travelType.value = value
     }
 
-    private val countryList = listOf<String>("Afghanistan", "Albania")
-    fun getCountryList(): List<String> {
-        return countryList
+    private var _countryList = mutableStateOf(mapOf<String,Int>())
+    val countryList: MutableState<Map<String,Int>> = _countryList
+    private fun updateCountryList(value: Map<String,Int>){
+        _countryList.value=value
+    }
+    //initialize countries list from api
+    init {
+        viewModelScope.launch {
+            getAllCountries()
+        }
     }
 
-    private var _StateList = mutableStateOf(listOf<String>())
-    val StateList: MutableState<List<String>> = _StateList
-    fun updateStateList(value: List<String>) {
-        _StateList.value = value
+    private var _stateList = mutableStateOf(mapOf<String,Int>())
+    val stateList: MutableState<Map<String,Int>> = _stateList
+    fun updateStateList(value: Map<String,Int>) {
+        _stateList.value = value
+    }
+    private var _countyList= mutableStateOf(mapOf<String,Int>())
+    val countyList:MutableState<Map<String,Int>> = _countyList
+    fun updateCountyList(value: Map<String,Int>){
+        _countyList.value=value
     }
 
-    private var _CityList = mutableStateOf(listOf<String>())
-    val CityList: MutableState<List<String>> = _CityList
-    fun updateCityList(value: List<String>) {
-        _CityList.value = value
+    private var _cityList = mutableStateOf(mapOf<String,Int>())
+    val cityList: MutableState<Map<String,Int>> = _cityList
+    fun updateCityList(value: Map<String,Int>) {
+        _cityList.value = value
     }
 
     private var _startAttraction =
@@ -892,8 +897,6 @@ class JourneyGeniusViewModel(
         }
         updateSelectedHotelList(updatedSelectedHotel)
     }
-
-
     private var _attractionToHotels = mutableStateOf(mapOf<Place, List<Hotel>>())
     val attractionToHotels: MutableState<Map<Place, List<Hotel>>> = _attractionToHotels
     fun updateAttractionToHotel(value: Map<Place, List<Hotel>>) {
@@ -1180,6 +1183,34 @@ class JourneyGeniusViewModel(
         }
         allRoutes
     }
+    suspend fun getAllCountries()  {
+        withContext(Dispatchers.IO){
+            val url="http://api.geonames.org/countryInfoJSON?username=journeyGenius"
+            val result = URL(url).readText()
+            val jsonObject = JsonParser.parseString(result).asJsonObject
+            val geoNamesList = jsonObject.getAsJsonArray("geonames")
+            val allCountries = mutableMapOf<String,Int>()
+            if(!geoNamesList.isEmpty){
+                for (i in geoNamesList){
+                    allCountries[i.asJsonObject["countryName"].asString] = i.asJsonObject["geonameId"].asInt
+                }
+            }
+            updateCountryList(allCountries)
+        }
+    }
+    suspend fun getAllStatesAndCities(geoNameId:Int):Map<String,Int> = withContext(Dispatchers.IO){
 
+            val url="http://api.geonames.org/childrenJSON?geonameId=${geoNameId}&username=journeyGenius"
+            val result=URL(url).readText()
+            val jsonObject = JsonParser.parseString(result).asJsonObject
+            val geoNamesList = jsonObject.getAsJsonArray("geonames")
+            val allStates = mutableMapOf<String,Int>()
+            if(!geoNamesList.isEmpty){
+                for (i in geoNamesList){
+                    allStates[i.asJsonObject["name"].asString.replace(Regex(" Shi"), "")] = i.asJsonObject["geonameId"].asInt
+                }
+            }
+            allStates
 
+    }
 }
