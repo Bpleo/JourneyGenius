@@ -490,32 +490,33 @@ fun ChooseDropdownMenu(viewModel: JourneyGeniusViewModel) {
             Spacer(modifier = Modifier.height(5.dp))
             Column {
 
-                //Departure Country
-                OutlinedTextField(value = departCountry.value,
-                    onValueChange = {
-                        viewModel.updateDepartCountry(it)
-                    },
-                    modifier = Modifier
-                        .width(150.dp)
-                        .height(60.dp),
-                    label = { Text(text = "Country") },
-                    trailingIcon = {
-                        Icon(
-                            iconDepartCountry,
-                            contentDescription = "",
-                            Modifier.clickable {
-                                departCountryExpanded = !departCountryExpanded
-                            })
-                    })
-                DropdownMenu(
-                    expanded = departCountryExpanded,
-                    onDismissRequest = { departCountryExpanded = false },
-                    modifier = Modifier.width(150.dp).height(200.dp),
+                Box{
+                    //Departure Country
+                    OutlinedTextField(value = departCountry.value,
+                        onValueChange = {
+                            viewModel.updateDepartCountry(it)
+                        },
+                        modifier = Modifier
+                            .width(150.dp)
+                            .height(60.dp),
+                        label = { Text(text = "Country") },
+                        trailingIcon = {
+                            Icon(
+                                iconDepartCountry,
+                                contentDescription = "",
+                                Modifier.clickable {
+                                    departCountryExpanded = !departCountryExpanded
+                                })
+                        })
+                    DropdownMenu(
+                        expanded = departCountryExpanded,
+                        onDismissRequest = { departCountryExpanded = false },
+                        modifier = Modifier.width(150.dp).height(200.dp),
 //                    modifier = Modifier.width(150.dp),
 //                            modifier = Modifier.width(with(LocalDensity.current) { textFiledSize.width.toDp() })
-                ) {
+                    ) {
 
-                    //for country List dummy data
+                        //for country List dummy data
 //                    countries.forEach { country ->
 //                        DropdownMenuItem(text = { Text(country) }, onClick = {
 //                            viewModel.updateDepartCountry(country)
@@ -525,44 +526,46 @@ fun ChooseDropdownMenu(viewModel: JourneyGeniusViewModel) {
 //                        })
 //
 //                    }
-                    countryList.forEach { country ->
-                        DropdownMenuItem(text = { Text(country.key) }, onClick = {
-                            viewModel.updateDepartCountry(country.key)
-                            viewModel.updateDepartState("")
-                            viewModel.updateDepartCity("")
-                            departCountryExpanded = false
-                            viewModel.viewModelScope.launch {
-                                viewModel.updateStateList(viewModel.getAllStatesAndCities(country.value))
-                            }
-                        })
+                        countryList.forEach { country ->
+                            DropdownMenuItem(text = { Text(country.key) }, onClick = {
+                                viewModel.updateDepartCountry(country.key)
+                                viewModel.updateDepartState("")
+                                viewModel.updateDepartCity("")
+                                departCountryExpanded = false
+                                viewModel.viewModelScope.launch {
+                                    viewModel.updateStateList(viewModel.getAllStatesAndCities(country.value))
+                                }
+                            })
 
+                        }
                     }
                 }
 
-                //Departure State
-                OutlinedTextField(value = departSate.value,
-                    onValueChange = { viewModel.updateDepartState(it)
+                Box{
+                    //Departure State
+                    OutlinedTextField(value = departSate.value,
+                        onValueChange = { viewModel.updateDepartState(it)
 
-                                  },
-                    modifier = Modifier
-                        .width(150.dp)
-                        .height(60.dp),
-                    label = { Text(text = "State") },
-                    trailingIcon = {
-                        Icon(
-                            iconDepartState,
-                            contentDescription = "",
-                            Modifier.clickable {
-                                departStateExpanded = !departStateExpanded
-                            })
-                    })
-                DropdownMenu(
-                    expanded = departStateExpanded,
-                    onDismissRequest = { departStateExpanded = false },
-                    modifier = Modifier.width(150.dp).height(200.dp),
+                        },
+                        modifier = Modifier
+                            .width(150.dp)
+                            .height(60.dp),
+                        label = { Text(text = "State") },
+                        trailingIcon = {
+                            Icon(
+                                iconDepartState,
+                                contentDescription = "",
+                                Modifier.clickable {
+                                    departStateExpanded = !departStateExpanded
+                                })
+                        })
+                    DropdownMenu(
+                        expanded = departStateExpanded,
+                        onDismissRequest = { departStateExpanded = false },
+                        modifier = Modifier.width(150.dp).height(200.dp),
 //                            modifier = Modifier.width(with(LocalDensity.current) { textFiledSize.width.toDp() })
-                ) {
-                    //For dummy data
+                    ) {
+                        //For dummy data
 //                    countryToStateMap[departCountry.value]?.forEach { country ->
 //                        DropdownMenuItem(text = { Text(country) }, onClick = {
 //                            viewModel.updateDepartState(country)
@@ -570,59 +573,59 @@ fun ChooseDropdownMenu(viewModel: JourneyGeniusViewModel) {
 //                        })
 //                    }
 
-                    if(stateList.isNotEmpty()){
-                        stateList.forEach{state->
-                            DropdownMenuItem(text = { Text(state.key) }, onClick = {
-                                viewModel.updateDepartState(state.key)
-                                departStateExpanded = false
-                                viewModel.viewModelScope.launch {
-                                    viewModel.updateCityList(viewModel.getAllStatesAndCities(state.value))
-                                }
-                            })
+                        if(stateList.isNotEmpty()){
+                            stateList.forEach{state->
+                                DropdownMenuItem(text = { Text(state.key) }, onClick = {
+                                    viewModel.updateDepartState(state.key)
+                                    departStateExpanded = false
+                                    viewModel.viewModelScope.launch {
+                                        viewModel.updateCityList(viewModel.getAllStatesAndCities(state.value))
+                                    }
+                                })
+                            }
                         }
                     }
                 }
-                //Departure City
-                OutlinedTextField(value = departCity.value,
-                    onValueChange = { viewModel.updateDepartCity(it) },
-                    modifier = Modifier
-                        .width(150.dp)
-                        .height(60.dp),
-                    label = { Text(text = "City") },
-                    trailingIcon = {
-                        Icon(
-                            iconDepartCity,
-                            contentDescription = "",
-                            Modifier.clickable {
-                                departCityExpanded = !departCityExpanded
-                            })
-                    })
-                DropdownMenu(
-                    expanded = departCityExpanded,
-                    onDismissRequest = { departCityExpanded = false },
-                    modifier = Modifier.width(150.dp).height(200.dp),
+
+                Box{
+                    //Departure City
+                    OutlinedTextField(value = departCity.value,
+                        onValueChange = { viewModel.updateDepartCity(it) },
+                        modifier = Modifier
+                            .width(150.dp)
+                            .height(60.dp),
+                        label = { Text(text = "City") },
+                        trailingIcon = {
+                            Icon(
+                                iconDepartCity,
+                                contentDescription = "",
+                                Modifier.clickable {
+                                    departCityExpanded = !departCityExpanded
+                                })
+                        })
+                    DropdownMenu(
+                        expanded = departCityExpanded,
+                        onDismissRequest = { departCityExpanded = false },
+                        modifier = Modifier.width(150.dp).height(200.dp),
 //                            modifier = Modifier.width(with(LocalDensity.current) { textFiledSize.width.toDp() })
-                ) {
+                    ) {
 //                    stateToCityMap[departSate.value]?.forEach { country ->
 //                        DropdownMenuItem(text = { Text(country) }, onClick = {
 //                            viewModel.updateDepartCity(country)
 //                            departCityExpanded = false
 //                        })
 //                    }
-                    if(cityList.isNotEmpty()){
-                        cityList.forEach { city ->
-                            DropdownMenuItem(text = { Text(city.key) }, onClick = {
-                                viewModel.updateDepartCity(city.key)
-                                departCityExpanded = false
-                            })
+                        if(cityList.isNotEmpty()){
+                            cityList.forEach { city ->
+                                DropdownMenuItem(text = { Text(city.key) }, onClick = {
+                                    viewModel.updateDepartCity(city.key)
+                                    departCityExpanded = false
+                                })
+                            }
                         }
                     }
-
                 }
-
-
             }
-
         }
         Spacer(modifier = Modifier.width(15.dp))
         //Destination
@@ -681,69 +684,73 @@ fun ChooseDropdownMenu(viewModel: JourneyGeniusViewModel) {
                     }
                 }
 
-                //Destination State
-                OutlinedTextField(value = destState.value,
-                    onValueChange = {
-                        viewModel.updateDestState(it)
-                    },
-                    modifier = Modifier
-                        .width(150.dp)
-                        .height(60.dp),
-                    label = { Text(text = "State") },
-                    trailingIcon = {
-                        Icon(
-                            iconDestinState,
-                            contentDescription = "",
-                            Modifier.clickable {
-                                destStateExpanded = !destStateExpanded
-                            })
-                    })
-                DropdownMenu(
-                    expanded = destStateExpanded,
-                    onDismissRequest = { destStateExpanded = false },
-                    modifier = Modifier.width(150.dp).height(200.dp),
-//                            modifier = Modifier.width(with(LocalDensity.current) { textFiledSize.width.toDp() })
-                ) {
-                    countryToStateMap[destCountry.value]?.forEach { country ->
-                        DropdownMenuItem(text = { Text(country) }, onClick = {
-                            viewModel.updateDestState(country)
-                            viewModel.updateDestCity("")
-                            destStateExpanded = false
+                Box {
+                    //Destination State
+                    OutlinedTextField(value = destState.value,
+                        onValueChange = {
+                            viewModel.updateDestState(it)
+                        },
+                        modifier = Modifier
+                            .width(150.dp)
+                            .height(60.dp),
+                        label = { Text(text = "State") },
+                        trailingIcon = {
+                            Icon(
+                                iconDestinState,
+                                contentDescription = "",
+                                Modifier.clickable {
+                                    destStateExpanded = !destStateExpanded
+                                })
                         })
+                    DropdownMenu(
+                        expanded = destStateExpanded,
+                        onDismissRequest = { destStateExpanded = false },
+                        modifier = Modifier.width(150.dp).height(200.dp),
+//                            modifier = Modifier.width(with(LocalDensity.current) { textFiledSize.width.toDp() })
+                    ) {
+                        countryToStateMap[destCountry.value]?.forEach { country ->
+                            DropdownMenuItem(text = { Text(country) }, onClick = {
+                                viewModel.updateDestState(country)
+                                viewModel.updateDestCity("")
+                                destStateExpanded = false
+                            })
+                        }
                     }
                 }
-                //Destination City
-                OutlinedTextField(value = destCity.value,
-                    onValueChange = { viewModel.updateDestCity(it) },
-                    modifier = Modifier
-                        .width(150.dp)
-                        .height(60.dp),
+                Box {
+                    //Destination City
+                    OutlinedTextField(value = destCity.value,
+                        onValueChange = { viewModel.updateDestCity(it) },
+                        modifier = Modifier
+                            .width(150.dp)
+                            .height(60.dp),
 
-                    label = { Text(text = "City") },
-                    trailingIcon = {
-                        Icon(
-                            iconDestinCity,
-                            contentDescription = "",
-                            Modifier.clickable {
-                                destCityExpanded = !destCityExpanded
-                            })
-                    })
-                DropdownMenu(
-                    expanded = destCityExpanded,
-                    onDismissRequest = { destCityExpanded = false },
-                    modifier = Modifier.width(150.dp).height(200.dp),
-//                            modifier = Modifier.width(with(LocalDensity.current) { textFiledSize.width.toDp() })
-                ) {
-                    stateToCityMap[destState.value]?.forEach { country ->
-                        DropdownMenuItem(text = { Text(country) }, onClick = {
-                            viewModel.updateDestCity(country)
-                            destCityExpanded = false
-//                                        Log.d("marker",selectedCityLocation.value.toString())
-                            findLocOnMap(1,country, context)
-                            viewModel.updateSelectedAttractionList(listOf())
-                            viewModel.updateAttractionsList(listOf())
-                            viewModel.updateSelectedPlacesOnMap(HashMap())
+                        label = { Text(text = "City") },
+                        trailingIcon = {
+                            Icon(
+                                iconDestinCity,
+                                contentDescription = "",
+                                Modifier.clickable {
+                                    destCityExpanded = !destCityExpanded
+                                })
                         })
+                    DropdownMenu(
+                        expanded = destCityExpanded,
+                        onDismissRequest = { destCityExpanded = false },
+                        modifier = Modifier.width(150.dp).height(200.dp),
+//                            modifier = Modifier.width(with(LocalDensity.current) { textFiledSize.width.toDp() })
+                    ) {
+                        stateToCityMap[destState.value]?.forEach { country ->
+                            DropdownMenuItem(text = { Text(country) }, onClick = {
+                                viewModel.updateDestCity(country)
+                                destCityExpanded = false
+//                                        Log.d("marker",selectedCityLocation.value.toString())
+                                findLocOnMap(1,country, context)
+                                viewModel.updateSelectedAttractionList(listOf())
+                                viewModel.updateAttractionsList(listOf())
+                                viewModel.updateSelectedPlacesOnMap(HashMap())
+                            })
+                        }
                     }
                 }
             }
