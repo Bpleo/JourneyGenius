@@ -143,7 +143,13 @@ fun SignUpButton(
                             Log.i("Auth","Success")
                             val currentUser = auth.currentUser
                             val uid = currentUser!!.uid
-                            val user = User(userName = userName, email = email, pwd = pwd, id = uid, planGroupList = listOf<Plans>())
+                            val user = User(
+                                userName = userName,
+                                email = email,
+                                pwd = pwd,
+                                id = uid,
+                                planGroupList = listOf<Plans>(),
+                                likedPlanList = listOf<String>())
                             db.collection("users").document(uid).set(user)
                                 .addOnSuccessListener {
                                     Log.d("FIRESTORE", "DocumentSnapshot written with ID: $uid")

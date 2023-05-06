@@ -418,7 +418,7 @@ class JourneyGeniusViewModel(
         }
     }
 
-    fun updateLikes(likes: Int, planId: String, isLike: Boolean){
+    fun updateLikes(likes: Int, planId: String, isLikeAction: Boolean){
         val user = auth.currentUser
         val fireStoreUpdates = mapOf(
             "Plan_List.$planId.likes" to likes
@@ -427,12 +427,12 @@ class JourneyGeniusViewModel(
             "/planList/$planId/likes" to likes
         )
         if (user != null) {
-            if (isLike) {
-                //TODO add planID to local LikedPlanList
+            if (isLikeAction) {
             } else {
                 //TODO remove planID from local LikedPlanList
             }
             //TODO update changed LikedPlanList to db
+
             db.collection("users").document(user.uid).update(fireStoreUpdates)
                 .addOnSuccessListener {
                     realtime.updateChildren(realtimeUpdates)
