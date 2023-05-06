@@ -1206,7 +1206,4 @@ class JourneyGeniusViewModel(
             allStates
 
     }
-
-    // Community View Model
-    fun refreshCommunity() {}
 }

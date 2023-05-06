@@ -88,7 +88,7 @@ fun CommunityList(
             )
             IconButton(
                 onClick = {
-                    viewModel.refreshCommunity()
+                    viewModel.fetchGroupDataAndPrint(limit = 10)
                     coroutineScope.launch {
                         scrollState.animateScrollToItem(0)
                     }

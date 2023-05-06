@@ -5,5 +5,6 @@ data class User(
     val userName: String,
     val email: String,
     val pwd: String,
-    val planGroupList: List<Plans>
+    val planGroupList: List<Plans>,
+    val likedPlanList: List<String>
 )
