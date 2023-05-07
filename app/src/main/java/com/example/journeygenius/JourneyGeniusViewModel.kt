@@ -109,7 +109,7 @@ class JourneyGeniusViewModel(
                 Log.d("REALTIME3",groupListData.toString())
                 _communityPlanList.value = _communityPlanList.value + groupListData
             } catch (e: Exception) {
-                println("Error fetching data: ${e.message}")
+                Log.e("fetchGroupDataAndPrint","Error fetching data: ${e.message}")
             }
         }
     }
@@ -867,21 +867,49 @@ class JourneyGeniusViewModel(
         }
     }
 
-    private var _stateList = mutableStateOf(mapOf<String,Int>())
-    val stateList: MutableState<Map<String,Int>> = _stateList
-    fun updateStateList(value: Map<String,Int>) {
-        _stateList.value = value
+
+    private var _departStateList = mutableStateOf(mapOf<String,Int>())
+    val departStateList: MutableState<Map<String,Int>> = _departStateList
+    fun updateDepartStateList(geoNameId: Int) {
+        viewModelScope.launch {
+            _departStateList.value=getAllStatesAndCities(geoNameId)
+        }
+
     }
-    private var _countyList= mutableStateOf(mapOf<String,Int>())
-    val countyList:MutableState<Map<String,Int>> = _countyList
-    fun updateCountyList(value: Map<String,Int>){
-        _countyList.value=value
+    private var _destStateList = mutableStateOf(mapOf<String,Int>())
+    val destStateList: MutableState<Map<String,Int>> = _destStateList
+    fun updateDestStateList(geoNameId: Int) {
+        viewModelScope.launch {
+            _destStateList.value=getAllStatesAndCities(geoNameId)
+        }
     }
 
-    private var _cityList = mutableStateOf(mapOf<String,Int>())
-    val cityList: MutableState<Map<String,Int>> = _cityList
-    fun updateCityList(value: Map<String,Int>) {
-        _cityList.value = value
+//    private var _countyList= mutableStateOf(mapOf<String,Int>())
+//    val countyList:MutableState<Map<String,Int>> = _countyList
+//    fun updateCountyList(value: Map<String,Int>){
+//        _countyList.value=value
+//    }
+
+    private var _departCityList = mutableStateOf(mapOf<String,Int>())
+    val departCityList: MutableState<Map<String,Int>> = _departCityList
+    fun updateDepartCityList(geoNameId: Int) {
+        viewModelScope.launch {
+            _departCityList.value=getAllStatesAndCities(geoNameId)
+        }
+    }
+    fun clearDepartCityList(){
+        _departCityList.value.toMutableMap().clear()
+    }
+
+    private var _destCityList = mutableStateOf(mapOf<String,Int>())
+    val destCityList: MutableState<Map<String,Int>> = _destCityList
+    fun updateDestCityList(geoNameId: Int) {
+        viewModelScope.launch {
+            _destCityList.value=getAllStatesAndCities(geoNameId)
+        }
+    }
+    fun clearDestCityList(){
+        _destCityList.value.toMutableMap().clear()
     }
 
     private var _startAttraction =
@@ -967,24 +995,30 @@ class JourneyGeniusViewModel(
 
     suspend fun searchNearbyPlaces(location: Location, radius: Int = 5000000, apiKey: String) {
         withContext(Dispatchers.IO) {
-            val url =
-                URL("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${location.lat},${location.lng}&radius=$radius&key=$apiKey&type=tourist_attraction&language=en")
-            val json = url.readText(Charset.defaultCharset())
-            val gson = Gson()
-            val response = gson.fromJson(json, Response::class.java)
-            addAttractionsList(response.results.map { result ->
-                Place(
-                    name = result.name,
-                    vicinity = result.vicinity,
-                    location = Location(result.geometry.location.lat, result.geometry.location.lng),
-                    rating = result.rating,
-                    place_id = result.place_id,
-                    photos = result.photos?.toList()
-                )
-            })
-            Log.d("attractionlist", attractionsList.toString())
+            try {
+                val url =
+                    URL("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${location.lat},${location.lng}&radius=$radius&key=$apiKey&type=tourist_attraction&language=en")
+                val json = url.readText(Charset.defaultCharset())
+                val gson = Gson()
+                val response = gson.fromJson(json, Response::class.java)
+                addAttractionsList(response.results.map { result ->
+                    Place(
+                        name = result.name,
+                        vicinity = result.vicinity,
+                        location = Location(result.geometry.location.lat, result.geometry.location.lng),
+                        rating = result.rating,
+                        place_id = result.place_id,
+                        photos = result.photos?.toList()
+                    )
+                })
+                Log.d("attractionlist", attractionsList.toString())
+            } catch (e: Exception) {
+                Log.e("searchNearbyPlaces", "Exception caught: ${e.message}")
+                // Handle the exception here
+            }
         }
     }
+
 
     suspend fun getNearbyPlaces(
         location: Location,
@@ -992,23 +1026,29 @@ class JourneyGeniusViewModel(
         apiKey: String
     ): List<Place> {
         return withContext(Dispatchers.IO) {
-            val url =
-                URL("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${location.lat},${location.lng}&radius=$radius&key=$apiKey&type=tourist_attraction&language=en")
-            val json = url.readText(Charset.defaultCharset())
-            val gson = Gson()
-            val response = gson.fromJson(json, Response::class.java)
-            return@withContext response.results.map { result ->
-                Place(
-                    name = result.name,
-                    vicinity = result.vicinity,
-                    location = Location(result.geometry.location.lat, result.geometry.location.lng),
-                    rating = result.rating,
-                    place_id = result.place_id,
-                    photos = result.photos?.toList()
-                )
+            try {
+                val url =
+                    URL("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${location.lat},${location.lng}&radius=$radius&key=$apiKey&type=tourist_attraction&language=en")
+                val json = url.readText(Charset.defaultCharset())
+                val gson = Gson()
+                val response = gson.fromJson(json, Response::class.java)
+                response.results.map { result ->
+                    Place(
+                        name = result.name,
+                        vicinity = result.vicinity,
+                        location = Location(result.geometry.location.lat, result.geometry.location.lng),
+                        rating = result.rating,
+                        place_id = result.place_id,
+                        photos = result.photos?.toList()
+                    )
+                }
+            } catch (e: Exception) {
+                // handle the exception here, e.g. log or display an error message
+                emptyList()
             }
         }
     }
+
 
     suspend fun searchNearbyHotels(
         placeName: String,
@@ -1028,69 +1068,72 @@ class JourneyGeniusViewModel(
         var priceLevelMatched = false
         val url =
             URL("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${location.lat},${location.lng}&radius=$radius&type=lodging&key=$apiKey&language=en")
-        val json = url.readText(Charset.defaultCharset())
-        //println(json)
-        val gson = Gson()
-        val response = gson.fromJson(json, HotelResponse::class.java)
+        try {
+            val json = url.readText(Charset.defaultCharset())
+            val gson = Gson()
+            val response = gson.fromJson(json, HotelResponse::class.java)
 
-        val mutableHotelList = mutableListOf<HotelResult>()
-        for (i in 0 until response.results.size) {
-            if (response.results[i].price_level != 0) {
-                priceLevelFound = true
+            val mutableHotelList = mutableListOf<HotelResult>()
+            for (i in 0 until response.results.size) {
+                if (response.results[i].price_level != 0) {
+                    priceLevelFound = true
+                }
+                if (response.results[i].price_level <= maxPriceLevel) {
+                    mutableHotelList.add(response.results[i])
+                    priceLevelMatched = true
+                }
             }
-            if (response.results[i].price_level <= maxPriceLevel) {
-                mutableHotelList.add(response.results[i])
-                priceLevelMatched = true
-            }
-        }
-        println("mutableHotelSize: ${mutableHotelList.size}")
+//            println("mutableHotelSize: ${mutableHotelList.size}")
 
-        if (!priceLevelFound || (priceLevelFound && !priceLevelMatched)) {
-            // TODO: Toast Upgrade
-            CoroutineScope(Dispatchers.Main).launch {
-                Toast.makeText(
-                    context,
-                    "No hotels found within the specified price range near $placeName",
-                    Toast.LENGTH_LONG
-                ).show()
-            }
-            response.results.map { result ->
-                Hotel(
-                    place = Place(
-                        name = result.name,
-                        vicinity = result.vicinity,
-                        location = Location(
-                            result.geometry.location.lat,
-                            result.geometry.location.lng
+            if (!priceLevelFound || (priceLevelFound && !priceLevelMatched)) {
+                // TODO: Toast Upgrade
+                CoroutineScope(Dispatchers.Main).launch {
+                    Toast.makeText(
+                        context,
+                        "No hotels found within the specified price range near $placeName",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+                response.results.map { result ->
+                    Hotel(
+                        place = Place(
+                            name = result.name,
+                            vicinity = result.vicinity,
+                            location = Location(
+                                result.geometry.location.lat,
+                                result.geometry.location.lng
+                            ),
+                            rating = result.rating,
+                            place_id = result.place_id,
+                            photos = result.photos?.toList()
                         ),
-                        rating = result.rating,
-                        place_id = result.place_id,
-                        photos = result.photos?.toList()
-                    ),
-                    priceLevel = result.price_level,
-
+                        priceLevel = result.price_level,
                     )
-            }
-        } else {
-            mutableHotelList.map { result ->
-                Hotel(
-                    place = Place(
-                        name = result.name,
-                        vicinity = result.vicinity,
-                        location = Location(
-                            result.geometry.location.lat,
-                            result.geometry.location.lng
+                }
+            } else {
+                mutableHotelList.map { result ->
+                    Hotel(
+                        place = Place(
+                            name = result.name,
+                            vicinity = result.vicinity,
+                            location = Location(
+                                result.geometry.location.lat,
+                                result.geometry.location.lng
+                            ),
+                            rating = result.rating,
+                            place_id = result.place_id,
+                            photos = result.photos?.toList()
                         ),
-                        rating = result.rating,
-                        place_id = result.place_id,
-                        photos = result.photos?.toList()
-                    ),
-                    priceLevel = result.price_level,
-
+                        priceLevel = result.price_level,
                     )
+                }
             }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emptyList<Hotel>()
         }
     }
+
 
     suspend fun getRoutes(
         from: LatLng,
@@ -1100,139 +1143,151 @@ class JourneyGeniusViewModel(
         travelModeOption: String,
         context: Context
     ): List<List<LatLng>> = withContext(Dispatchers.IO) {
+        try {
+            val url = getURL(from, to, apiKey, waypoints, travelModeOption)
+            val result = URL(url).readText()
+            val jsonObject = JsonParser.parseString(result).asJsonObject
+            val routes = jsonObject.getAsJsonArray("routes")
+            val allRoutes = mutableListOf<List<LatLng>>()
+            val legs = mutableListOf<LatLng>()
+            if (routes.isEmpty) {
+                val newTravelMode = when (travelModeOption) {
+                    "bicycling" -> "walking"
+                    "transit" -> "driving"
+                    else -> "driving"
+                }
+                val newUrl = getURL(from, to, apiKey, emptyList(), newTravelMode)
+                val newResult = URL(newUrl).readText()
+                val newJsonObj = JsonParser.parseString(newResult).asJsonObject
+                val newRoutes = newJsonObj.getAsJsonArray("routes")
+                if (newRoutes.isEmpty) {
+                    CoroutineScope(Dispatchers.Main).launch {
+                        Toast.makeText(
+                            context,
+                            "No more travel mode matching",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+//                    println("No more travel mode matching")
+                    return@withContext emptyList()
+                }
+                for (i in 0 until newRoutes.size()) {
+                    val pointsLegs = newRoutes[i].asJsonObject
+                        .getAsJsonArray("legs")
+                    for (j in 0 until pointsLegs.size()){
+                        val pointsSteps=pointsLegs[j].asJsonObject.getAsJsonArray("steps").flatMap {
+                            decodePoly(it.asJsonObject.getAsJsonObject("polyline").get("points").asString)
+                        }
+                        legs.addAll(pointsSteps)
+                    }
 
-        val url = getURL(from, to, apiKey, waypoints, travelModeOption)
-        val result = URL(url).readText()
-        val jsonObject = JsonParser.parseString(result).asJsonObject
-        val routes = jsonObject.getAsJsonArray("routes")
-        val allRoutes = mutableListOf<List<LatLng>>()
-        val legs = mutableListOf<LatLng>()
-//    for (i in 0 until routes.size()) {
-//        val points = routes[i].asJsonObject
-//            .getAsJsonArray("legs")[0].asJsonObject
-//            .getAsJsonArray("steps")
-//            .flatMap {
-//                decodePoly(it.asJsonObject.getAsJsonObject("polyline").get("points").asString)
-//            }
-//        allPoints.add(points)
-//    }
-        if (routes.isEmpty) {
-            val newTravelMode = when (travelModeOption) {
-                "bicycling" -> "walking"
-                "transit" -> "driving"
-                else -> "driving"
-            }
-            val newUrl = getURL(from, to, apiKey, emptyList(), newTravelMode)
-            val newResult = URL(newUrl).readText()
-            val newJsonObj = JsonParser.parseString(newResult).asJsonObject
-            val newRoutes = newJsonObj.getAsJsonArray("routes")
-            if (newRoutes.isEmpty) {
+                    allRoutes.add(legs.toList())
+                    legs.clear()
+                }
+//                println("$travelModeOption not exist, show $newTravelMode instead")
                 CoroutineScope(Dispatchers.Main).launch {
                     Toast.makeText(
                         context,
-                        "No more travel mode matching",
+                        "$travelModeOption not exist, show $newTravelMode instead",
                         Toast.LENGTH_SHORT
                     ).show()
                 }
-                println("No more travel mode matching")
-                return@withContext emptyList()
-            }
-//            for (i in 0 until newRoutes.size()) {
-//                val points = newRoutes[i].asJsonObject
-//                    .getAsJsonArray("legs")[0].asJsonObject
-//                    .getAsJsonArray("steps")
-//                    .flatMap {
-//                        decodePoly(
-//                            it.asJsonObject.getAsJsonObject("polyline").get("points").asString
-//                        )
-//                    }
-//                allRoutes.add(points)
-//            }
-            for (i in 0 until newRoutes.size()) {
-                val pointsLegs = newRoutes[i].asJsonObject
-                    .getAsJsonArray("legs")
-                for (j in 0 until pointsLegs.size()){
-                    val pointsSteps=pointsLegs[j].asJsonObject.getAsJsonArray("steps").flatMap {
-                        decodePoly(it.asJsonObject.getAsJsonObject("polyline").get("points").asString)
+            } else {
+                for (i in 0 until routes.size()) {
+                    val pointsLegs = routes[i].asJsonObject
+                        .getAsJsonArray("legs")
+                    for (j in 0 until pointsLegs.size()){
+                        val pointsSteps=pointsLegs[j].asJsonObject.getAsJsonArray("steps").flatMap {
+                            decodePoly(it.asJsonObject.getAsJsonObject("polyline").get("points").asString)
+                        }
+                        legs.addAll(pointsSteps)
                     }
-                    legs.addAll(pointsSteps)
-                }
 
-                allRoutes.add(legs.toList())
-                legs.clear()
-            }
-            println("$travelModeOption not exist, show $newTravelMode instead")
-            CoroutineScope(Dispatchers.Main).launch {
-                Toast.makeText(
-                    context,
-                    "$travelModeOption not exist, show $newTravelMode instead",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        } else {
-//            for (i in 0 until routes.size()) {
-//                val points = routes[i].asJsonObject
-//                    .getAsJsonArray("legs")[0].asJsonObject
-//                    .getAsJsonArray("steps")
-//                    .flatMap {
-//                        decodePoly(
-//                            it.asJsonObject.getAsJsonObject("polyline").get("points").asString
-//                        )
-//                    }
-//                allRoutes.add(points)
-//            }
-            for (i in 0 until routes.size()) {
-                val pointsLegs = routes[i].asJsonObject
-                    .getAsJsonArray("legs")
-                for (j in 0 until pointsLegs.size()){
-                    val pointsSteps=pointsLegs[j].asJsonObject.getAsJsonArray("steps").flatMap {
-                        decodePoly(it.asJsonObject.getAsJsonObject("polyline").get("points").asString)
-                    }
-                    legs.addAll(pointsSteps)
+                    allRoutes.add(legs.toList())
+                    legs.clear()
                 }
-
-                allRoutes.add(legs.toList())
-                legs.clear()
-            }
-            println("$travelModeOption exist")
-            CoroutineScope(Dispatchers.Main).launch {
-                Toast.makeText(
-                    context,
-                    "$travelModeOption exist",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        }
-        allRoutes
-    }
-    suspend fun getAllCountries()  {
-        withContext(Dispatchers.IO){
-            val url="http://api.geonames.org/countryInfoJSON?username=journeyGenius"
-            val result = URL(url).readText()
-            val jsonObject = JsonParser.parseString(result).asJsonObject
-            val geoNamesList = jsonObject.getAsJsonArray("geonames")
-            val allCountries = mutableMapOf<String,Int>()
-            if(!geoNamesList.isEmpty){
-                for (i in geoNamesList){
-                    allCountries[i.asJsonObject["countryName"].asString] = i.asJsonObject["geonameId"].asInt
+//                println("$travelModeOption exist")
+                CoroutineScope(Dispatchers.Main).launch {
+                    Toast.makeText(
+                        context,
+                        "$travelModeOption exist",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
-            updateCountryList(allCountries)
+            allRoutes
+        } catch (e: Exception) {
+            Log.e("getRoutes","Error occurred: ${e.message}")
+            emptyList()
         }
     }
+
+    private suspend fun getAllCountries() {
+        withContext(Dispatchers.IO) {
+            try {
+                val url = "http://api.geonames.org/countryInfoJSON?username=journeyGenius"
+                val result = URL(url).readText()
+                val jsonObject = JsonParser.parseString(result).asJsonObject
+                val geoNamesList = jsonObject.getAsJsonArray("geonames")
+                val allCountries = mutableMapOf<String, Int>()
+                if (!geoNamesList.isEmpty) {
+                    for (i in geoNamesList) {
+                        allCountries[i.asJsonObject["countryName"].asString] = i.asJsonObject["geonameId"].asInt
+                    }
+                }
+                updateCountryList(allCountries)
+            } catch (e: Exception) {
+                // Handle the exception here, for example:
+                Log.e("getAllCountries", "Error: ${e.message}")
+            }
+        }
+    }
+
+
+    // TODO: Clear Rubbish
     suspend fun getAllStatesAndCities(geoNameId:Int):Map<String,Int> = withContext(Dispatchers.IO){
-
-            val url="http://api.geonames.org/childrenJSON?geonameId=${geoNameId}&username=journeyGenius"
-            val result=URL(url).readText()
-            val jsonObject = JsonParser.parseString(result).asJsonObject
-            val geoNamesList = jsonObject.getAsJsonArray("geonames")
-            val allStates = mutableMapOf<String,Int>()
-            if(!geoNamesList.isEmpty){
-                for (i in geoNamesList){
-                    allStates[i.asJsonObject["name"].asString.replace(Regex(" Shi"), "")] = i.asJsonObject["geonameId"].asInt
+        val CAandUSiDList= listOf<Int>(5883102,5909050,6065171,6087430,6354959,6091069,6091530,6091732,6093943,6113358,6115047,6141242,6185811,
+            4829764,5879092,5551752,4099753,5332921,5417618,4831725,4142224,4155751,4197000,5855797,5596512,4896861,4921868,4862182,4273857,6254925,
+            4331987,4971068,4361885,6254926,5001836,5037779,4436296,4398678,5667009,5073708,5509151,5090174,5101760,5481136,5128638,4482348,5690763,5165418,
+            4544379,5744337,6254927,5224323,4597040,5769223,4662168,4736286,5549030,5242283,6254928,5815135,4138106,4826850,5279468,5843591)
+            if(geoNameId in CAandUSiDList){  //US and Canada
+                val geoIDList = mutableListOf<Int>()
+                val url="http://api.geonames.org/childrenJSON?geonameId=${geoNameId}&username=journeyGenius"
+                val result=URL(url).readText()
+                val jsonObject = JsonParser.parseString(result).asJsonObject
+                val geoNamesList = jsonObject.getAsJsonArray("geonames")
+                if(!geoNamesList.isEmpty){
+                    for (i in geoNamesList){
+                        geoIDList.add(i.asJsonObject["geonameId"].asInt)
+                    }
                 }
+                val allStates = mutableMapOf<String,Int>()
+                for (i in geoIDList){
+                    val url="http://api.geonames.org/childrenJSON?geonameId=${i}&username=journeyGenius"
+                    val result=URL(url).readText()
+                    val jsonObject = JsonParser.parseString(result).asJsonObject
+                    val geoNamesList = jsonObject.getAsJsonArray("geonames")
+                    if(!geoNamesList.isEmpty){
+                        for (i in geoNamesList){
+                            allStates[i.asJsonObject["name"].asString.replace(Regex(" Shi"), "")] = i.asJsonObject["geonameId"].asInt
+                        }
+                    }
+                }
+                allStates
+            }else{
+                val url="http://api.geonames.org/childrenJSON?geonameId=${geoNameId}&username=journeyGenius"
+                val result=URL(url).readText()
+                val jsonObject = JsonParser.parseString(result).asJsonObject
+                val geoNamesList = jsonObject.getAsJsonArray("geonames")
+                val allStates = mutableMapOf<String,Int>()
+                if(!geoNamesList.isEmpty){
+                    for (i in geoNamesList){
+                        allStates[i.asJsonObject["name"].asString.replace(Regex(" Shi"), "")] = i.asJsonObject["geonameId"].asInt
+                    }
+                }
+                allStates
             }
-            allStates
+
 
     }
 
