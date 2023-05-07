@@ -27,15 +27,11 @@ import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import com.google.gson.JsonParser
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.tasks.await
 import java.net.URL
 import java.nio.charset.Charset
 import java.time.LocalDate
 import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
-import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -101,6 +97,10 @@ class JourneyGeniusViewModel(
 
     private val _communityPlanList = mutableStateOf(mapOf<String, Plans>())
     val communityPlanList: MutableState<Map<String, Plans>> = _communityPlanList
+
+    private fun updateCommunityPlanList(value : Map<String, Plans>){
+        _communityPlanList.value = value
+    }
 
     fun fetchGroupDataAndPrint(limit: Long, startAtValue: String = "") {
         viewModelScope.launch {
@@ -419,7 +419,8 @@ class JourneyGeniusViewModel(
                             val groupListData =
                                 documentSnapshot.get("Plan_List") as? Map<String, Any>
                             val groupList: Map<String, Plans> = getGroupList(groupListData)
-                            val likedListData = documentSnapshot.get("likedPlanList") as? List<String>
+                            val likedListData = documentSnapshot.get("likedPlanList") as List<String>
+                            updateLikedPlanList(likedListData)
                             // append groupList to current vm
                             updatePlanGroupList(groupList)
                         } else {
@@ -447,12 +448,20 @@ class JourneyGeniusViewModel(
         )
         if (user != null) {
             val list = _likedPlanList.value.toMutableList()
+            val communityPlanList = _communityPlanList.value.toMutableMap()
             if (isLikeAction) {
                 list.add(planId)
             } else {
                 if (list.contains(planId))
                     list.remove(planId)
             }
+            val updatePlan = communityPlanList[planId]
+            if (updatePlan != null) {
+                updatePlan.likes = likes
+                communityPlanList[planId] = updatePlan
+                updateCommunityPlanList(communityPlanList)
+            }
+
             updateLikedPlanList(list)
             db.collection("users").document(user.uid).update("likedPlanList",list).addOnSuccessListener {
                 db.collection("users").document(user.uid).update(fireStoreUpdates)

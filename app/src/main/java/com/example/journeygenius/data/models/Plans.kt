@@ -5,5 +5,5 @@ data class Plans(
     val description: String,
     val isPublic: Boolean,
     val plans: List<SinglePlan>,
-    val likes: Int = 0
+    var likes: Int = 0
 )

@@ -149,7 +149,7 @@ fun CardDetailScreen(
                             .size(15.dp)
                     )
                     Text(
-                        text = formatLikesString(30),
+                        text = formatLikesString(plan.likes),
                         fontSize = 15.sp,
                         color = MaterialTheme.colorScheme.secondary,
                         fontWeight = FontWeight.Bold,
