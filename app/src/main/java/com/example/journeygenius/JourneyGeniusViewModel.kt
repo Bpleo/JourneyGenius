@@ -1301,4 +1301,9 @@ class JourneyGeniusViewModel(
     fun getPhotoUrl(photoReference: String, apiKey: String): String {
         return "https://maps.googleapis.com/maps/api/place/photo?maxwidth=100&photoreference=$photoReference&key=$apiKey"
     }
+
+    fun checkUserLikedPost(planId: String): Boolean {
+        val list = _likedPlanList.value.toMutableList()
+        return list.contains(planId)
+    }
 }

@@ -37,6 +37,9 @@ fun CardDetailScreen(
     viewModel: JourneyGeniusViewModel,
     navController: NavController) {
 
+    val userLikedPost = remember { mutableStateOf(viewModel.checkUserLikedPost(planId)) }
+    val initialLikeStatus = remember { userLikedPost.value }
+
     val plan = viewModel.getPlanById(planId)
 
     val allPhotos: List<Photo> = plan!!.plans.flatMap { singlePlan ->
@@ -182,16 +185,26 @@ fun CardDetailScreen(
             horizontalArrangement = Arrangement.End
         ) {
             OutlinedButton(
-                onClick = {navController.popBackStack()},
+                onClick = {
+                    if (initialLikeStatus != userLikedPost.value) {
+                        if (userLikedPost.value) {
+                            viewModel.updateLikes(plan.likes + 1, planId, userLikedPost.value)
+                        }
+                        else {
+                            viewModel.updateLikes(plan.likes - 1, planId, userLikedPost.value)
+                        }
+                    }
+                    navController.popBackStack()
+                },
                 modifier = Modifier.padding(end = 16.dp)
             ) {
                 Text(text = "Close")
             }
 
             OutlinedButton(
-                onClick = {}
+                onClick = { userLikedPost.value = !userLikedPost.value },
             ) {
-                Text(text = "Like")
+                Text(text = if (userLikedPost.value) "Unlike" else "Like")
             }
         }
     }
