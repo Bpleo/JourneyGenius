@@ -2,6 +2,7 @@ package com.example.journeygenius.components
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material3.*
@@ -34,35 +35,34 @@ fun CardDetailScreen(
     val scrollState = rememberScrollState()
 
     Box(modifier = Modifier.fillMaxSize()) {
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(scrollState)
                 .padding(bottom = 130.dp),
-            verticalArrangement = Arrangement.Top
-        ){
-            Image(
-                painter = painterResource(id = R.drawable.demo_image_horizontal),
-                contentDescription = "Plan Image",
-                contentScale = ContentScale.FillWidth,
-                modifier = Modifier
-                    .height(200.dp)
-                    .fillMaxWidth()
-            )
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+        ) {
+            item {
+                Image(
+                    painter = painterResource(id = R.drawable.demo_image_horizontal),
+                    contentDescription = "Plan Image",
+                    contentScale = ContentScale.FillWidth,
+                    modifier = Modifier
+                        .height(200.dp)
+                        .fillMaxWidth()
+                )
+            }
 
-            Column(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth()
-            ) {
+            item {
                 Text(
                     text = plan?.title ?: "",
                     fontWeight = FontWeight.Bold,
                     fontSize = 20.sp,
                 )
+            }
 
-                Spacer(modifier = Modifier.height(8.dp))
+            item { Spacer(modifier = Modifier.height(8.dp)) }
 
+            item {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
@@ -77,18 +77,28 @@ fun CardDetailScreen(
                     Text(
                         text = formatLikesString(30),
                         fontSize = 15.sp,
-                        color = Color.LightGray,
+                        color = Color.White,
                         fontWeight = FontWeight.Bold,
                     )
                 }
+            }
 
-                Spacer(modifier = Modifier.height(8.dp))
+            item { Spacer(modifier = Modifier.height(8.dp)) }
 
+            item {
                 Text(
                     text = plan?.description ?: "",
                     fontSize = 16.sp,
                 )
+            }
 
+            item { Spacer(modifier = Modifier.height(20.dp)) }
+
+            plan?.plans?.let {
+                items(it.size) { index ->
+                    TravelExpandableCard(data = it[index])
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
             }
         }
 
