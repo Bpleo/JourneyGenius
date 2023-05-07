@@ -38,7 +38,7 @@ fun CardDetailScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(bottom = 130.dp),
+                .padding(bottom = 150.dp),
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
         ) {
             item {
@@ -56,7 +56,9 @@ fun CardDetailScreen(
                 Text(
                     text = plan?.title ?: "",
                     fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp,
+                    fontSize = 25.sp,
+                    modifier = Modifier.padding(top = 15.dp),
+                    color = MaterialTheme.colorScheme.primary,
                 )
             }
 
@@ -77,7 +79,7 @@ fun CardDetailScreen(
                     Text(
                         text = formatLikesString(30),
                         fontSize = 15.sp,
-                        color = Color.White,
+                        color = MaterialTheme.colorScheme.secondary,
                         fontWeight = FontWeight.Bold,
                     )
                 }
@@ -89,6 +91,7 @@ fun CardDetailScreen(
                 Text(
                     text = plan?.description ?: "",
                     fontSize = 16.sp,
+                    color = MaterialTheme.colorScheme.secondary,
                 )
             }
 

@@ -44,7 +44,7 @@ fun TravelExpandableCard(
             .fillMaxWidth()
             .animateContentSize(
                 animationSpec = tween(
-                    delayMillis = 300,
+                    durationMillis = 300,
                     easing = LinearOutSlowInEasing
                 )
             ),
@@ -62,8 +62,9 @@ fun TravelExpandableCard(
                 Text(
                     modifier = Modifier.weight(6f),
                     text = "Travel to " + data.destination,
-                    fontSize = 16.sp,
+                    fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary,
                 )
                 IconButton(
                     modifier = Modifier
@@ -82,9 +83,7 @@ fun TravelExpandableCard(
         }
 
         if (expandedState) {
-            Text(
-                text = "Card Expanded"
-            )
+            TravelDetailCompose(data = data,)
         }
     }
 }
