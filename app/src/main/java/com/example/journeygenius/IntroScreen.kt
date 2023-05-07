@@ -31,7 +31,7 @@ fun Intro(
     val navController = rememberNavController()
     var showSplash by remember { mutableStateOf(true) }
     LaunchedEffect(key1 = true) {
-        delay(500)
+        delay(1500)
         showSplash = false
     }
     NavHost(
@@ -72,7 +72,7 @@ fun IntroScreen(){
             Image(
                 painter = imagePainter,
                 contentDescription = "Journey Genius Logo",
-                modifier = Modifier.size(200.dp)
+                modifier = Modifier.size(320.dp)
             )
             Text(
                 text = "Simplifying Travel",

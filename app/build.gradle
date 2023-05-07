@@ -134,6 +134,8 @@ dependencies {
     //Coil
     implementation("io.coil-kt:coil-compose:2.0.0-rc01")
 
+    // Rating bar
+    implementation 'com.github.a914-gowtham:compose-ratingbar:1.2.5'
 
 //    // Room components
 //    implementation "androidx.room:room-runtime:2.5.1"

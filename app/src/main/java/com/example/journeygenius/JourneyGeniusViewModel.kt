@@ -432,7 +432,7 @@ class JourneyGeniusViewModel(
                 //TODO remove planID from local LikedPlanList
             }
             //TODO update changed LikedPlanList to db
-
+            //TODO update likes to local PlanListGroup
             db.collection("users").document(user.uid).update(fireStoreUpdates)
                 .addOnSuccessListener {
                     realtime.updateChildren(realtimeUpdates)
@@ -1226,7 +1226,7 @@ class JourneyGeniusViewModel(
         }
     }
 
-    // TODO: Clear Rubbish 
+    // TODO: Clear Rubbish
     suspend fun getAllStatesAndCities(geoNameId:Int):Map<String,Int> = withContext(Dispatchers.IO){
         val CAandUSiDList= listOf<Int>(5883102,5909050,6065171,6087430,6354959,6091069,6091530,6091732,6093943,6113358,6115047,6141242,6185811,
             4829764,5879092,5551752,4099753,5332921,5417618,4831725,4142224,4155751,4197000,5855797,5596512,4896861,4921868,4862182,4273857,6254925,
@@ -1273,4 +1273,6 @@ class JourneyGeniusViewModel(
 
     }
 
+    // Community View Model
+    fun refreshCommunity() {}
 }
