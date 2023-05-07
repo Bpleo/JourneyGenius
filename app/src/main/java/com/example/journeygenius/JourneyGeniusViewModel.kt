@@ -124,6 +124,8 @@ class JourneyGeniusViewModel(
                 val description = planListData["description"] as? String
                 val public = planListData["public"] as? Boolean
                 val title = planListData["title"] as? String
+                val likesData = planListData["likes"] as? Long
+                val likes = likesData?.toInt()
                 // get a list of single plans
                 val plansData =
                     planListData["plans"] as? List<Map<String, Any>>
@@ -380,9 +382,9 @@ class JourneyGeniusViewModel(
                             null
                     } ?: emptyList()
                 // get a Plans object
-                if (title != null && description != null && public != null && plans != null) {
+                if (title != null && description != null && public != null && plans != null && likes != null) {
                     Log.d("DATA", "plan list pulled")
-                    Plans(title, description, public, plans)
+                    Plans(title, description, public, plans, likes)
                 } else
                     null
             }
