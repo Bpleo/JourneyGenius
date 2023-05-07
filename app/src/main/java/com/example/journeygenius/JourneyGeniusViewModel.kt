@@ -1291,6 +1291,7 @@ class JourneyGeniusViewModel(
 
     }
 
-    // Community View Model
-    fun refreshCommunity() {}
+    fun getPhotoUrl(photoReference: String, apiKey: String): String {
+        return "https://maps.googleapis.com/maps/api/place/photo?maxwidth=100&photoreference=$photoReference&key=$apiKey"
+    }
 }

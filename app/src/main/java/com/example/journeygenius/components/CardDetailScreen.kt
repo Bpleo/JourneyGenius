@@ -7,6 +7,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -17,11 +19,16 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
+import coil.compose.rememberImagePainter
 import com.example.journeygenius.JourneyGeniusViewModel
+import com.example.journeygenius.PlacesapiKey
 import com.example.journeygenius.R
 import com.example.journeygenius.community.CommunityScreen
+import com.example.journeygenius.data.models.Photo
 import com.example.journeygenius.data.models.Plans
 
 @Composable
@@ -32,7 +39,23 @@ fun CardDetailScreen(
 
     val plan = viewModel.getPlanById(planId)
 
-    val scrollState = rememberScrollState()
+    val allPhotos: List<Photo> = plan!!.plans.flatMap { singlePlan ->
+        singlePlan.attractions.flatMap { place ->
+            place.photos ?: emptyList()
+        }
+    }
+
+    val photoUrls: List<String> = allPhotos.mapNotNull { photo ->
+        if (photo.photo_reference != null) {
+            getPhotoUrl(photo.photo_reference, PlacesapiKey)
+        } else {
+            null
+        }
+    }
+
+    val firstImageUrl = photoUrls.firstOrNull() ?: ""
+
+    val showMorePhoto = remember { mutableStateOf(false) }
 
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
@@ -42,8 +65,8 @@ fun CardDetailScreen(
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
         ) {
             item {
-                Image(
-                    painter = painterResource(id = R.drawable.demo_image_horizontal),
+                AsyncImage(
+                    model = firstImageUrl,
                     contentDescription = "Plan Image",
                     contentScale = ContentScale.FillWidth,
                     modifier = Modifier
@@ -53,11 +76,44 @@ fun CardDetailScreen(
             }
 
             item {
+                if (!showMorePhoto.value){
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Button(
+                            onClick = { showMorePhoto.value = true },
+                            modifier = Modifier
+                                .padding(top = 8.dp)
+                        ) {
+                            Text(text = "More Photos")
+                        }
+                    }
+                }
+            }
+
+            if (showMorePhoto.value) {
+                items(photoUrls.size) { index ->
+                    if (index != 0 && index < 5) {
+                        AsyncImage(
+                            model = photoUrls[index],
+                            contentDescription = "Photo",
+                            contentScale = ContentScale.FillWidth,
+                            modifier = Modifier
+                                .height(200.dp)
+                                .fillMaxWidth()
+                        )
+                    }
+                }
+
+            }
+
+            item {
                 Text(
                     text = plan?.title ?: "",
                     fontWeight = FontWeight.Bold,
                     fontSize = 25.sp,
-                    modifier = Modifier.padding(top = 15.dp),
+                    modifier = Modifier.padding(top = 8.dp),
                     color = MaterialTheme.colorScheme.primary,
                 )
             }

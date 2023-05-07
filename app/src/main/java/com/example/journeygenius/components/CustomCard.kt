@@ -3,7 +3,6 @@ package com.example.journeygenius.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Favorite
@@ -18,14 +17,33 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import com.example.journeygenius.PlacesapiKey
 import com.example.journeygenius.R
+import com.example.journeygenius.data.models.Photo
 import com.example.journeygenius.data.models.Plans
 
 @Composable
 fun CustomCard(
     id: String,
     data: Plans,
-    onCardClick: (String) -> Unit) {
+    onCardClick: (String) -> Unit
+) {
+
+    val allPhotos: List<Photo> = data.plans.flatMap { singlePlan ->
+        singlePlan.attractions.flatMap { place ->
+            place.photos ?: emptyList()
+        }
+    }
+
+    val randomPhoto: Photo? = allPhotos.randomOrNull()
+
+    val photoUrl = if (randomPhoto?.photo_reference != null) {
+        getPhotoUrl(randomPhoto.photo_reference, PlacesapiKey)
+    } else {
+        R.drawable.demo_image_horizontal
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -47,14 +65,25 @@ fun CustomCard(
             ),
         ) {
             Column() {
-                Image(
-                    painter = painterResource(id = R.drawable.demo_image_horizontal),
-                    contentDescription = "Image",
-                    modifier = Modifier
-                        .height(150.dp)
-                        .fillMaxWidth(),
-                    contentScale = ContentScale.Crop
-                )
+                if (photoUrl is String) {
+                    AsyncImage(
+                        model = photoUrl,
+                        contentDescription = "Image",
+                        modifier = Modifier
+                            .height(150.dp)
+                            .fillMaxWidth(),
+                        contentScale = ContentScale.Crop,
+                    )
+                } else if (photoUrl is Int) {
+                    Image(
+                        painter = painterResource(id = photoUrl),
+                        contentDescription = "Image",
+                        modifier = Modifier
+                            .height(150.dp)
+                            .fillMaxWidth(),
+                        contentScale = ContentScale.Crop,
+                    )
+                }
 
                 Column(
                     modifier = Modifier
@@ -116,4 +145,8 @@ fun formatLikesString(likes: Int): String {
             likes.toString()
         }
     }
+}
+
+fun getPhotoUrl(photoReference: String, apiKey: String): String {
+    return "https://maps.googleapis.com/maps/api/place/photo?maxwidth=100&photoreference=$photoReference&key=$apiKey"
 }

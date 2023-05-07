@@ -118,11 +118,10 @@ fun CommunityList(
 
                 CustomCard(
                     id = planId,
-                    data = plan,
-                    onCardClick = { id ->
-                        navController.navigate("card_detail/$id")
-                    }
-                )
+                    data = plan
+                ) { id ->
+                    navController.navigate("card_detail/$id")
+                }
             }
         }
     }
