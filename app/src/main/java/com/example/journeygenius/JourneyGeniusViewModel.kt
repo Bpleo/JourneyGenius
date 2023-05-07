@@ -432,7 +432,7 @@ class JourneyGeniusViewModel(
                 //TODO remove planID from local LikedPlanList
             }
             //TODO update changed LikedPlanList to db
-
+            //TODO update likes to local PlanListGroup
             db.collection("users").document(user.uid).update(fireStoreUpdates)
                 .addOnSuccessListener {
                     realtime.updateChildren(realtimeUpdates)
@@ -1212,4 +1212,7 @@ class JourneyGeniusViewModel(
             allStates
 
     }
+
+    // Community View Model
+    fun refreshCommunity() {}
 }
