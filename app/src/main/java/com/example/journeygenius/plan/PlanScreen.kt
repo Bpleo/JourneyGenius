@@ -779,7 +779,8 @@ fun ChooseDropdownMenu(viewModel: JourneyGeniusViewModel) {
                                 DropdownMenuItem(text = { Text(city.key) }, onClick = {
                                     viewModel.updateDestCity(city.key)
                                     destCityExpanded = false
-                                    findLocOnMap(1,city.key, context)
+                                    viewModel.updateSelectedCityLocation(LatLng(city.value.latitude,city.value.longitude))
+                                    viewModel.updateSelectedCityLatLng(listOf(city.value.latitude,city.value.longitude))
                                     viewModel.updateSelectedAttractionList(listOf())
                                     viewModel.updateAttractionsList(listOf())
                                     viewModel.updateSelectedPlacesOnMap(HashMap())
