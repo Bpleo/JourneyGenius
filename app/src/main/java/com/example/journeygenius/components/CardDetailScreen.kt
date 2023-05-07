@@ -3,6 +3,7 @@ package com.example.journeygenius.components
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material3.*
@@ -67,58 +68,47 @@ fun CardDetailScreen(
                 .padding(bottom = 150.dp),
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
         ) {
-            item {
-                AsyncImage(
-                    model = firstImageUrl,
-                    contentDescription = "Plan Image",
-                    contentScale = ContentScale.FillWidth,
-                    modifier = Modifier
-                        .height(200.dp)
-                        .fillMaxWidth()
-                )
-            }
-
-            item {
-                if (!showMorePhoto.value){
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Button(
-                            onClick = { showMorePhoto.value = true },
-                            modifier = Modifier
-                                .padding(top = 8.dp)
-                        ) {
-                            Text(text = "More Photos")
+            if (showMorePhoto.value) {
+                item {
+                    LazyRow {
+                        items(photoUrls.size) { index ->
+                            AsyncImage(
+                                model = photoUrls[index],
+                                contentDescription = "Photo",
+                                contentScale = ContentScale.FillWidth,
+                                modifier = Modifier
+                                    .height(200.dp)
+                                    .width(200.dp)
+                            )
                         }
                     }
                 }
             }
-
-            if (showMorePhoto.value) {
-                items(photoUrls.size) { index ->
-                    if (index != 0 && index < 5) {
-                        AsyncImage(
-                            model = photoUrls[index],
-                            contentDescription = "Photo",
-                            contentScale = ContentScale.FillWidth,
-                            modifier = Modifier
-                                .height(200.dp)
-                                .fillMaxWidth()
-                        )
-                    }
+            else {
+                item {
+                    AsyncImage(
+                        model = firstImageUrl,
+                        contentDescription = "Plan Image",
+                        contentScale = ContentScale.FillWidth,
+                        modifier = Modifier
+                            .height(200.dp)
+                            .fillMaxWidth()
+                    )
                 }
+            }
+
+            if (photoUrls.isNotEmpty() && photoUrls.size >= 1){
                 item {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.Center
                     ) {
                         Button(
-                            onClick = { showMorePhoto.value = false },
+                            onClick = { showMorePhoto.value = !showMorePhoto.value },
                             modifier = Modifier
                                 .padding(top = 8.dp)
                         ) {
-                            Text(text = "Close Photos")
+                            Text(text = if (showMorePhoto.value) "Hide Photos" else "More Photos")
                         }
                     }
                 }

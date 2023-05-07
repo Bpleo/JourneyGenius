@@ -148,5 +148,5 @@ fun formatLikesString(likes: Int): String {
 }
 
 fun getPhotoUrl(photoReference: String, apiKey: String): String {
-    return "https://maps.googleapis.com/maps/api/place/photo?maxwidth=100&photoreference=$photoReference&key=$apiKey"
+    return "https://maps.googleapis.com/maps/api/place/photo?maxwidth=5000&photoreference=$photoReference&key=$apiKey"
 }
