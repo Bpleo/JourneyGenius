@@ -41,6 +41,9 @@ fun CardDetailScreen(
     val userLikedPost = remember { mutableStateOf(viewModel.checkUserLikedPost(planId)) }
     val initialLikeStatus = remember { userLikedPost.value }
 
+    val showDialog = remember { mutableStateOf(false) }
+    val selectedImageUrl = remember { mutableStateOf("") }
+
     val plan = viewModel.getPlanById(planId)
 
     val allPhotos: List<Photo> = plan!!.plans.flatMap { singlePlan ->
@@ -79,6 +82,10 @@ fun CardDetailScreen(
                                 modifier = Modifier
                                     .height(200.dp)
                                     .width(200.dp)
+                                    .clickable {
+                                        selectedImageUrl.value = photoUrls[index]
+                                        showDialog.value = true
+                                    }
                             )
                         }
                     }
@@ -93,6 +100,10 @@ fun CardDetailScreen(
                         modifier = Modifier
                             .height(200.dp)
                             .fillMaxWidth()
+                            .clickable {
+                                selectedImageUrl.value = firstImageUrl
+                                showDialog.value = true
+                            }
                     )
                 }
             }
@@ -195,6 +206,25 @@ fun CardDetailScreen(
                 onClick = { userLikedPost.value = !userLikedPost.value },
             ) {
                 Text(text = if (userLikedPost.value) "Unlike" else "Like")
+            }
+        }
+
+        if (showDialog.value) {
+            Dialog(onDismissRequest = { showDialog.value = false }) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    if (selectedImageUrl.value.isNotEmpty()) {
+                        AsyncImage(
+                            model = selectedImageUrl.value,
+                            contentDescription = "Large Photo",
+                            contentScale = ContentScale.FillWidth,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { showDialog.value = false }
+                        )
+                    } else {
+                        CircularProgressIndicator()
+                    }
+                }
             }
         }
     }
