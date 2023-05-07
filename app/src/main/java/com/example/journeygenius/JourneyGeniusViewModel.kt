@@ -406,10 +406,6 @@ class JourneyGeniusViewModel(
         val user = auth.currentUser
         if (user != null) {
             Log.d("USER", user.email.toString())
-//            realTimeDataFetch(startAtValue = _startAtValue.value) { fetchedData, nextStartAt ->
-//                Log.i("REALTIME",fetchedData.toString())
-//                _startAtValue.value = nextStartAt
-//            }
             db.collection("users").document(user.uid).get()
                 .addOnSuccessListener { documentSnapshot ->
                     if (documentSnapshot != null) {
@@ -423,7 +419,7 @@ class JourneyGeniusViewModel(
                             val groupListData =
                                 documentSnapshot.get("Plan_List") as? Map<String, Any>
                             val groupList: Map<String, Plans> = getGroupList(groupListData)
-
+                            val likedListData = documentSnapshot.get("likedPlanList") as? List<String>
                             // append groupList to current vm
                             updatePlanGroupList(groupList)
                         } else {
@@ -450,26 +446,31 @@ class JourneyGeniusViewModel(
             "/planList/$planId/likes" to likes
         )
         if (user != null) {
+            val list = _likedPlanList.value.toMutableList()
             if (isLikeAction) {
+                list.add(planId)
             } else {
-                //TODO remove planID from local LikedPlanList
+                if (list.contains(planId))
+                    list.remove(planId)
             }
-            //TODO update changed LikedPlanList to db
-            //TODO update likes to local PlanListGroup
-            db.collection("users").document(user.uid).update(fireStoreUpdates)
-                .addOnSuccessListener {
-                    realtime.updateChildren(realtimeUpdates)
-                        .addOnSuccessListener {
-                            Log.d("DATA", "$planId's like updates to $likes")
-                        }
-                        .addOnFailureListener { exception ->
-                            println("Error updating likes field: $exception")
-                        }
-                }
-                .addOnFailureListener { exception ->
-                    println("Error updating likes field: $exception")
-                }
+            updateLikedPlanList(list)
+            db.collection("users").document(user.uid).update("likedPlanList",list).addOnSuccessListener {
+                db.collection("users").document(user.uid).update(fireStoreUpdates)
+                    .addOnSuccessListener {
+                        realtime.updateChildren(realtimeUpdates)
+                            .addOnSuccessListener {
+                                Log.d("DATA", "$planId's like updates to $likes")
+                            }
+                            .addOnFailureListener { exception ->
+                                println("Error updating likes field: $exception")
+                            }
+                    }
+                    .addOnFailureListener { exception ->
+                        println("Error updating likes field: $exception")
+                    }
+            }
         }
+
     }
 
     private var _userName = mutableStateOf(TextFieldValue())
@@ -676,6 +677,12 @@ class JourneyGeniusViewModel(
             updateSelectedPlacesOnMap(updatedSelectedPlacesOnMap as HashMap<Pair<Double, Double>, List<Place>>)
         }
 
+    }
+
+    private var _likedPlanList = mutableStateOf<List<String>>(listOf())
+    val likedPlanList: MutableState<List<String>> = _likedPlanList
+    fun updateLikedPlanList(value: List<String>){
+        _likedPlanList.value = value
     }
 
     private var _attractionRoutes = mutableStateOf<List<Place>>(listOf())
