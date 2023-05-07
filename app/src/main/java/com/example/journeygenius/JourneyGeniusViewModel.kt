@@ -80,6 +80,7 @@ class JourneyGeniusViewModel(
             override fun onDataChange(snapshot: DataSnapshot) {
                 val groupListData = snapshot.value as? Map<String, Any>?
                 val groupList = getGroupList(groupListData)
+                Log.d("REALTIME1", groupList.toString())
                 val nextStartAtValue = snapshot.children.lastOrNull()?.key.orEmpty()
                 onComplete(groupList, nextStartAtValue)
             }
@@ -92,18 +93,20 @@ class JourneyGeniusViewModel(
     suspend fun fetchGroupData(limit: Long, startAtValue: String = ""): Map<String, Plans> {
         return suspendCoroutine { continuation ->
             realTimeDataFetch(limit, startAtValue) { groupListData, _ ->
+                Log.d("REALTIME2", groupListData.toString())
                 continuation.resume(groupListData)
             }
         }
     }
 
-    private val _communityPlanList = MutableStateFlow<Map<String, Plans>>(emptyMap())
-    val communityPlanList: StateFlow<Map<String, Plans>> = _communityPlanList
+    private val _communityPlanList = mutableStateOf(mapOf<String, Plans>())
+    val communityPlanList: MutableState<Map<String, Plans>> = _communityPlanList
 
     fun fetchGroupDataAndPrint(limit: Long, startAtValue: String = "") {
         viewModelScope.launch {
             try {
                 val groupListData = fetchGroupData(limit, startAtValue)
+                Log.d("REALTIME3",groupListData.toString())
                 _communityPlanList.value = _communityPlanList.value + groupListData
             } catch (e: Exception) {
                 println("Error fetching data: ${e.message}")
@@ -146,7 +149,11 @@ class JourneyGeniusViewModel(
                                         lng = it["lng"] as? Double ?: 0.0
                                     )
                                 }
-                                val rating = data["rating"] as? Double
+                                val ratingData = data["rating"]
+                                val rating: Double? = if (ratingData is Long)
+                                    ratingData.toDouble()
+                                else
+                                    ratingData as Double
                                 val place_id = data["place_id"] as? String
                                 // get a list of photos
                                 val photosData = data["photos"] as? List<Map<String, Any>>
@@ -188,7 +195,11 @@ class JourneyGeniusViewModel(
                                     lng = it["lng"] as? Double ?: 0.0
                                 )
                             }
-                            val rating = data["rating"] as? Double
+                            val ratingData = data["rating"]
+                            val rating: Double? = if (ratingData is Long)
+                                ratingData.toDouble()
+                            else
+                                ratingData as Double
                             val place_id = data["place_id"] as? String
                             // get a list of photos
                             val photosData = data["photos"] as? List<Map<String, Any>>
@@ -223,7 +234,11 @@ class JourneyGeniusViewModel(
                                     lng = it["lng"] as? Double ?: 0.0
                                 )
                             }
-                            val rating = data["rating"] as? Double
+                            val ratingData = data["rating"]
+                            val rating: Double? = if (ratingData is Long)
+                                ratingData.toDouble()
+                            else
+                                ratingData as Double
                             val place_id = data["place_id"] as? String
                             // get a list of photos
                             val photosData = data["photos"] as? List<Map<String, Any>>
@@ -247,8 +262,8 @@ class JourneyGeniusViewModel(
                                 null // get a Place Object
                         }
                         // get attractionRoutes
-                        val attractionRoutesDate = planData["attractionRoutes"] as? List<Map<String, Any>>
-                        val attractionRoutes: List<Place> = attractionRoutesDate?.mapNotNull { data->
+                        val attractionRoutesData = planData["attractionRoutes"] as? List<Map<String, Any>>
+                        val attractionRoutes: List<Place> = attractionRoutesData?.mapNotNull { data->
                             val name = data["name"] as? String
                             val vicinity = data["vicinity"] as? String
                             val locationData = data["location"] as? Map<String, Any>
@@ -258,7 +273,11 @@ class JourneyGeniusViewModel(
                                     lng = it["lng"] as? Double ?: 0.0
                                 )
                             }
-                            val rating = data["rating"] as? Double
+                            val ratingData = data["rating"]
+                            val rating: Double? = if (ratingData is Long)
+                                ratingData.toDouble()
+                            else
+                                ratingData as Double
                             val place_id = data["place_id"] as? String
                             // get a list of photos
                             val photosData = data["photos"] as? List<Map<String, Any>>
@@ -305,7 +324,11 @@ class JourneyGeniusViewModel(
                                         lng = it["lng"] as? Double ?: 0.0
                                     )
                                 }
-                                val rating = data["rating"] as? Double
+                                val ratingData = data["rating"]
+                                val rating: Double? = if (ratingData is Long)
+                                    ratingData.toDouble()
+                                else
+                                    ratingData as Double
                                 val place_id = data["place_id"] as? String
                                 // get a list of photos
                                 val photosData = data["photos"] as? List<Map<String, Any>>
@@ -383,10 +406,10 @@ class JourneyGeniusViewModel(
         val user = auth.currentUser
         if (user != null) {
             Log.d("USER", user.email.toString())
-            realTimeDataFetch(startAtValue = _startAtValue.value) { fetchedData, nextStartAt ->
-                Log.i("REALTIME",fetchedData.toString())
-                _startAtValue.value = nextStartAt
-            }
+//            realTimeDataFetch(startAtValue = _startAtValue.value) { fetchedData, nextStartAt ->
+//                Log.i("REALTIME",fetchedData.toString())
+//                _startAtValue.value = nextStartAt
+//            }
             db.collection("users").document(user.uid).get()
                 .addOnSuccessListener { documentSnapshot ->
                     if (documentSnapshot != null) {
