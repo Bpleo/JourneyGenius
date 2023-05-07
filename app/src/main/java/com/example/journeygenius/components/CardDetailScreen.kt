@@ -67,6 +67,8 @@ fun CardDetailScreen(
 
     val showMorePhoto = remember { mutableStateOf(false) }
 
+    val localLikes = remember { mutableStateOf(plan.likes) }
+
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
             modifier = Modifier
@@ -153,7 +155,7 @@ fun CardDetailScreen(
                             .size(15.dp)
                     )
                     Text(
-                        text = formatLikesString(plan.likes),
+                        text = formatLikesString(localLikes.value),
                         fontSize = 15.sp,
                         color = MaterialTheme.colorScheme.secondary,
                         fontWeight = FontWeight.Bold,
@@ -191,12 +193,7 @@ fun CardDetailScreen(
             OutlinedButton(
                 onClick = {
                     if (initialLikeStatus != userLikedPost.value) {
-                        if (userLikedPost.value) {
-                            viewModel.updateLikes(plan.likes + 1, planId, userLikedPost.value)
-                        }
-                        else {
-                            viewModel.updateLikes(plan.likes - 1, planId, userLikedPost.value)
-                        }
+                        viewModel.updateLikes(localLikes.value, planId, userLikedPost.value)
                     }
                     navController.popBackStack()
                 },
@@ -206,7 +203,16 @@ fun CardDetailScreen(
             }
 
             OutlinedButton(
-                onClick = { userLikedPost.value = !userLikedPost.value },
+                onClick = {
+                    userLikedPost.value = !userLikedPost.value
+
+                    if (userLikedPost.value) {
+                        localLikes.value += 1
+                    }
+                    else {
+                        localLikes.value -= 1
+                    }
+                          },
             ) {
                 Text(text = if (userLikedPost.value) "Unlike" else "Like")
             }
