@@ -155,7 +155,7 @@ fun CardDetailScreen(
 
             plan?.plans?.let {
                 items(it.size) { index ->
-                    TravelExpandableCard(data = it[index])
+                    TravelExpandableCard(data = it[index], viewModel)
                     Spacer(modifier = Modifier.height(8.dp))
                 }
             }

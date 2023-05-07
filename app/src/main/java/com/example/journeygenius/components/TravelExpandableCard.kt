@@ -25,12 +25,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.rotate
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.journeygenius.JourneyGeniusViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TravelExpandableCard(
-    data: SinglePlan
+    data: SinglePlan,
+    viewModel: JourneyGeniusViewModel
 ) {
     var expandedState by remember {
         mutableStateOf(false)
@@ -83,7 +86,7 @@ fun TravelExpandableCard(
         }
 
         if (expandedState) {
-            TravelDetailCompose(data = data,)
+            TravelDetailCompose(data = data, viewModel = viewModel)
         }
     }
 }
