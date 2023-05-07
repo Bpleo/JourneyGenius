@@ -742,9 +742,17 @@ class JourneyGeniusViewModel(
         if (updatedPlanList.contains(value)) {
             updatedPlanList.remove(value)
             updatePlanList(updatedPlanList)
+            updatePlanGroup(
+                Plans(
+                    planGroup.value.title,
+                    planGroup.value.description,
+                    planGroup.value.isPublic,
+                    planList.value
+                )
+            )
         }
-    }
 
+    }
     private var _planGroup = mutableStateOf(Plans("", "", true, listOf()))
     val planGroup: MutableState<Plans> = _planGroup
     fun updatePlanGroup(value: Plans) {
