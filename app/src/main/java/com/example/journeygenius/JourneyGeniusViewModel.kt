@@ -1275,62 +1275,76 @@ class JourneyGeniusViewModel(
             }
             allStates
         }catch (e:Exception){
-            Log.e("getAllCountries", "Error: ${e.message}")
+            Log.e("getAllStates", "Error: ${e.message}")
             emptyMap()
         }
     }
 
     // TODO: Clear Rubbish
     suspend fun getAllCities(geoNameId:Int):Map<String,LatLng> = withContext(Dispatchers.IO){
+
         val CAandUSiDList= listOf(5883102,5909050,6065171,6087430,6354959,6091069,6091530,6091732,6093943,6113358,6115047,6141242,6185811,
             4829764,5879092,5551752,4099753,5332921,5417618,4831725,4142224,4155751,4197000,5855797,5596512,4896861,4921868,4862182,4273857,6254925,
             4331987,4971068,4361885,6254926,5001836,5037779,4436296,4398678,5667009,5073708,5509151,5090174,5101760,5481136,5128638,4482348,5690763,5165418,
             4544379,5744337,6254927,5224323,4597040,5769223,4662168,4736286,5549030,5242283,6254928,5815135,4138106,4826850,5279468,5843591)
-            if(geoNameId in CAandUSiDList){  //US and Canada
+        try {
+            if (geoNameId in CAandUSiDList) {  //US and Canada
                 val geoIDList = mutableListOf<Int>()
-                val url="http://api.geonames.org/childrenJSON?geonameId=${geoNameId}&username=journeyGenius"
-                val result=URL(url).readText()
+                val url =
+                    "http://api.geonames.org/childrenJSON?geonameId=${geoNameId}&username=journeyGenius"
+                val result = URL(url).readText()
                 val jsonObject = JsonParser.parseString(result).asJsonObject
                 val geoNamesList = jsonObject.getAsJsonArray("geonames")
-                if(!geoNamesList.isEmpty){
-                    for (i in geoNamesList){
+                if (!geoNamesList.isEmpty) {
+                    for (i in geoNamesList) {
                         geoIDList.add(i.asJsonObject["geonameId"].asInt)
                     }
                 }
-                val allCities = mutableMapOf<String,LatLng>()
-                for (i in geoIDList){
-                    val url="http://api.geonames.org/childrenJSON?geonameId=${i}&username=journeyGenius"
-                    val result=URL(url).readText()
+                val allCities = mutableMapOf<String, LatLng>()
+                for (i in geoIDList) {
+                    val url =
+                        "http://api.geonames.org/childrenJSON?geonameId=${i}&username=journeyGenius"
+                    val result = URL(url).readText()
                     val jsonObject = JsonParser.parseString(result).asJsonObject
                     val geoNamesList = jsonObject.getAsJsonArray("geonames")
-                    if(!geoNamesList.isEmpty){
-                        for (i in geoNamesList){
+                    if (!geoNamesList.isEmpty) {
+                        for (i in geoNamesList) {
 //                            val temp=i.asJsonObject["name"].asString
 //                            if(temp.contains("City of ")){
 //                                allStates[temp.replace(Regex("City of "), "")]= i.asJsonObject["geonameId"].asInt
 //                            }
-                            allCities[i.asJsonObject["name"].asString] = LatLng(i.asJsonObject["lat"].asDouble,i.asJsonObject["lng"].asDouble)
+                            allCities[i.asJsonObject["name"].asString] = LatLng(
+                                i.asJsonObject["lat"].asDouble,
+                                i.asJsonObject["lng"].asDouble
+                            )
                         }
                     }
                 }
                 allCities
-            }else{
-                val url="http://api.geonames.org/childrenJSON?geonameId=${geoNameId}&username=journeyGenius"
-                val result=URL(url).readText()
+            } else {
+                val url =
+                    "http://api.geonames.org/childrenJSON?geonameId=${geoNameId}&username=journeyGenius"
+                val result = URL(url).readText()
                 val jsonObject = JsonParser.parseString(result).asJsonObject
                 val geoNamesList = jsonObject.getAsJsonArray("geonames")
-                val allCities = mutableMapOf<String,LatLng>()
-                if(!geoNamesList.isEmpty){
-                    for (i in geoNamesList){
+                val allCities = mutableMapOf<String, LatLng>()
+                if (!geoNamesList.isEmpty) {
+                    for (i in geoNamesList) {
 
-                        allCities[i.asJsonObject["name"].asString.replace(Regex(" Shi"), "")] = LatLng(i.asJsonObject["lat"].asDouble,i.asJsonObject["lng"].asDouble)
+                        allCities[i.asJsonObject["name"].asString.replace(Regex(" Shi"), "")] =
+                            LatLng(i.asJsonObject["lat"].asDouble, i.asJsonObject["lng"].asDouble)
                     }
                 }
                 allCities
             }
+        }catch (e:Exception){
+            Log.e("getAllCities", "Error: ${e.message}")
+            emptyMap()
+        }
 
 
     }
+
 
 
     fun getPhotoUrl(photoReference: String, apiKey: String): String {
