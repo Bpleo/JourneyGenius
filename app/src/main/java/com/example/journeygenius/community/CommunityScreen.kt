@@ -90,7 +90,7 @@ fun CommunityList(
                 },
                 modifier = Modifier
                     .background(
-                        color = Color.LightGray,
+                        color = Color.Black,
                         shape = MaterialTheme.shapes.medium
                     )
                     .padding(8.dp)

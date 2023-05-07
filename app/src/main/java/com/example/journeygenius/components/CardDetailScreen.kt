@@ -105,7 +105,20 @@ fun CardDetailScreen(
                         )
                     }
                 }
-
+                item {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Button(
+                            onClick = { showMorePhoto.value = false },
+                            modifier = Modifier
+                                .padding(top = 8.dp)
+                        ) {
+                            Text(text = "Close Photos")
+                        }
+                    }
+                }
             }
 
             item {
