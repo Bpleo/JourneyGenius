@@ -366,16 +366,18 @@ fun ChooseDropdownMenu(viewModel: JourneyGeniusViewModel) {
     val countryList by remember {
         viewModel.countryList
     }
-    val stateList by remember {
-        viewModel.stateList
+    val departStateList by remember {
+        viewModel.departStateList
     }
-    val countyList by remember {
-        viewModel.countyList
+    val departCityList by remember {
+        viewModel.departCityList
     }
-    val cityList by remember {
-        viewModel.cityList
+    val destStateList by remember {
+        viewModel.destStateList
     }
-
+    val destCityList by remember {
+        viewModel.destCityList
+    }
     val departCountry by remember {
         mutableStateOf(viewModel.departCountry)
     }
@@ -511,33 +513,34 @@ fun ChooseDropdownMenu(viewModel: JourneyGeniusViewModel) {
                     DropdownMenu(
                         expanded = departCountryExpanded,
                         onDismissRequest = { departCountryExpanded = false },
-                        modifier = Modifier.width(150.dp).height(200.dp),
+                        modifier = Modifier
+                            .width(150.dp)
+                            .height(200.dp),
 //                    modifier = Modifier.width(150.dp),
 //                            modifier = Modifier.width(with(LocalDensity.current) { textFiledSize.width.toDp() })
                     ) {
 
                         //for country List dummy data
-//                    countries.forEach { country ->
-//                        DropdownMenuItem(text = { Text(country) }, onClick = {
-//                            viewModel.updateDepartCountry(country)
-//                            viewModel.updateDepartState("")
-//                            viewModel.updateDepartCity("")
-//                            departCountryExpanded = false
-//                        })
-//
-//                    }
-                        countryList.forEach { country ->
-                            DropdownMenuItem(text = { Text(country.key) }, onClick = {
-                                viewModel.updateDepartCountry(country.key)
-                                viewModel.updateDepartState("")
-                                viewModel.updateDepartCity("")
-                                departCountryExpanded = false
-                                viewModel.viewModelScope.launch {
-                                    viewModel.updateStateList(viewModel.getAllStatesAndCities(country.value))
-                                }
-                            })
+                    countries.forEach { country ->
+                        DropdownMenuItem(text = { Text(country) }, onClick = {
+                            viewModel.updateDepartCountry(country)
+                            viewModel.updateDepartState("")
+                            viewModel.updateDepartCity("")
+                            departCountryExpanded = false
+                        })
 
-                        }
+                    }
+//                        countryList.forEach { country ->
+//                            DropdownMenuItem(text = { Text(country.key) }, onClick = {
+//                                viewModel.updateDepartCountry(country.key)
+//                                viewModel.updateDepartState("")
+//                                viewModel.updateDepartCity("")
+//                                viewModel.clearDepartCityList()
+//                                departCountryExpanded = false
+//                                viewModel.updateDepartStateList(country.value)
+//                            })
+//
+//                        }
                     }
                 }
 
@@ -545,7 +548,6 @@ fun ChooseDropdownMenu(viewModel: JourneyGeniusViewModel) {
                     //Departure State
                     OutlinedTextField(value = departSate.value,
                         onValueChange = { viewModel.updateDepartState(it)
-
                         },
                         modifier = Modifier
                             .width(150.dp)
@@ -562,28 +564,28 @@ fun ChooseDropdownMenu(viewModel: JourneyGeniusViewModel) {
                     DropdownMenu(
                         expanded = departStateExpanded,
                         onDismissRequest = { departStateExpanded = false },
-                        modifier = Modifier.width(150.dp).height(200.dp),
+                        modifier = Modifier
+                            .width(150.dp)
+                            .height(200.dp),
 //                            modifier = Modifier.width(with(LocalDensity.current) { textFiledSize.width.toDp() })
                     ) {
                         //For dummy data
-//                    countryToStateMap[departCountry.value]?.forEach { country ->
-//                        DropdownMenuItem(text = { Text(country) }, onClick = {
-//                            viewModel.updateDepartState(country)
-//                            departStateExpanded = false
-//                        })
-//                    }
+                    countryToStateMap[departCountry.value]?.forEach { country ->
+                        DropdownMenuItem(text = { Text(country) }, onClick = {
+                            viewModel.updateDepartState(country)
+                            departStateExpanded = false
+                        })
+                    }
 
-                        if(stateList.isNotEmpty()){
-                            stateList.forEach{state->
-                                DropdownMenuItem(text = { Text(state.key) }, onClick = {
-                                    viewModel.updateDepartState(state.key)
-                                    departStateExpanded = false
-                                    viewModel.viewModelScope.launch {
-                                        viewModel.updateCityList(viewModel.getAllStatesAndCities(state.value))
-                                    }
-                                })
-                            }
-                        }
+//                        if(departStateList.isNotEmpty()){
+//                            departStateList.forEach{state->
+//                                DropdownMenuItem(text = { Text(state.key) }, onClick = {
+//                                    viewModel.updateDepartState(state.key)
+//                                    departStateExpanded = false
+//                                    viewModel.updateDepartCityList(state.value)
+//                                })
+//                            }
+//                        }
                     }
                 }
 
@@ -606,23 +608,25 @@ fun ChooseDropdownMenu(viewModel: JourneyGeniusViewModel) {
                     DropdownMenu(
                         expanded = departCityExpanded,
                         onDismissRequest = { departCityExpanded = false },
-                        modifier = Modifier.width(150.dp).height(200.dp),
+                        modifier = Modifier
+                            .width(150.dp)
+                            .height(200.dp),
 //                            modifier = Modifier.width(with(LocalDensity.current) { textFiledSize.width.toDp() })
                     ) {
-//                    stateToCityMap[departSate.value]?.forEach { country ->
-//                        DropdownMenuItem(text = { Text(country) }, onClick = {
-//                            viewModel.updateDepartCity(country)
-//                            departCityExpanded = false
-//                        })
-//                    }
-                        if(cityList.isNotEmpty()){
-                            cityList.forEach { city ->
-                                DropdownMenuItem(text = { Text(city.key) }, onClick = {
-                                    viewModel.updateDepartCity(city.key)
-                                    departCityExpanded = false
-                                })
-                            }
-                        }
+                    stateToCityMap[departSate.value]?.forEach { country ->
+                        DropdownMenuItem(text = { Text(country) }, onClick = {
+                            viewModel.updateDepartCity(country)
+                            departCityExpanded = false
+                        })
+                    }
+//                        if(departCityList.isNotEmpty()){
+//                            departCityList.forEach { city ->
+//                                DropdownMenuItem(text = { Text(city.key) }, onClick = {
+//                                    viewModel.updateDepartCity(city.key)
+//                                    departCityExpanded = false
+//                                })
+//                            }
+//                        }
                     }
                 }
             }
@@ -660,27 +664,32 @@ fun ChooseDropdownMenu(viewModel: JourneyGeniusViewModel) {
                     DropdownMenu(
                         expanded = destCountryExpanded,
                         onDismissRequest = { destCountryExpanded = false },
-                        modifier = Modifier.width(150.dp).height(200.dp),
+                        modifier = Modifier
+                            .width(150.dp)
+                            .height(200.dp),
 //                            modifier = Modifier.width(with(LocalDensity.current) { textFiledSize.width.toDp() })
                     ) {
-//                        countries.forEach { country ->
-//                            DropdownMenuItem(text = { Text(country) }, onClick = {
-//                                viewModel.updateDestCountry(country)
-//                                viewModel.updateDestState("")
-//                                viewModel.updateDestCity("")
-//                                destCountryExpanded = false
-//                            })
-//
-//                        }
-                        countryList.forEach { country ->
-                            DropdownMenuItem(text = { Text(country.key) }, onClick = {
-                                viewModel.updateDestCountry(country.key)
+                        countries.forEach { country ->
+                            DropdownMenuItem(text = { Text(country) }, onClick = {
+                                viewModel.updateDestCountry(country)
                                 viewModel.updateDestState("")
                                 viewModel.updateDestCity("")
                                 destCountryExpanded = false
                             })
 
                         }
+//                        countryList.forEach { country ->
+//                            DropdownMenuItem(text = { Text(country.key) }, onClick = {
+//                                viewModel.updateDestCountry(country.key)
+//                                viewModel.updateDestState("")
+//                                viewModel.updateDestCity("")
+//                                viewModel.clearDestCityList()
+//                                destCountryExpanded = false
+//                                viewModel.updateDestStateList(country.value)
+//
+//                            })
+//
+//                        }
                     }
                 }
 
@@ -705,7 +714,9 @@ fun ChooseDropdownMenu(viewModel: JourneyGeniusViewModel) {
                     DropdownMenu(
                         expanded = destStateExpanded,
                         onDismissRequest = { destStateExpanded = false },
-                        modifier = Modifier.width(150.dp).height(200.dp),
+                        modifier = Modifier
+                            .width(150.dp)
+                            .height(200.dp),
 //                            modifier = Modifier.width(with(LocalDensity.current) { textFiledSize.width.toDp() })
                     ) {
                         countryToStateMap[destCountry.value]?.forEach { country ->
@@ -715,6 +726,16 @@ fun ChooseDropdownMenu(viewModel: JourneyGeniusViewModel) {
                                 destStateExpanded = false
                             })
                         }
+//                        if(destStateList.isNotEmpty()){
+//                            destStateList.forEach{state->
+//                                DropdownMenuItem(text = { Text(state.key) }, onClick = {
+//                                    viewModel.updateDestState(state.key)
+//                                    viewModel.updateDestCity("")
+//                                    destStateExpanded = false
+//                                    viewModel.updateDestCityList(state.value)
+//                                })
+//                            }
+//                        }
                     }
                 }
                 Box {
@@ -737,7 +758,9 @@ fun ChooseDropdownMenu(viewModel: JourneyGeniusViewModel) {
                     DropdownMenu(
                         expanded = destCityExpanded,
                         onDismissRequest = { destCityExpanded = false },
-                        modifier = Modifier.width(150.dp).height(200.dp),
+                        modifier = Modifier
+                            .width(150.dp)
+                            .height(200.dp),
 //                            modifier = Modifier.width(with(LocalDensity.current) { textFiledSize.width.toDp() })
                     ) {
                         stateToCityMap[destState.value]?.forEach { country ->
@@ -751,6 +774,18 @@ fun ChooseDropdownMenu(viewModel: JourneyGeniusViewModel) {
                                 viewModel.updateSelectedPlacesOnMap(HashMap())
                             })
                         }
+//                        if(destCityList.isNotEmpty()){
+//                            destCityList.forEach { city ->
+//                                DropdownMenuItem(text = { Text(city.key) }, onClick = {
+//                                    viewModel.updateDestCity(city.key)
+//                                    destCityExpanded = false
+//                                    findLocOnMap(1,city.key, context)
+//                                    viewModel.updateSelectedAttractionList(listOf())
+//                                    viewModel.updateAttractionsList(listOf())
+//                                    viewModel.updateSelectedPlacesOnMap(HashMap())
+//                                })
+//                            }
+//                        }
                     }
                 }
             }

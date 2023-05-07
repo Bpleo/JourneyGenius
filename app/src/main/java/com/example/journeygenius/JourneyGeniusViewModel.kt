@@ -844,21 +844,49 @@ class JourneyGeniusViewModel(
         }
     }
 
-    private var _stateList = mutableStateOf(mapOf<String,Int>())
-    val stateList: MutableState<Map<String,Int>> = _stateList
-    fun updateStateList(value: Map<String,Int>) {
-        _stateList.value = value
+
+    private var _departStateList = mutableStateOf(mapOf<String,Int>())
+    val departStateList: MutableState<Map<String,Int>> = _departStateList
+    fun updateDepartStateList(geoNameId: Int) {
+        viewModelScope.launch {
+            _departStateList.value=getAllStatesAndCities(geoNameId)
+        }
+
     }
-    private var _countyList= mutableStateOf(mapOf<String,Int>())
-    val countyList:MutableState<Map<String,Int>> = _countyList
-    fun updateCountyList(value: Map<String,Int>){
-        _countyList.value=value
+    private var _destStateList = mutableStateOf(mapOf<String,Int>())
+    val destStateList: MutableState<Map<String,Int>> = _destStateList
+    fun updateDestStateList(geoNameId: Int) {
+        viewModelScope.launch {
+            _destStateList.value=getAllStatesAndCities(geoNameId)
+        }
     }
 
-    private var _cityList = mutableStateOf(mapOf<String,Int>())
-    val cityList: MutableState<Map<String,Int>> = _cityList
-    fun updateCityList(value: Map<String,Int>) {
-        _cityList.value = value
+//    private var _countyList= mutableStateOf(mapOf<String,Int>())
+//    val countyList:MutableState<Map<String,Int>> = _countyList
+//    fun updateCountyList(value: Map<String,Int>){
+//        _countyList.value=value
+//    }
+
+    private var _departCityList = mutableStateOf(mapOf<String,Int>())
+    val departCityList: MutableState<Map<String,Int>> = _departCityList
+    fun updateDepartCityList(geoNameId: Int) {
+        viewModelScope.launch {
+            _departCityList.value=getAllStatesAndCities(geoNameId)
+        }
+    }
+    fun clearDepartCityList(){
+        _departCityList.value.toMutableMap().clear()
+    }
+
+    private var _destCityList = mutableStateOf(mapOf<String,Int>())
+    val destCityList: MutableState<Map<String,Int>> = _destCityList
+    fun updateDestCityList(geoNameId: Int) {
+        viewModelScope.launch {
+            _destCityList.value=getAllStatesAndCities(geoNameId)
+        }
+    }
+    fun clearDestCityList(){
+        _destCityList.value.toMutableMap().clear()
     }
 
     private var _startAttraction =
@@ -1197,19 +1225,52 @@ class JourneyGeniusViewModel(
             updateCountryList(allCountries)
         }
     }
-    suspend fun getAllStatesAndCities(geoNameId:Int):Map<String,Int> = withContext(Dispatchers.IO){
 
-            val url="http://api.geonames.org/childrenJSON?geonameId=${geoNameId}&username=journeyGenius"
-            val result=URL(url).readText()
-            val jsonObject = JsonParser.parseString(result).asJsonObject
-            val geoNamesList = jsonObject.getAsJsonArray("geonames")
-            val allStates = mutableMapOf<String,Int>()
-            if(!geoNamesList.isEmpty){
-                for (i in geoNamesList){
-                    allStates[i.asJsonObject["name"].asString.replace(Regex(" Shi"), "")] = i.asJsonObject["geonameId"].asInt
+    // TODO: Clear Rubbish 
+    suspend fun getAllStatesAndCities(geoNameId:Int):Map<String,Int> = withContext(Dispatchers.IO){
+        val CAandUSiDList= listOf<Int>(5883102,5909050,6065171,6087430,6354959,6091069,6091530,6091732,6093943,6113358,6115047,6141242,6185811,
+            4829764,5879092,5551752,4099753,5332921,5417618,4831725,4142224,4155751,4197000,5855797,5596512,4896861,4921868,4862182,4273857,6254925,
+            4331987,4971068,4361885,6254926,5001836,5037779,4436296,4398678,5667009,5073708,5509151,5090174,5101760,5481136,5128638,4482348,5690763,5165418,
+            4544379,5744337,6254927,5224323,4597040,5769223,4662168,4736286,5549030,5242283,6254928,5815135,4138106,4826850,5279468,5843591)
+            if(geoNameId in CAandUSiDList){  //US and Canada
+                val geoIDList = mutableListOf<Int>()
+                val url="http://api.geonames.org/childrenJSON?geonameId=${geoNameId}&username=journeyGenius"
+                val result=URL(url).readText()
+                val jsonObject = JsonParser.parseString(result).asJsonObject
+                val geoNamesList = jsonObject.getAsJsonArray("geonames")
+                if(!geoNamesList.isEmpty){
+                    for (i in geoNamesList){
+                        geoIDList.add(i.asJsonObject["geonameId"].asInt)
+                    }
                 }
+                val allStates = mutableMapOf<String,Int>()
+                for (i in geoIDList){
+                    val url="http://api.geonames.org/childrenJSON?geonameId=${i}&username=journeyGenius"
+                    val result=URL(url).readText()
+                    val jsonObject = JsonParser.parseString(result).asJsonObject
+                    val geoNamesList = jsonObject.getAsJsonArray("geonames")
+                    if(!geoNamesList.isEmpty){
+                        for (i in geoNamesList){
+                            allStates[i.asJsonObject["name"].asString.replace(Regex(" Shi"), "")] = i.asJsonObject["geonameId"].asInt
+                        }
+                    }
+                }
+                allStates
+            }else{
+                val url="http://api.geonames.org/childrenJSON?geonameId=${geoNameId}&username=journeyGenius"
+                val result=URL(url).readText()
+                val jsonObject = JsonParser.parseString(result).asJsonObject
+                val geoNamesList = jsonObject.getAsJsonArray("geonames")
+                val allStates = mutableMapOf<String,Int>()
+                if(!geoNamesList.isEmpty){
+                    for (i in geoNamesList){
+                        allStates[i.asJsonObject["name"].asString.replace(Regex(" Shi"), "")] = i.asJsonObject["geonameId"].asInt
+                    }
+                }
+                allStates
             }
-            allStates
+
 
     }
+
 }
