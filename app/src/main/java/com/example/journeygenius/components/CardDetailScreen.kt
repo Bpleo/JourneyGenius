@@ -1,5 +1,6 @@
 package com.example.journeygenius.components
 
+import android.util.TypedValue
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -14,29 +15,31 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import coil.compose.rememberImagePainter
 import com.example.journeygenius.JourneyGeniusViewModel
 import com.example.journeygenius.PlacesapiKey
-import com.example.journeygenius.R
-import com.example.journeygenius.community.CommunityScreen
 import com.example.journeygenius.data.models.Photo
-import com.example.journeygenius.data.models.Plans
+import android.content.Context;
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.Dp
 
 @Composable
 fun CardDetailScreen(
     planId: String,
     viewModel: JourneyGeniusViewModel,
     navController: NavController) {
+
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp.dp
+    val screenHeight = configuration.screenHeightDp.dp
+
+    val singleImageHeight = multiplyDp(LocalContext.current, screenHeight, 0.4f)
 
     val userLikedPost = remember { mutableStateOf(viewModel.checkUserLikedPost(planId)) }
     val initialLikeStatus = remember { userLikedPost.value }
@@ -98,7 +101,7 @@ fun CardDetailScreen(
                         contentDescription = "Plan Image",
                         contentScale = ContentScale.FillWidth,
                         modifier = Modifier
-                            .height(200.dp)
+                            .height(singleImageHeight)
                             .fillMaxWidth()
                             .clickable {
                                 selectedImageUrl.value = firstImageUrl
@@ -228,4 +231,22 @@ fun CardDetailScreen(
             }
         }
     }
+}
+
+fun dpToPx(context: Context, dp: Float): Float {
+    return TypedValue.applyDimension(
+        TypedValue.COMPLEX_UNIT_DIP,
+        dp,
+        context.resources.displayMetrics
+    )
+}
+
+fun pxToDp(context: Context, px: Float): Float {
+    return px / context.resources.displayMetrics.density
+}
+
+fun multiplyDp(context: Context, dp: Dp, multiplier: Float): Dp {
+    val px = dpToPx(context, dp.value)
+    val multipliedPx = px * multiplier
+    return pxToDp(context, multipliedPx).dp
 }
