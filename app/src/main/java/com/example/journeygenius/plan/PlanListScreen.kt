@@ -7,6 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
@@ -139,28 +140,28 @@ fun PlanList(
             ) {
                 if (planList.isNotEmpty()) {
                     LazyColumn(
+                        state= rememberLazyListState(),
                         verticalArrangement = Arrangement.spacedBy(10.dp),
                     ) {
-                        item {
-                            Box(modifier = Modifier.height(10.dp))
-                        }
-                        itemsIndexed(planList) { index, plan ->
-                            val currentItem by rememberUpdatedState(plan)
+                        itemsIndexed(items=planList,
+                        key = {index: Int, item: SinglePlan ->item.hashCode()  }
+                            ) { index, item ->
                             val dismissState = rememberDismissState(
                                 confirmValueChange = {
                                     // Done: call remove plan list func
                                     // TODO: Need Test
-                                    planViewModel.delSinglePlan(currentItem)
+                                    planViewModel.delSinglePlan(item)
                                     true
                                 },
                                 positionalThreshold = {
-                                    200.dp.toPx()
+                                    100.dp.toPx()
                                 }
                             )
                             SwipeToDismiss(state = dismissState,
                                 background = {
                                     SwipeBackground(dismissState = dismissState)
                                 },
+                                directions = setOf(DismissDirection.EndToStart),
                                 dismissContent = {
                                     Text(
                                         modifier = Modifier
@@ -171,14 +172,15 @@ fun PlanList(
                                             )
                                             .padding(24.dp)
                                             .clickable {
-                                                planViewModel.updatePlanOnDetail(plan)
+                                                planViewModel.updatePlanOnDetail(item)
                                                 navController.navigate("Plan Detail")
                                             },
-                                        text = "Trip to  ${plan.destination}",
+                                        text = "Trip to  ${item.destination}",
                                         fontSize = MaterialTheme.typography.titleLarge.fontSize,
                                         fontWeight = MaterialTheme.typography.titleLarge.fontWeight,
                                     )
                                 },
+
 
                             )
                         }
