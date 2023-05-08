@@ -122,10 +122,6 @@ class JourneyGeniusViewModel(
     }
 
 
-    fun getPersonalPlanById(planId: String): Plans? {
-        return planGroupList.value[planId]
-    }
-
     private fun getGroupList(groupListData: Map<String, Any>?): Map<String, Plans> {
         val groupList = groupListData?.mapNotNull { (key, value) ->
             val plans = (value as? Map<String, Any>)?.let { planListData ->
