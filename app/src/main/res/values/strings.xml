@@ -64,4 +64,7 @@
     <string name="my_plan_list">My Plan List</string>
     <string name="settings">Settings</string>
     <string name="personal_settings">Personal Settings</string>
+    <string name="log_out">Log out</string>
+    <string name="language">Language</string>
+    <string name="reset_language">Reset Language</string>
 </resources>

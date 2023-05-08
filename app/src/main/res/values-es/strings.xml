@@ -65,4 +65,8 @@
     <string name="my_plan_list">Mi lista de planes</string>
     <string name="settings">Ajustes</string>
     <string name="personal_settings">Ajustes personales</string>
+    <string name="log_out">cerrar sesión</string>
+
+    <string name="language">idioma</string>
+    <string name="reset_language">Restablecer idioma</string>
 </resources>
