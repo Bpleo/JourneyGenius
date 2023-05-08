@@ -408,7 +408,7 @@ class JourneyGeniusViewModel(
 
     private val _startAtValue = mutableStateOf("")
     fun updateStartAtValue(value: String){
-
+        _startAtValue.value = value
     }
 
     //pull plan list from firestore and add to local vm
@@ -484,6 +484,7 @@ class JourneyGeniusViewModel(
                             realtime.child("planList").child(planId).removeValue()
                                 .addOnSuccessListener {
                                     Log.d("DATA","$planId change to private")
+
                                 }
                                 .addOnFailureListener {
                                         exception ->
@@ -494,6 +495,8 @@ class JourneyGeniusViewModel(
                             Log.e("DATA","Error updating likes field: $exception")
                         }
                 }
+                updateStartAtValue("")
+                updateCommunityPlanList(emptyMap())
             }
         }
     }
