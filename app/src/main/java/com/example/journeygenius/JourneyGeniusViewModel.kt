@@ -457,6 +457,37 @@ class JourneyGeniusViewModel(
         }
     }
 
+    fun deletePlanListFromGroup(planId: String){
+        val user = auth.currentUser
+        if (user != null){
+            val planGroupList = _planGroupList.value.toMutableMap()
+            val plan = planGroupList[planId]
+            if (plan != null) {
+                val public = plan.isPublic
+                planGroupList.remove(planId)
+                updatePlanGroupList(planGroupList)
+                db.collection("users").document(user.uid).update("Plan_List", _planGroupList.value)
+                    .addOnSuccessListener {
+                        if (public){
+                            realtime.child("planList").child(planId).removeValue()
+                                .addOnSuccessListener {
+                                    Log.d("DATA", "$planId removed from community")
+                                    updateCommunityPlanList(emptyMap())
+                                    updateStartAtValue("")
+                                }
+                                .addOnFailureListener { exception ->
+                                    Log.e("DATA", "Error updating likes field: $exception")
+                                }
+                        }
+                        Log.d("DATA", "$planId removed from user list")
+                    }
+                    .addOnFailureListener { exception ->
+                        Log.e("DATA", "Error updating likes field: $exception")
+                    }
+            }
+        }
+    }
+
     //change given plan's visibility, either make it public or private by given variable
     fun updatePlanVisibility(public: Boolean, planId: String) {
         val user = auth.currentUser
