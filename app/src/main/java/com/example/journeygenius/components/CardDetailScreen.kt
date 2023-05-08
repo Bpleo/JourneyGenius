@@ -36,7 +36,9 @@ import com.example.journeygenius.R
 fun CardDetailScreen(
     planId: String,
     viewModel: JourneyGeniusViewModel,
-    navController: NavController) {
+    navController: NavController,
+    category: String
+) {
 
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
@@ -50,7 +52,7 @@ fun CardDetailScreen(
     val showDialog = remember { mutableStateOf(false) }
     val selectedImageUrl = remember { mutableStateOf("") }
 
-    val plan = viewModel.getPlanById(planId)
+    val plan = viewModel.getPlanById(category, planId)
 
     val allPhotos: List<Photo> = plan!!.plans.flatMap { singlePlan ->
         singlePlan.attractions.flatMap { place ->

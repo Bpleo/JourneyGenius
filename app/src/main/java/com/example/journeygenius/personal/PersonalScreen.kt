@@ -71,14 +71,14 @@ fun PersonalScreen(
         composable("Personal Plan List"){
             PersonalListScreen(
                 viewModel = viewModel,
-                db = db,
                 navController = personalNavController)
         }
         composable("card_detail/{planId}") { backStackEntry ->
             CardDetailScreen(
                 planId = backStackEntry.arguments?.getString("planId") ?: "",
                 viewModel = viewModel,
-                navController = personalNavController
+                navController = personalNavController,
+                category =  "Personal"
             )
         }
     }

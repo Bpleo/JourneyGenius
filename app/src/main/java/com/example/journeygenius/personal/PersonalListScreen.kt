@@ -21,14 +21,9 @@ import com.google.firebase.firestore.FirebaseFirestore
 @Composable
 fun PersonalListScreen(
     viewModel: JourneyGeniusViewModel,
-    db: FirebaseFirestore,
     navController: NavHostController
 ){
     val windowSize = rememberWindowSize()
-
-    val dummyPlans = mutableListOf<Plans>()
-//    TODO: get from db or viewModel
-//    val plans: List<Plan>
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -47,13 +42,16 @@ fun PersonalListScreen(
                         verticalArrangement = Arrangement.spacedBy(16.dp),
                         modifier = Modifier.padding(bottom = 75.dp)
                     ) {
-                        items(dummyPlans.size) { index ->
+                        val plansList = viewModel.planGroupList.value.entries.toList()
+
+                        items(plansList.size) { index ->
+                            val (planId, plan) = plansList[index]
                             CustomCard(
-                                id = "0",
-                                data = dummyPlans[index]
-                            ) { planId->
+                                id = planId,
+                                data = plan
+                            ) { id->
                                 // Navigate to the CardDetailScreen with the given plan ID
-                                navController.navigate("card_detail/$planId")
+                                navController.navigate("card_detail/$id")
                             }
                         }
                     }

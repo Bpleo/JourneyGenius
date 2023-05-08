@@ -113,8 +113,17 @@ class JourneyGeniusViewModel(
         }
     }
 
-    fun getPlanById(planId: String): Plans? {
-        return communityPlanList.value[planId]
+    fun getPlanById(category: String, planId: String): Plans? {
+        if (category == "Community") {
+            return communityPlanList.value[planId]
+        } else {
+            return planGroupList.value[planId]
+        }
+    }
+
+
+    fun getPersonalPlanById(planId: String): Plans? {
+        return planGroupList.value[planId]
     }
 
     private fun getGroupList(groupListData: Map<String, Any>?): Map<String, Plans> {

@@ -51,7 +51,8 @@ fun CommunityScreen(viewModel: JourneyGeniusViewModel) {
                 CardDetailScreen(
                     planId = backStackEntry.arguments?.getString("planId") ?: "",
                     viewModel = viewModel,
-                    navController = nestedNavController
+                    navController = nestedNavController,
+                    category = "Community"
                 )
             }
         }
