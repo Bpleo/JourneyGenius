@@ -121,7 +121,8 @@ fun CommunityList(
 
                 CustomCard(
                     id = planId,
-                    data = plan
+                    data = plan,
+                    category = "Community"
                 ) { id ->
                     navController.navigate("card_detail/$id")
                 }

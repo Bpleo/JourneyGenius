@@ -1,11 +1,13 @@
 package com.example.journeygenius.components
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Favorite
+import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -27,7 +29,8 @@ import com.example.journeygenius.data.models.Plans
 fun CustomCard(
     id: String,
     data: Plans,
-    onCardClick: (String) -> Unit
+    category: String,
+    onCardClick: (String) -> Unit,
 ) {
 
     val allPhotos: List<Photo> = data.plans.flatMap { singlePlan ->
@@ -112,16 +115,25 @@ fun CustomCard(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.End
                     ) {
+                        if (category == "Personal" && !data.isPublic) {
+                            Icon(
+                                imageVector = Icons.Outlined.Lock,
+                                contentDescription = "Private",
+                                tint = Color.LightGray,
+                                modifier = Modifier
+                                    .size(16.dp)
+                            )
+                        }
                         Icon(
                             imageVector = Icons.Outlined.Favorite,
                             contentDescription = "Like",
                             tint = Color.Red,
                             modifier = Modifier
-                                .size(10.dp)
+                                .size(16.dp)
                         )
                         Text(
                             text = formatLikesString(data.likes),
-                            fontSize = 13.sp,
+                            fontSize = 16.sp,
                             color = Color.LightGray,
                             fontWeight = FontWeight.Bold,
                         )

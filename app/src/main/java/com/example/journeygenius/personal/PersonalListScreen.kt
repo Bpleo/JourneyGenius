@@ -48,7 +48,8 @@ fun PersonalListScreen(
                             val (planId, plan) = plansList[index]
                             CustomCard(
                                 id = planId,
-                                data = plan
+                                data = plan,
+                                category = "Personal"
                             ) { id->
                                 // Navigate to the CardDetailScreen with the given plan ID
                                 navController.navigate("card_detail/$id")

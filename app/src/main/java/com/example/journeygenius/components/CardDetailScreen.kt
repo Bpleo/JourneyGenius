@@ -28,6 +28,7 @@ import com.example.journeygenius.JourneyGeniusViewModel
 import com.example.journeygenius.PlacesapiKey
 import com.example.journeygenius.data.models.Photo
 import android.content.Context;
+import android.util.Log
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import com.example.journeygenius.R
@@ -73,6 +74,10 @@ fun CardDetailScreen(
     val showMorePhoto = remember { mutableStateOf(false) }
 
     val localLikes = remember { mutableStateOf(plan.likes) }
+
+    val publicStatus = remember { mutableStateOf(plan.isPublic) }
+    val initialPublicStatus = remember { publicStatus.value }
+
 
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
@@ -202,6 +207,10 @@ fun CardDetailScreen(
                     if (initialLikeStatus != userLikedPost.value) {
                         viewModel.updateLikes(localLikes.value, planId, userLikedPost.value)
                     }
+                    if (initialPublicStatus != publicStatus.value) {
+                        viewModel.updatePlanVisibility(planId = planId, public = publicStatus.value)
+                        Log.d("Data", "Change public status to "+ publicStatus.value.toString())
+                    }
                     navController.popBackStack()
                 },
                 modifier = Modifier.padding(end = 16.dp)
@@ -209,21 +218,40 @@ fun CardDetailScreen(
                 Text(text = stringResource(R.string.close))
             }
 
-            OutlinedButton(
-                onClick = {
-                    userLikedPost.value = !userLikedPost.value
+            if (category == "Personal") {
+                Row(verticalAlignment = Alignment.CenterVertically){
+                    Switch(
+                        checked = publicStatus.value,
+                        onCheckedChange = {
+                            publicStatus.value = !publicStatus.value
+//                            Log.d("Data", !publicStatus.value + "->"+ publicStatus.value)
+                        },
+                        modifier = Modifier.padding(start = 16.dp, end = 8.dp)
+                    )
+                    Text(
+                        text = if (publicStatus.value) stringResource(R.string.Public) else stringResource(
+                            R.string.Private),
+                        style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(end = 16.dp)
+                    )
+                }
+            } else if (category == "Community") {
+                OutlinedButton(
+                    onClick = {
+                        userLikedPost.value = !userLikedPost.value
 
-                    if (userLikedPost.value) {
-                        localLikes.value += 1
-                    }
-                    else {
-                        localLikes.value -= 1
-                    }
-                          },
-            ) {
-                Text(text = if (userLikedPost.value) stringResource(R.string.unlike) else stringResource(
-                                    R.string.like)
-                                )
+                        if (userLikedPost.value) {
+                            localLikes.value += 1
+                        }
+                        else {
+                            localLikes.value -= 1
+                        }
+                    },
+                ) {
+                    Text(text = if (userLikedPost.value) stringResource(R.string.unlike) else stringResource(
+                        R.string.like)
+                    )
+                }
             }
         }
 
