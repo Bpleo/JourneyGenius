@@ -1,5 +1,6 @@
 package com.example.journeygenius.plan
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.location.Address
@@ -42,8 +43,10 @@ import com.example.journeygenius.WindowSize
 import com.example.journeygenius.WindowType
 import com.example.journeygenius.JourneyGeniusViewModel
 import com.example.journeygenius.R
+import com.example.journeygenius.components.RequestPermission
 import com.example.journeygenius.rememberWindowSize
 import com.example.journeygenius.ui.theme.JourneyGeniusTheme
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -783,14 +786,14 @@ fun DestinationButton(navController: NavController) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 fun PlanScreen(
     viewModel: JourneyGeniusViewModel,
     windowSize: WindowSize,
     navController: NavController
 ) {
-
+    RequestPermission(permission = Manifest.permission.ACCESS_FINE_LOCATION, viewModel = viewModel)
     val selectedDateRange = remember {
         val value = viewModel.dateRange
         mutableStateOf(value)

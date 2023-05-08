@@ -67,7 +67,7 @@ class JourneyGeniusViewModel(
         onComplete: (Map<String, Plans>, String) -> Unit
     ) {
         var query = realtime.child("planList").orderByKey().limitToFirst(limit.toInt())
-        if (_startAtValue.value.isNotEmpty()){
+        if (_startAtValue.value.isNotEmpty()) {
             query = query.startAt(_startAtValue.value)
         }
         query.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -80,6 +80,7 @@ class JourneyGeniusViewModel(
                 if (groupList != null)
                     onComplete(groupList, nextStartAtValue)
             }
+
             override fun onCancelled(error: DatabaseError) {
                 Log.d("DATA", "Realtime pulled data false", error.toException())
             }
@@ -98,7 +99,7 @@ class JourneyGeniusViewModel(
     private val _communityPlanList = mutableStateOf(mapOf<String, Plans>())
     val communityPlanList: MutableState<Map<String, Plans>> = _communityPlanList
 
-    private fun updateCommunityPlanList(value : Map<String, Plans>){
+    private fun updateCommunityPlanList(value: Map<String, Plans>) {
         _communityPlanList.value = value
     }
 
@@ -109,7 +110,7 @@ class JourneyGeniusViewModel(
 //                Log.d("REALTIME3",groupListData.toString())
                 _communityPlanList.value = _communityPlanList.value + groupListData
             } catch (e: Exception) {
-                Log.e("fetchGroupDataAndPrint","Error fetching data: ${e.message}")
+                Log.e("fetchGroupDataAndPrint", "Error fetching data: ${e.message}")
             }
         }
     }
@@ -170,8 +171,9 @@ class JourneyGeniusViewModel(
                                     val widthData = photo["width"] as? Long
                                     val width = widthData?.toInt() ?: 0
                                     val photo_reference = photo["photo_reference"] as? String
-                                    val html_attributions = photo["html_attributions"] as? List<String>
-                                    if (height != null && width != null && photo_reference != null && html_attributions != null){
+                                    val html_attributions =
+                                        photo["html_attributions"] as? List<String>
+                                    if (height != null && width != null && photo_reference != null && html_attributions != null) {
                                         Log.d("DATA", "attraction photo pulled")
                                         Photo(height, html_attributions, photo_reference, width)
                                     } else
@@ -192,7 +194,7 @@ class JourneyGeniusViewModel(
                             } ?: emptyList()
                         // get startAttraction
                         val startAttractionData = planData["startAttraction"] as? Map<String, Any>
-                        val startAttraction = startAttractionData?.let {data ->
+                        val startAttraction = startAttractionData?.let { data ->
                             val name = data["name"] as? String
                             val vicinity = data["vicinity"] as? String
                             val locationData = data["location"] as? Map<String, Any>
@@ -217,7 +219,7 @@ class JourneyGeniusViewModel(
                                 val width = widthData?.toInt() ?: 0
                                 val photo_reference = photo["photo_reference"] as? String
                                 val html_attributions = photo["html_attributions"] as? List<String>
-                                if (height != null && width != null && photo_reference != null && html_attributions != null){
+                                if (height != null && width != null && photo_reference != null && html_attributions != null) {
                                     Log.d("DATA", "attraction photo pulled")
                                     Photo(height, html_attributions, photo_reference, width)
                                 } else
@@ -256,7 +258,7 @@ class JourneyGeniusViewModel(
                                 val width = widthData?.toInt()
                                 val photo_reference = photo["photo_reference"] as? String
                                 val html_attributions = photo["html_attributions"] as? List<String>
-                                if (height != null && width != null && photo_reference != null && html_attributions != null){
+                                if (height != null && width != null && photo_reference != null && html_attributions != null) {
                                     Log.d("DATA", "attraction photo pulled")
                                     Photo(height, html_attributions, photo_reference, width)
                                 } else
@@ -269,59 +271,10 @@ class JourneyGeniusViewModel(
                                 null // get a Place Object
                         }
                         // get attractionRoutes
-                        val attractionRoutesData = planData["attractionRoutes"] as? List<Map<String, Any>>
-                        val attractionRoutes: List<Place> = attractionRoutesData?.mapNotNull { data->
-                            val name = data["name"] as? String
-                            val vicinity = data["vicinity"] as? String
-                            val locationData = data["location"] as? Map<String, Any>
-                            val location = locationData?.let {
-                                Location(
-                                    lat = it["lat"] as? Double ?: 0.0,
-                                    lng = it["lng"] as? Double ?: 0.0
-                                )
-                            }
-                            val ratingData = data["rating"]
-                            val rating: Double? = if (ratingData is Long)
-                                ratingData.toDouble()
-                            else
-                                ratingData as Double
-                            val place_id = data["place_id"] as? String
-                            // get a list of photos
-                            val photosData = data["photos"] as? List<Map<String, Any>>
-                            val photos: List<Photo>? = photosData?.mapNotNull { photo ->
-                                val heightData = photo["height"] as? Long
-                                val height = heightData?.toInt()
-                                val widthData = photo["width"] as? Long
-                                val width = widthData?.toInt()
-                                val photo_reference = photo["photo_reference"] as? String
-                                val html_attributions = photo["html_attributions"] as? List<String>
-                                if (height != null && width != null && photo_reference != null && html_attributions != null){
-                                    Log.d("DATA", "attraction photo pulled")
-                                    Photo(height, html_attributions, photo_reference, width)
-                                } else
-                                    null
-                            }
-                            if (name != null && vicinity != null && location != null && rating != null && place_id != null) {
-                                Log.d("DATA", "attraction pulled")
-                                Place(
-                                    name,
-                                    vicinity,
-                                    location,
-                                    rating,
-                                    place_id,
-                                    photos
-                                )
-                            } else
-                                null // get a Place Object
-                        } ?: emptyList()
-                        // get a list of hotels
-                        val hotelData = planData["hotel"] as? List<Map<String, Any>>
-                        val hotel:List<Hotel> = hotelData?.mapNotNull { hotelData ->
-                            val priceLevelData = hotelData["priceLevel"] as? Long
-                            val priceLevel = priceLevelData?.toInt()
-                            val placeData = hotelData["place"] as? Map<String, Any>
-                            val place = placeData?.let{
-                                    data ->
+                        val attractionRoutesData =
+                            planData["attractionRoutes"] as? List<Map<String, Any>>
+                        val attractionRoutes: List<Place> =
+                            attractionRoutesData?.mapNotNull { data ->
                                 val name = data["name"] as? String
                                 val vicinity = data["vicinity"] as? String
                                 val locationData = data["location"] as? Map<String, Any>
@@ -345,8 +298,60 @@ class JourneyGeniusViewModel(
                                     val widthData = photo["width"] as? Long
                                     val width = widthData?.toInt()
                                     val photo_reference = photo["photo_reference"] as? String
-                                    val html_attributions = photo["html_attributions"] as? List<String>
-                                    if (height != null && width != null && photo_reference != null && html_attributions != null){
+                                    val html_attributions =
+                                        photo["html_attributions"] as? List<String>
+                                    if (height != null && width != null && photo_reference != null && html_attributions != null) {
+                                        Log.d("DATA", "attraction photo pulled")
+                                        Photo(height, html_attributions, photo_reference, width)
+                                    } else
+                                        null
+                                }
+                                if (name != null && vicinity != null && location != null && rating != null && place_id != null) {
+                                    Log.d("DATA", "attraction pulled")
+                                    Place(
+                                        name,
+                                        vicinity,
+                                        location,
+                                        rating,
+                                        place_id,
+                                        photos
+                                    )
+                                } else
+                                    null // get a Place Object
+                            } ?: emptyList()
+                        // get a list of hotels
+                        val hotelData = planData["hotel"] as? List<Map<String, Any>>
+                        val hotel: List<Hotel> = hotelData?.mapNotNull { hotelData ->
+                            val priceLevelData = hotelData["priceLevel"] as? Long
+                            val priceLevel = priceLevelData?.toInt()
+                            val placeData = hotelData["place"] as? Map<String, Any>
+                            val place = placeData?.let { data ->
+                                val name = data["name"] as? String
+                                val vicinity = data["vicinity"] as? String
+                                val locationData = data["location"] as? Map<String, Any>
+                                val location = locationData?.let {
+                                    Location(
+                                        lat = it["lat"] as? Double ?: 0.0,
+                                        lng = it["lng"] as? Double ?: 0.0
+                                    )
+                                }
+                                val ratingData = data["rating"]
+                                val rating: Double? = if (ratingData is Long)
+                                    ratingData.toDouble()
+                                else
+                                    ratingData as Double
+                                val place_id = data["place_id"] as? String
+                                // get a list of photos
+                                val photosData = data["photos"] as? List<Map<String, Any>>
+                                val photos: List<Photo>? = photosData?.mapNotNull { photo ->
+                                    val heightData = photo["height"] as? Long
+                                    val height = heightData?.toInt()
+                                    val widthData = photo["width"] as? Long
+                                    val width = widthData?.toInt()
+                                    val photo_reference = photo["photo_reference"] as? String
+                                    val html_attributions =
+                                        photo["html_attributions"] as? List<String>
+                                    if (height != null && width != null && photo_reference != null && html_attributions != null) {
                                         Log.d("DATA", "hotel photo pulled")
                                         Photo(height, html_attributions, photo_reference, width)
                                     } else
@@ -358,13 +363,13 @@ class JourneyGeniusViewModel(
                                 } else
                                     null // get a Place Object
                             }
-                            if (priceLevel != null && place != null){
+                            if (priceLevel != null && place != null) {
                                 Log.d("DATA", "hotel pulled")
                                 Hotel(place, priceLevel)
                             } else {
                                 null
                             }
-                        }?: emptyList()
+                        } ?: emptyList()
                         // get a SinglePlan Object
                         if (date != null && destination != null && attractions != null && priceLevel != null
                             && startAttraction != null && endAttraction != null && attractionRoutes != null
@@ -407,7 +412,7 @@ class JourneyGeniusViewModel(
     }
 
     private val _startAtValue = mutableStateOf("")
-    fun updateStartAtValue(value: String){
+    fun updateStartAtValue(value: String) {
         _startAtValue.value = value
     }
 
@@ -431,7 +436,8 @@ class JourneyGeniusViewModel(
                             var groupList: Map<String, Plans> = emptyMap()
                             if (groupListData != null)
                                 groupList = getGroupList(groupListData)
-                            val likedListData = documentSnapshot.get("likedPlanList") as List<String>
+                            val likedListData =
+                                documentSnapshot.get("likedPlanList") as List<String>
                             updateLikedPlanList(likedListData)
                             // append groupList to current vm
                             if (groupList != null)
@@ -452,7 +458,7 @@ class JourneyGeniusViewModel(
     }
 
     //change given plan's visibility, either make it public or private by given variable
-    fun updatePlanVisibility(public: Boolean, planId: String){
+    fun updatePlanVisibility(public: Boolean, planId: String) {
         val user = auth.currentUser
         val fireStoreUpdates = mapOf(
             "Plan_List.$planId.public" to public
@@ -460,7 +466,7 @@ class JourneyGeniusViewModel(
         if (user != null) {
             val planGroupList = _planGroupList.value.toMutableMap()
             val updatePlan = planGroupList[planId]
-            if (updatePlan != null){
+            if (updatePlan != null) {
                 updatePlan.isPublic = public
                 planGroupList[planId] = updatePlan
                 updatePlanGroupList(planGroupList)
@@ -469,30 +475,29 @@ class JourneyGeniusViewModel(
                         .addOnSuccessListener {
                             realtime.child("planList").child(planId).setValue(updatePlan)
                                 .addOnSuccessListener {
-                                    Log.d("DATA","$planId change to public")
+                                    Log.d("DATA", "$planId change to public")
                                 }
-                                .addOnFailureListener {exception ->
-                                    Log.e("DATA","Error updating likes field: $exception")
+                                .addOnFailureListener { exception ->
+                                    Log.e("DATA", "Error updating likes field: $exception")
                                 }
                         }
-                        .addOnFailureListener {exception ->
-                            Log.e("DATA","Error updating likes field: $exception")
+                        .addOnFailureListener { exception ->
+                            Log.e("DATA", "Error updating likes field: $exception")
                         }
                 } else {
                     db.collection("users").document(user.uid).update(fireStoreUpdates)
                         .addOnSuccessListener {
                             realtime.child("planList").child(planId).removeValue()
                                 .addOnSuccessListener {
-                                    Log.d("DATA","$planId change to private")
+                                    Log.d("DATA", "$planId change to private")
 
                                 }
-                                .addOnFailureListener {
-                                        exception ->
-                                    Log.e("DATA","Error updating likes field: $exception")
+                                .addOnFailureListener { exception ->
+                                    Log.e("DATA", "Error updating likes field: $exception")
                                 }
                         }
                         .addOnFailureListener { exception ->
-                            Log.e("DATA","Error updating likes field: $exception")
+                            Log.e("DATA", "Error updating likes field: $exception")
                         }
                 }
                 updateStartAtValue("")
@@ -501,7 +506,7 @@ class JourneyGeniusViewModel(
         }
     }
 
-    fun updateLikes(likes: Int, planId: String, isLikeAction: Boolean){
+    fun updateLikes(likes: Int, planId: String, isLikeAction: Boolean) {
         val user = auth.currentUser
         val fireStoreUpdates = mapOf(
             "Plan_List.$planId.likes" to likes
@@ -525,31 +530,34 @@ class JourneyGeniusViewModel(
                 updateCommunityPlanList(communityPlanList)
             }
             updateLikedPlanList(list)
-            db.collection("users").document(user.uid).update("likedPlanList",list).addOnSuccessListener {
-                db.collection("users").document(user.uid).update(fireStoreUpdates)
-                    .addOnSuccessListener {
-                        realtime.updateChildren(realtimeUpdates)
-                            .addOnSuccessListener {
-                                Log.d("DATA", "$planId's like updates to $likes")
-                            }
-                            .addOnFailureListener { exception ->
-                                Log.e("DATA","Error updating likes field: $exception")
-                            }
-                    }
-                    .addOnFailureListener { exception ->
-                        Log.e("DATA","Error updating likes field: $exception")
-                    }
-            }
+            db.collection("users").document(user.uid).update("likedPlanList", list)
+                .addOnSuccessListener {
+                    db.collection("users").document(user.uid).update(fireStoreUpdates)
+                        .addOnSuccessListener {
+                            realtime.updateChildren(realtimeUpdates)
+                                .addOnSuccessListener {
+                                    Log.d("DATA", "$planId's like updates to $likes")
+                                }
+                                .addOnFailureListener { exception ->
+                                    Log.e("DATA", "Error updating likes field: $exception")
+                                }
+                        }
+                        .addOnFailureListener { exception ->
+                            Log.e("DATA", "Error updating likes field: $exception")
+                        }
+                }
         }
     }
 
 
-    private var _languageList = mutableStateOf(mapOf<String, String>(
-        "en" to "English",
-        "zh" to "中文",
-        "es" to "Español"
-    ))
-    val languageList: MutableState<Map<String,String>> = _languageList
+    private var _languageList = mutableStateOf(
+        mapOf<String, String>(
+            "en" to "English",
+            "zh" to "中文",
+            "es" to "Español"
+        )
+    )
+    val languageList: MutableState<Map<String, String>> = _languageList
 
     private var _language = mutableStateOf("en")
 
@@ -558,9 +566,8 @@ class JourneyGeniusViewModel(
 
     fun updateLanguage(value: String) {
         _language.value = value
-        Log.d("Data", "Try changing language to "+ _language.value)
+        Log.d("Data", "Try changing language to " + _language.value)
     }
-
 
 
     private var _userName = mutableStateOf(TextFieldValue())
@@ -647,22 +654,32 @@ class JourneyGeniusViewModel(
         _dateRange.value = Range(start, end)
     }
 
-    private var _departCountry = mutableStateOf("US")
+    // TODO: get local location 
+    private var _departCountry = mutableStateOf("")
     val departCountry: MutableState<String> = _departCountry
     fun updateDepartCountry(value: String) {
         _departCountry.value = value
     }
 
-    private var _departState = mutableStateOf("MA")
+    private var _departState = mutableStateOf("")
     val departState: MutableState<String> = _departState
     fun updateDepartState(value: String) {
         _departState.value = value
     }
 
-    private var _departCity = mutableStateOf("Boston")
+    private var _departCity = mutableStateOf("")
     val departCity: MutableState<String> = _departCity
     fun updateDepartCity(value: String) {
         _departCity.value = value
+    }
+
+    private var _departLocation = mutableStateOf(Location(42.35078152627635, -71.10439199975308))
+    val departLocation: MutableState<Location> = _departLocation
+    fun updateDepartLocation(value: Location) {
+        _departLocation.value = value
+        viewModelScope.launch {
+           getNameByLatLng(value)
+        }
     }
 
     private var _destCountry = mutableStateOf("")
@@ -771,25 +788,27 @@ class JourneyGeniusViewModel(
 
     private var _likedPlanList = mutableStateOf<List<String>>(listOf())
     val likedPlanList: MutableState<List<String>> = _likedPlanList
-    fun updateLikedPlanList(value: List<String>){
+    fun updateLikedPlanList(value: List<String>) {
         _likedPlanList.value = value
     }
 
     private var _attractionRoutes = mutableStateOf<List<Place>>(listOf())
-    val attractionRoutes:MutableState<List<Place>> = _attractionRoutes
-    fun updateAttractionRoutes(value: List<Place>){
-        _attractionRoutes.value=value
+    val attractionRoutes: MutableState<List<Place>> = _attractionRoutes
+    fun updateAttractionRoutes(value: List<Place>) {
+        _attractionRoutes.value = value
     }
-    fun addAttractionToRoutes(value: Place){
-        val updatedRoutes=_attractionRoutes.value.toMutableList()
-        if(!updatedRoutes.contains(value)){
+
+    fun addAttractionToRoutes(value: Place) {
+        val updatedRoutes = _attractionRoutes.value.toMutableList()
+        if (!updatedRoutes.contains(value)) {
             updatedRoutes.add(value)
             updateAttractionRoutes(updatedRoutes)
         }
     }
-    fun delAttractionToRoutes(value:Place){
-        val updatedRoutes=_attractionRoutes.value.toMutableList()
-        if(updatedRoutes.contains(value)){
+
+    fun delAttractionToRoutes(value: Place) {
+        val updatedRoutes = _attractionRoutes.value.toMutableList()
+        if (updatedRoutes.contains(value)) {
             updatedRoutes.remove(value)
             updateAttractionRoutes(updatedRoutes)
         }
@@ -797,10 +816,14 @@ class JourneyGeniusViewModel(
 
 
     private var _singlePlan =
-        mutableStateOf(SinglePlan("", "", listOf(),
-            Place("", "", Location(0.0, 0.0), 0.0, "", listOf()),
-            Place("", "", Location(0.0, 0.0), 0.0, "", listOf()),
-            listOf(),4, "extravagant", listOf(), ""))
+        mutableStateOf(
+            SinglePlan(
+                "", "", listOf(),
+                Place("", "", Location(0.0, 0.0), 0.0, "", listOf()),
+                Place("", "", Location(0.0, 0.0), 0.0, "", listOf()),
+                listOf(), 4, "extravagant", listOf(), ""
+            )
+        )
     val singlePlan: MutableState<SinglePlan> = _singlePlan
     fun updateSinglePlan(value: SinglePlan) {
         _singlePlan.value = value
@@ -809,8 +832,9 @@ class JourneyGeniusViewModel(
     fun addHotelsToSinglePlan(value: List<Hotel>) {
         singlePlan.value.hotel = value
     }
-    fun addRoutesToSinglePlan(value:List<Place>){
-        singlePlan.value.attractionRoutes=value
+
+    fun addRoutesToSinglePlan(value: List<Place>) {
+        singlePlan.value.attractionRoutes = value
     }
 
     private var _planList = mutableStateOf(listOf<SinglePlan>())
@@ -843,6 +867,7 @@ class JourneyGeniusViewModel(
         }
 
     }
+
     private var _planGroup = mutableStateOf(Plans("", "", true, listOf()))
     val planGroup: MutableState<Plans> = _planGroup
     fun updatePlanGroup(value: Plans) {
@@ -960,11 +985,12 @@ class JourneyGeniusViewModel(
         _travelType.value = value
     }
 
-    private var _countryList = mutableStateOf(mapOf<String,Int>())
-    val countryList: MutableState<Map<String,Int>> = _countryList
-    private fun updateCountryList(value: Map<String,Int>){
-        _countryList.value=value
+    private var _countryList = mutableStateOf(mapOf<String, Int>())
+    val countryList: MutableState<Map<String, Int>> = _countryList
+    private fun updateCountryList(value: Map<String, Int>) {
+        _countryList.value = value
     }
+
     //initialize countries list from api
     init {
         viewModelScope.launch {
@@ -973,19 +999,20 @@ class JourneyGeniusViewModel(
     }
 
 
-    private var _departStateList = mutableStateOf(mapOf<String,Int>())
-    val departStateList: MutableState<Map<String,Int>> = _departStateList
+    private var _departStateList = mutableStateOf(mapOf<String, Int>())
+    val departStateList: MutableState<Map<String, Int>> = _departStateList
     fun updateDepartStateList(geoNameId: Int) {
         viewModelScope.launch {
-            _departStateList.value=getAllStates(geoNameId)
+            _departStateList.value = getAllStates(geoNameId)
         }
 
     }
-    private var _destStateList = mutableStateOf(mapOf<String,Int>())
-    val destStateList: MutableState<Map<String,Int>> = _destStateList
+
+    private var _destStateList = mutableStateOf(mapOf<String, Int>())
+    val destStateList: MutableState<Map<String, Int>> = _destStateList
     fun updateDestStateList(geoNameId: Int) {
         viewModelScope.launch {
-            _destStateList.value=getAllStates(geoNameId)
+            _destStateList.value = getAllStates(geoNameId)
         }
     }
 
@@ -995,25 +1022,27 @@ class JourneyGeniusViewModel(
 //        _countyList.value=value
 //    }
 
-    private var _departCityList = mutableStateOf(mapOf<String,LatLng>())
-    val departCityList: MutableState<Map<String,LatLng>> = _departCityList
+    private var _departCityList = mutableStateOf(mapOf<String, LatLng>())
+    val departCityList: MutableState<Map<String, LatLng>> = _departCityList
     fun updateDepartCityList(geoNameId: Int) {
         viewModelScope.launch {
-            _departCityList.value=getAllCities(geoNameId)
+            _departCityList.value = getAllCities(geoNameId)
         }
     }
-    fun clearDepartCityList(){
+
+    fun clearDepartCityList() {
         _departCityList.value.toMutableMap().clear()
     }
 
-    private var _destCityList = mutableStateOf(mapOf<String,LatLng>())
-    val destCityList: MutableState<Map<String,LatLng>> = _destCityList
+    private var _destCityList = mutableStateOf(mapOf<String, LatLng>())
+    val destCityList: MutableState<Map<String, LatLng>> = _destCityList
     fun updateDestCityList(geoNameId: Int) {
         viewModelScope.launch {
-            _destCityList.value=getAllCities(geoNameId)
+            _destCityList.value = getAllCities(geoNameId)
         }
     }
-    fun clearDestCityList(){
+
+    fun clearDestCityList() {
         _destCityList.value.toMutableMap().clear()
     }
 
@@ -1052,6 +1081,7 @@ class JourneyGeniusViewModel(
         }
         updateSelectedHotelList(updatedSelectedHotel)
     }
+
     private var _attractionToHotels = mutableStateOf(mapOf<Place, List<Hotel>>())
     val attractionToHotels: MutableState<Map<Place, List<Hotel>>> = _attractionToHotels
     fun updateAttractionToHotel(value: Map<Place, List<Hotel>>) {
@@ -1110,7 +1140,10 @@ class JourneyGeniusViewModel(
                     Place(
                         name = result.name,
                         vicinity = result.vicinity,
-                        location = Location(result.geometry.location.lat, result.geometry.location.lng),
+                        location = Location(
+                            result.geometry.location.lat,
+                            result.geometry.location.lng
+                        ),
                         rating = result.rating,
                         place_id = result.place_id,
                         photos = result.photos?.toList()
@@ -1141,7 +1174,10 @@ class JourneyGeniusViewModel(
                     Place(
                         name = result.name,
                         vicinity = result.vicinity,
-                        location = Location(result.geometry.location.lat, result.geometry.location.lng),
+                        location = Location(
+                            result.geometry.location.lat,
+                            result.geometry.location.lng
+                        ),
                         rating = result.rating,
                         place_id = result.place_id,
                         photos = result.photos?.toList()
@@ -1279,10 +1315,14 @@ class JourneyGeniusViewModel(
                 for (i in 0 until newRoutes.size()) {
                     val pointsLegs = newRoutes[i].asJsonObject
                         .getAsJsonArray("legs")
-                    for (j in 0 until pointsLegs.size()){
-                        val pointsSteps=pointsLegs[j].asJsonObject.getAsJsonArray("steps").flatMap {
-                            decodePoly(it.asJsonObject.getAsJsonObject("polyline").get("points").asString)
-                        }
+                    for (j in 0 until pointsLegs.size()) {
+                        val pointsSteps =
+                            pointsLegs[j].asJsonObject.getAsJsonArray("steps").flatMap {
+                                decodePoly(
+                                    it.asJsonObject.getAsJsonObject("polyline")
+                                        .get("points").asString
+                                )
+                            }
                         legs.addAll(pointsSteps)
                     }
 
@@ -1301,10 +1341,14 @@ class JourneyGeniusViewModel(
                 for (i in 0 until routes.size()) {
                     val pointsLegs = routes[i].asJsonObject
                         .getAsJsonArray("legs")
-                    for (j in 0 until pointsLegs.size()){
-                        val pointsSteps=pointsLegs[j].asJsonObject.getAsJsonArray("steps").flatMap {
-                            decodePoly(it.asJsonObject.getAsJsonObject("polyline").get("points").asString)
-                        }
+                    for (j in 0 until pointsLegs.size()) {
+                        val pointsSteps =
+                            pointsLegs[j].asJsonObject.getAsJsonArray("steps").flatMap {
+                                decodePoly(
+                                    it.asJsonObject.getAsJsonObject("polyline")
+                                        .get("points").asString
+                                )
+                            }
                         legs.addAll(pointsSteps)
                     }
 
@@ -1322,7 +1366,7 @@ class JourneyGeniusViewModel(
             }
             allRoutes
         } catch (e: Exception) {
-            Log.e("getRoutes","Error occurred: ${e.message}")
+            Log.e("getRoutes", "Error occurred: ${e.message}")
             emptyList()
         }
     }
@@ -1337,7 +1381,8 @@ class JourneyGeniusViewModel(
                 val allCountries = mutableMapOf<String, Int>()
                 if (!geoNamesList.isEmpty) {
                     for (i in geoNamesList) {
-                        allCountries[i.asJsonObject["countryName"].asString] = i.asJsonObject["geonameId"].asInt
+                        allCountries[i.asJsonObject["countryName"].asString] =
+                            i.asJsonObject["geonameId"].asInt
                     }
                 }
                 updateCountryList(allCountries)
@@ -1348,8 +1393,8 @@ class JourneyGeniusViewModel(
         }
     }
 
-    suspend fun getAllStates(geoNameId: Int):Map<String,Int> = withContext(Dispatchers.IO){
-        try{
+    suspend fun getAllStates(geoNameId: Int): Map<String, Int> = withContext(Dispatchers.IO) {
+        try {
             val url =
                 "http://api.geonames.org/childrenJSON?geonameId=${geoNameId}&username=journeyGenius"
             val result = URL(url).readText()
@@ -1364,19 +1409,81 @@ class JourneyGeniusViewModel(
                 }
             }
             allStates
-        }catch (e:Exception){
+        } catch (e: Exception) {
             Log.e("getAllStates", "Error: ${e.message}")
             emptyMap()
         }
     }
 
     // TODO: Clean Rubbish
-    suspend fun getAllCities(geoNameId:Int):Map<String,LatLng> = withContext(Dispatchers.IO){
+    suspend fun getAllCities(geoNameId: Int): Map<String, LatLng> = withContext(Dispatchers.IO) {
 
-        val CAandUSiDList= listOf(5883102,5909050,6065171,6087430,6354959,6091069,6091530,6091732,6093943,6113358,6115047,6141242,6185811,
-            4829764,5879092,5551752,4099753,5332921,5417618,4831725,4142224,4155751,4197000,5855797,5596512,4896861,4921868,4862182,4273857,6254925,
-            4331987,4971068,4361885,6254926,5001836,5037779,4436296,4398678,5667009,5073708,5509151,5090174,5101760,5481136,5128638,4482348,5690763,5165418,
-            4544379,5744337,6254927,5224323,4597040,5769223,4662168,4736286,5549030,5242283,6254928,5815135,4138106,4826850,5279468,5843591)
+        val CAandUSiDList = listOf(
+            5883102,
+            5909050,
+            6065171,
+            6087430,
+            6354959,
+            6091069,
+            6091530,
+            6091732,
+            6093943,
+            6113358,
+            6115047,
+            6141242,
+            6185811,
+            4829764,
+            5879092,
+            5551752,
+            4099753,
+            5332921,
+            5417618,
+            4831725,
+            4142224,
+            4155751,
+            4197000,
+            5855797,
+            5596512,
+            4896861,
+            4921868,
+            4862182,
+            4273857,
+            6254925,
+            4331987,
+            4971068,
+            4361885,
+            6254926,
+            5001836,
+            5037779,
+            4436296,
+            4398678,
+            5667009,
+            5073708,
+            5509151,
+            5090174,
+            5101760,
+            5481136,
+            5128638,
+            4482348,
+            5690763,
+            5165418,
+            4544379,
+            5744337,
+            6254927,
+            5224323,
+            4597040,
+            5769223,
+            4662168,
+            4736286,
+            5549030,
+            5242283,
+            6254928,
+            5815135,
+            4138106,
+            4826850,
+            5279468,
+            5843591
+        )
         try {
             if (geoNameId in CAandUSiDList) {  //US and Canada
                 val geoIDList = mutableListOf<Int>()
@@ -1427,15 +1534,13 @@ class JourneyGeniusViewModel(
                 }
                 allCities
             }
-        }catch (e:Exception){
+        } catch (e: Exception) {
             Log.e("getAllCities", "Error: ${e.message}")
             emptyMap()
         }
 
 
     }
-
-
 
     fun getPhotoUrl(photoReference: String, apiKey: String): String {
         return "https://maps.googleapis.com/maps/api/place/photo?maxwidth=100&photoreference=$photoReference&key=$apiKey"
@@ -1445,4 +1550,32 @@ class JourneyGeniusViewModel(
         val list = _likedPlanList.value.toMutableList()
         return list.contains(planId)
     }
+
+    suspend fun getNameByLatLng(value: Location) = withContext(Dispatchers.IO) {
+        val lat = value.lat
+        val lng = value.lng
+        val url =
+            "http://api.geonames.org/findNearbyJSON?lat=${lat}&lng=${lng}&username=journeyGenius&style=full"
+        try {
+            val result = URL(url).readText()
+            val jsonObject = JsonParser.parseString(result).asJsonObject
+            val geoNamesList = jsonObject.getAsJsonArray("geonames")[0].asJsonObject
+            val countryName = geoNamesList["countryName"].asString
+            val adminName1 = geoNamesList["adminName1"].asString
+            val adminName2 = geoNamesList["adminName2"].asString
+            val adminName3 = geoNamesList["adminName3"].asString
+            updateDepartCountry(countryName)
+            updateDepartState(adminName1)
+            if (countryName == "Canada" || countryName == "United States") {
+                updateDepartCity(adminName3)
+            }else{
+                updateDepartCity(adminName2)
+            }
+            "$adminName3, $adminName2, $adminName1, $countryName"
+        } catch (e: Exception) {
+            Log.e("getNameByLatLng", "Error retrieving location data", e)
+            null
+        }
+    }
+
 }

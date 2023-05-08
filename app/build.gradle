@@ -137,16 +137,7 @@ dependencies {
     // Rating bar
     implementation 'com.github.a914-gowtham:compose-ratingbar:1.2.5'
 
-//    // Room components
-//    implementation "androidx.room:room-runtime:2.5.1"
-//    kapt "androidx.room:room-compiler:2.5.1"
-//    implementation "androidx.room:room-ktx:2.5.1"
-//
-//    // DataStore Preferences
-//    implementation("androidx.datastore:datastore-preferences:1.0.0")
-//
-//    // Dagger - Hilt
-//    implementation "com.google.dagger:hilt-android:2.42"
-//    kapt "com.google.dagger:hilt-android-compiler:2.42"
+    //provides Android runtime permissions
+    implementation 'com.google.accompanist:accompanist-permissions:0.24.13-rc'
 
 }
