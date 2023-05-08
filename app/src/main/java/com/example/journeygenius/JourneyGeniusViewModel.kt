@@ -533,6 +533,28 @@ class JourneyGeniusViewModel(
         }
     }
 
+
+    private var _languageList = mutableStateOf(mapOf<String, String>(
+        "en" to "English",
+        "zh" to "中文",
+        "es" to "Español"
+    ))
+    val languageList: MutableState<Map<String,String>> = _languageList
+
+    private var _language = mutableStateOf("en")
+
+    val language: MutableState<String> = _language
+
+
+    fun updateLanguage(value: String) {
+        _language.value = value
+        Log.d("Data", "Try changing language to "+ _language.value)
+        // TODO:
+        //  Need to change the device language settings here
+    }
+
+
+
     private var _userName = mutableStateOf(TextFieldValue())
     val userName: MutableState<TextFieldValue> = _userName
 
@@ -1072,7 +1094,7 @@ class JourneyGeniusViewModel(
         withContext(Dispatchers.IO) {
             try {
                 val url =
-                    URL("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${location.lat},${location.lng}&radius=$radius&key=$apiKey&type=tourist_attraction&language=en")
+                    URL("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${location.lat},${location.lng}&radius=$radius&key=$apiKey&type=tourist_attraction&language=${_language}")
                 val json = url.readText(Charset.defaultCharset())
                 val gson = Gson()
                 val response = gson.fromJson(json, Response::class.java)
@@ -1103,7 +1125,7 @@ class JourneyGeniusViewModel(
         return withContext(Dispatchers.IO) {
             try {
                 val url =
-                    URL("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${location.lat},${location.lng}&radius=$radius&key=$apiKey&type=tourist_attraction&language=en")
+                    URL("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${location.lat},${location.lng}&radius=$radius&key=$apiKey&type=tourist_attraction&language=${_language}")
                 val json = url.readText(Charset.defaultCharset())
                 val gson = Gson()
                 val response = gson.fromJson(json, Response::class.java)
@@ -1142,7 +1164,7 @@ class JourneyGeniusViewModel(
         var priceLevelFound = false
         var priceLevelMatched = false
         val url =
-            URL("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${location.lat},${location.lng}&radius=$radius&type=lodging&key=$apiKey&language=en")
+            URL("https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${location.lat},${location.lng}&radius=$radius&type=lodging&key=$apiKey&language=${_language}")
         try {
             val json = url.readText(Charset.defaultCharset())
             val gson = Gson()

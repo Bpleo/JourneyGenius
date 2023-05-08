@@ -57,7 +57,9 @@ fun PersonalScreen(
             PersonalMenu(LocalContext.current, viewModel, navController, personalNavController)
         }
         composable("Personal Settings") {
-            PersonalSettingScreen(navController = personalNavController)
+            PersonalSettingScreen(
+                viewModel = viewModel,
+                navController = personalNavController)
         }
         composable("Personal Account") {
             PersonalAccountScreen(
@@ -84,7 +86,7 @@ fun PersonalScreen(
     }
 }
 
-private val optionsList: ArrayList<OptionsData> = ArrayList()
+//private val optionsList: ArrayList<OptionsData> = ArrayList()
 
 @Composable
 fun PersonalMenu(
@@ -93,45 +95,56 @@ fun PersonalMenu(
     navController: NavHostController,
     personalNavController: NavHostController
 ) {
-    var listPrepared by remember {
-        mutableStateOf(false)
-    }
+
     LaunchedEffect(Unit) {
         withContext(Dispatchers.Default) {
-            optionsList.clear()
-            prepareOptionsData()
-            listPrepared = true
         }
     }
-    if (listPrepared) {
-        Column {
-            LazyColumn(
-                modifier = Modifier.padding(bottom = 75.dp)
-            ) {
-                item {
-                    UserDetails(
-                        context = context,
-                        name = viewModel.userName.value.text,
-                        email = viewModel.email.value.text
-                    )
-                }
-                // Show the options
-                items(optionsList) { item ->
-                    OptionsItemStyle(
-                        item = item,
-                        context = context,
-                        navController = personalNavController
-                    )
-                }
-                item {
-                    OptionsItemStyle(
-                        item = OptionsData(
-                            icon = Icons.Default.Logout,
-                            title = "Log out",
-                            subTitle = ""
-                        ), context = context, navController = navController
-                    )
-                }
+    Column {
+        LazyColumn(
+            modifier = Modifier.padding(bottom = 75.dp)
+        ) {
+            item {
+                UserDetails(
+                    context = context,
+                    name = viewModel.userName.value.text,
+                    email = viewModel.email.value.text
+                )
+            }
+            // Show the options
+            item {
+                OptionsItemStyle(item = OptionsData(
+                    icon = Icons.Outlined.Person,
+                    title = stringResource(R.string.personal_settings),
+                    subTitle = "Manage your account",
+                    id = "Account"
+                ), context = context, navController = personalNavController)
+            }
+            item {
+                OptionsItemStyle(item = OptionsData(
+                    icon = Icons.Outlined.FavoriteBorder,
+                    title = stringResource(R.string.my_plan_list),
+                    subTitle = "My plans",
+                    id = "Plan List"
+                ), context = context, navController = personalNavController)
+            }
+            item {
+                OptionsItemStyle(item = OptionsData(
+                    icon = Icons.Outlined.Settings,
+                    title = stringResource(R.string.settings),
+                    subTitle = "App settings",
+                    id = "Settings"
+                ), context = context, navController = personalNavController)
+            }
+            item {
+                OptionsItemStyle(
+                    item = OptionsData(
+                        icon = Icons.Default.Logout,
+                        title = stringResource(R.string.log_out),
+                        subTitle = "",
+                        id = "Log out"
+                    ), context = context, navController = navController
+                )
             }
         }
     }
@@ -191,7 +204,7 @@ private fun OptionsItemStyle(
 ) {
     val logout = true
     Row(
-        modifier = when (item.title) {
+        modifier = when (item.id) {
             "Log out" -> {
                 Modifier
                     .fillMaxWidth()
@@ -206,7 +219,7 @@ private fun OptionsItemStyle(
                 Modifier
                     .fillMaxWidth()
                     .clickable(enabled = true) {
-                        navController.navigate("Personal " + item.title) {}
+                        navController.navigate("Personal " + item.id) {}
                     }
                     .padding(all = 16.dp)
             }
@@ -267,32 +280,8 @@ private fun OptionsItemStyle(
     }
 }
 
-data class OptionsData(val icon: ImageVector, val title: String, val subTitle: String)
+data class OptionsData(val icon: ImageVector, val title: String, val subTitle: String, val id: String)
 
-private fun prepareOptionsData() {
-    val appIcons = Icons.Outlined
-    optionsList.add(
-        OptionsData(
-            icon = appIcons.Person,
-            title = "Account",
-            subTitle = "Manage your account"
-        )
-    )
-    optionsList.add(
-        OptionsData(
-            icon = appIcons.FavoriteBorder,
-            title = "Plan List",
-            subTitle = "My plans"
-        )
-    )
-    optionsList.add(
-        OptionsData(
-            icon = appIcons.Settings,
-            title = "Settings",
-            subTitle = "App notification settings"
-        )
-    )
-}
 
 
 @Preview(showBackground = true)
