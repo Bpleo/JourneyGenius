@@ -556,8 +556,6 @@ class JourneyGeniusViewModel(
     fun updateLanguage(value: String) {
         _language.value = value
         Log.d("Data", "Try changing language to "+ _language.value)
-        // TODO:
-        //  Need to change the device language settings here
     }
 
 
