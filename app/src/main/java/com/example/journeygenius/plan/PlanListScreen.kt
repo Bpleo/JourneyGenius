@@ -1,28 +1,22 @@
 package com.example.journeygenius.plan
 
 import android.widget.Toast
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -30,10 +24,10 @@ import com.example.journeygenius.ui.theme.JourneyGeniusTheme
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.journeygenius.JourneyGeniusViewModel
+import com.example.journeygenius.R
 import com.example.journeygenius.components.SwipeBackground
 import com.example.journeygenius.data.models.*
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -59,6 +53,8 @@ fun PlanList(
         planViewModel.isPublic
     }
     val context = LocalContext.current
+    val word =stringResource(R.string.save_successfully)
+
     JourneyGeniusTheme {
         Box(
             modifier = Modifier.fillMaxSize(),
@@ -70,7 +66,7 @@ fun PlanList(
                     .padding(0.dp, 20.dp)
             ) {
                 Text(
-                    text = "Plan List",
+                    text = stringResource(R.string.plan_list),
                     fontSize = MaterialTheme.typography.headlineLarge.fontSize
                 )
             }
@@ -83,7 +79,7 @@ fun PlanList(
                         planViewModel.updatePlanTitle(it)
                     },
                     label = {
-                        Text("Title: ")
+                        Text(stringResource(R.string.title))
                     },
                     textStyle = MaterialTheme.typography.bodyMedium,
                     singleLine = true,
@@ -118,7 +114,7 @@ fun PlanList(
                     value = planDescription,
                     onValueChange = { planViewModel.updatePlanDescription(it) },
                     label = {
-                        Text("Description:")
+                        Text(stringResource(R.string.description))
                     },
                     singleLine = true,
                     textStyle = MaterialTheme.typography.bodyMedium,
@@ -189,7 +185,7 @@ fun PlanList(
                     }
                 } else {
                     Text(
-                        color = Color.DarkGray, text = "Empty. Waiting to explore the world"
+                        color = Color.DarkGray, text = stringResource(R.string.empty_plan_list)
                     )
                 }
             }
@@ -207,7 +203,8 @@ fun PlanList(
                         modifier = Modifier.padding(start = 16.dp, end = 8.dp)
                     )
                     Text(
-                        text = if (planViewModel.isPublic.value) "Public" else "Private",
+                        text = if (planViewModel.isPublic.value) stringResource(R.string.Public) else stringResource(
+                                                    R.string.Private),
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.padding(end = 16.dp)
                     )
@@ -246,7 +243,7 @@ fun PlanList(
                         },
                         modifier = Modifier.width(100.dp)
                     ) {
-                        Text(text = "ADD")
+                        Text(text = stringResource(R.string.add))
                     }
                     Spacer(modifier = Modifier.width(20.dp))
                     Button(
@@ -299,15 +296,16 @@ fun PlanList(
                             planViewModel.updateDepartState("")
                             planViewModel.updateDepartCity("")
                             planViewModel.updateSelectedPlacesOnMap(hashMapOf())
+
                             Toast.makeText(
                                 context,
-                                "Save successfully !",
+                                word,
                                 Toast.LENGTH_SHORT
                             ).show()
                         }, modifier = Modifier
                             .width(125.dp)
                     ) {
-                        Text(text = "COMPLETE")
+                        Text(text = stringResource(R.string.complete))
                     }
                 }
             }

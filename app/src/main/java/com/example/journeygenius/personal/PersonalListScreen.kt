@@ -7,9 +7,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.journeygenius.JourneyGeniusViewModel
+import com.example.journeygenius.R
 import com.example.journeygenius.components.CustomCard
 import com.example.journeygenius.data.models.Plans
 import com.example.journeygenius.rememberWindowSize
@@ -32,7 +34,7 @@ fun PersonalListScreen(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ){
-        PersonalTopBar(context = LocalContext.current.applicationContext, title = "My Plan List", navController = navController)
+        PersonalTopBar(context = LocalContext.current.applicationContext, title = stringResource(R.string.my_plan_list), navController = navController)
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center

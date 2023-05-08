@@ -5,7 +5,6 @@ import android.content.Context
 import android.util.Log
 import android.util.Range
 import android.widget.Toast
-import androidx.compose.animation.core.snap
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.text.input.TextFieldValue
@@ -1336,7 +1335,7 @@ class JourneyGeniusViewModel(
         }
     }
 
-    // TODO: Clear Rubbish
+    // TODO: Clean Rubbish
     suspend fun getAllCities(geoNameId:Int):Map<String,LatLng> = withContext(Dispatchers.IO){
 
         val CAandUSiDList= listOf(5883102,5909050,6065171,6087430,6354959,6091069,6091530,6091732,6093943,6113358,6115047,6141242,6185811,

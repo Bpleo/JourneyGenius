@@ -8,6 +8,7 @@ import androidx.compose.runtime.currentComposer
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -15,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.journeygenius.*
+import com.example.journeygenius.R
 import com.example.journeygenius.ui.theme.JourneyGeniusTheme
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -41,7 +43,7 @@ fun PersonalAccountScreen(
         ) {
             PersonalTopBar(
                 context = LocalContext.current.applicationContext,
-                title = "Details",
+                title = stringResource(R.string.details),
                 navController = navController
             )
             Box(
@@ -80,7 +82,7 @@ fun PersonalAccountScreen(
 fun EmailField(viewModel: JourneyGeniusViewModel, db: FirebaseFirestore, auth: FirebaseAuth) {
     Column(){
         Text(
-            text = "Email: ",
+            text = stringResource(R.string.email),
             fontSize = MaterialTheme.typography.titleLarge.fontSize,
             color = MaterialTheme.colorScheme.primary,
         )
@@ -91,10 +93,10 @@ fun EmailField(viewModel: JourneyGeniusViewModel, db: FirebaseFirestore, auth: F
                     viewModel.updateEmail(newEmail)
                 } ,
                 label = {
-                    Text("Email: ")
+                    Text(stringResource(R.string.email))
                 },
                 placeholder = {
-                    Text(text = "Enter your Email")
+                    Text(text = stringResource(R.string.enter_ur_email))
                 },
                 maxLines = 1,
                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
@@ -108,7 +110,7 @@ fun EmailField(viewModel: JourneyGeniusViewModel, db: FirebaseFirestore, auth: F
                 modifier = Modifier.fillMaxWidth()
             ){
                 Text(
-                    text = "Reset Email",
+                    text = stringResource(R.string.reset_email),
                     textAlign = TextAlign.Center
                 )
             }
@@ -126,7 +128,7 @@ fun UserNameField(
     val uid = auth.currentUser?.uid
     Column(){
         Text(
-            text = "User Name: ",
+            text = stringResource(R.string.user_name),
             fontSize = MaterialTheme.typography.titleLarge.fontSize,
             color = MaterialTheme.colorScheme.primary,
         )
@@ -137,10 +139,10 @@ fun UserNameField(
                     viewModel.updateUserName(newUserName)
                 } ,
                 label = {
-                    Text("User Name: ")
+                    Text(stringResource(R.string.user_name))
                 },
                 placeholder = {
-                    Text(text = "Enter your Email")
+                    Text(text = stringResource(R.string.enter_ur_email))
                 },
                 maxLines = 1,
                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
@@ -154,7 +156,7 @@ fun UserNameField(
                 modifier = Modifier.fillMaxWidth()
             ){
                 Text(
-                    text = "Reset Username",
+                    text = stringResource(R.string.reset_username),
                     textAlign = TextAlign.Center
                 )
             }
@@ -166,7 +168,7 @@ fun UserNameField(
 fun PwdField(viewModel: JourneyGeniusViewModel, db: FirebaseFirestore, auth: FirebaseAuth) {
     Column(){
         Text(
-            text = "Password: ",
+            text = stringResource(R.string.password),
             fontSize = MaterialTheme.typography.titleLarge.fontSize,
             color = MaterialTheme.colorScheme.primary,
         )
@@ -176,12 +178,12 @@ fun PwdField(viewModel: JourneyGeniusViewModel, db: FirebaseFirestore, auth: Fir
                 onPasswordChange = {newPwd ->
                     viewModel.updatePwd(newPwd)
                 },
-                placeholder = "Enter your Password"
+                placeholder = stringResource(R.string.enter_ur_pswd)
             )
             Spacer(modifier = Modifier.width(8.dp))
         }
         Text(
-            text = "Verify Password: ",
+            text = stringResource(R.string.verify_pswd),
             fontSize = MaterialTheme.typography.titleLarge.fontSize,
             color = MaterialTheme.colorScheme.primary,
         )
@@ -191,7 +193,7 @@ fun PwdField(viewModel: JourneyGeniusViewModel, db: FirebaseFirestore, auth: Fir
                 onPasswordChange = {newPwd ->
                     viewModel.updateVerifyPwd(newPwd)
                 },
-                placeholder = "Verify your Password"
+                placeholder = stringResource(R.string.verify_pswd)
             )
             Spacer(modifier = Modifier.width(8.dp))
             Button(
@@ -204,7 +206,7 @@ fun PwdField(viewModel: JourneyGeniusViewModel, db: FirebaseFirestore, auth: Fir
                     .padding(0.dp, 8.dp)
             ){
                 Text(
-                    text = "Reset Password",
+                    text = stringResource(R.string.reset_pswd),
                     textAlign = TextAlign.Center
                 )
             }

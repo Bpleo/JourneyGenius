@@ -14,10 +14,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.journeygenius.JourneyGeniusViewModel
 import com.example.journeygenius.PlacesapiKey
+import com.example.journeygenius.R
 import com.example.journeygenius.WindowSize
 import com.example.journeygenius.WindowType
 import com.example.journeygenius.data.models.Plans
@@ -191,7 +193,7 @@ fun PlanHotelSelectionScreen(
                                 .padding(0.dp, 10.dp)
                         ) {
                             Text(
-                                text = "Choose your hotels",
+                                text = stringResource(R.string.choose_hotels),
                                 fontSize = MaterialTheme.typography.headlineLarge.fontSize
                             )
                         }
@@ -299,12 +301,10 @@ fun PlanHotelSelectionScreen(
                                         )
                                     )
                                     navController.navigate("Plan List")
-                                    Log.d("Plan", planGroup.toString())
-                                    Log.d("PlanList", viewModel.planGroupList.value.toString())
                                 }, modifier = Modifier
                                     .width(130.dp)
                             ) {
-                                Text(text = "Generate")
+                                Text(text = stringResource(id = R.string.generate))
                             }
                         }
 
@@ -324,7 +324,7 @@ fun PlanHotelSelectionScreen(
                                     .padding(50.dp, 50.dp)
                             ) {
                                 Text(
-                                    text = "Choose your hotels",
+                                    text = stringResource(id = R.string.choose_hotels),
                                     fontSize = MaterialTheme.typography.headlineLarge.fontSize
                                 )
                             }
@@ -438,12 +438,10 @@ fun PlanHotelSelectionScreen(
                                             )
                                         )
                                         navController.navigate("Plan List")
-                                        Log.d("Plan", planGroup.toString())
-                                        Log.d("PlanList", viewModel.planGroupList.value.toString())
                                     }, modifier = Modifier
                                         .width(130.dp)
                                 ) {
-                                    Text(text = "Generate")
+                                    Text(text = stringResource(id = R.string.generate))
                                 }
                             }
                         }

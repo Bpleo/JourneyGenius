@@ -16,6 +16,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.journeygenius.data.models.Place
 import androidx.compose.runtime.*
+import androidx.compose.ui.res.stringResource
+import com.example.journeygenius.R
 import com.gowtham.ratingbar.RatingBar
 import com.gowtham.ratingbar.RatingBarConfig
 import com.gowtham.ratingbar.RatingBarStyle
@@ -35,13 +37,13 @@ fun PlaceDetailCompose(
     ) {
         Text(
             text = if (isStartNode) {
-                "Start Attraction: " + data.name
+                stringResource(R.string.start_attraction) + data.name
             } else if (isEndNode) {
-                "End Attraction: "  + data.name
+                stringResource(R.string.end_attraction)  + data.name
             } else if (isHotel) {
-                "Hotel: " + data.name
+                stringResource(R.string.hotel) + data.name
             } else { // is middle attraction node
-                "Middle Attraction: " + data.name
+                stringResource(R.string.middle_attraction) + data.name
                    },
             fontSize = fontSize,
             fontWeight = FontWeight.Bold,
@@ -50,7 +52,7 @@ fun PlaceDetailCompose(
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = "• Vicinity: " + data.vicinity,
+            text = stringResource(R.string.place_detail_vicinity) + data.vicinity,
             fontSize = fontSize,
             color = MaterialTheme.colorScheme.secondary,
         )
@@ -59,7 +61,7 @@ fun PlaceDetailCompose(
         Row(
         ) {
             Text(
-                text = "• Rating: ",
+                text = stringResource(R.string.place_detail_rating),
                 fontSize = fontSize,
                 color = MaterialTheme.colorScheme.secondary,
             )

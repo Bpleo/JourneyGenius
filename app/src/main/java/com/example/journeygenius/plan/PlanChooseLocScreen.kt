@@ -30,6 +30,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewModelScope
@@ -364,7 +365,7 @@ fun PlanChooseLocScreen(
                                 modifier = Modifier.width(170.dp)
                             ) {
                                 Text(
-                                    text = "Departure",
+                                    text = stringResource(id = R.string.departure),
                                     fontSize = MaterialTheme.typography.titleLarge.fontSize,
                                 )
                                 Spacer(modifier = Modifier.height(10.dp))
@@ -378,7 +379,7 @@ fun PlanChooseLocScreen(
                                         modifier = Modifier
                                             .width(170.dp)
                                             .height(70.dp),
-                                        label = { Text(text = "Choose") },
+                                        label = { Text(text = stringResource(R.string.choose)) },
                                         trailingIcon = {
                                             Icon(
                                                 iconStartAttraction,
@@ -414,7 +415,7 @@ fun PlanChooseLocScreen(
                                 modifier = Modifier.width(170.dp)
                             ) {
                                 Text(
-                                    text = "Destination",
+                                    text = stringResource(id = R.string.destination),
                                     fontSize = MaterialTheme.typography.titleLarge.fontSize,
                                 )
                                 Spacer(modifier = Modifier.height(10.dp))
@@ -428,7 +429,7 @@ fun PlanChooseLocScreen(
                                         modifier = Modifier
                                             .width(170.dp)
                                             .height(70.dp),
-                                        label = { Text(text = "Choose") },
+                                        label = { Text(text = stringResource(id = R.string.choose)) },
                                         trailingIcon = {
                                             Icon(
                                                 iconEndAttraction,
@@ -461,7 +462,7 @@ fun PlanChooseLocScreen(
                                 .fillMaxWidth(), contentAlignment = Alignment.TopCenter
                         ) {
                             Text(
-                                text = "Select your preferred travel mode:",
+                                text = stringResource(R.string.select_travel_mode),
                                 fontSize = MaterialTheme.typography.bodyLarge.fontSize,
                             )
                         }
@@ -529,7 +530,7 @@ fun PlanChooseLocScreen(
                                     .fillMaxWidth(), contentAlignment = Alignment.TopCenter
                             ) {
                                 Text(
-                                    text = "Choose Your Interests",
+                                    text = stringResource(R.string.choose_your_interests),
                                     fontSize = MaterialTheme.typography.headlineMedium.fontSize
                                 )
                             }
@@ -732,7 +733,7 @@ fun PlanChooseLocScreen(
                                     }, modifier = Modifier
                                         .width(130.dp)
                                 ) {
-                                    Text(text = "Generate")
+                                    Text(text = stringResource(R.string.generate))
                                 }
                             }
 
@@ -743,8 +744,9 @@ fun PlanChooseLocScreen(
             }
             else -> {
                 Box(
-                    modifier = Modifier.fillMaxSize()
-                        .padding(100.dp,100.dp),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(100.dp, 100.dp),
                     contentAlignment = Alignment.TopCenter
                 ) {
                     Row {
@@ -762,7 +764,7 @@ fun PlanChooseLocScreen(
                                     modifier = Modifier.width(170.dp)
                                 ) {
                                     Text(
-                                        text = "Departure",
+                                        text = stringResource(id = R.string.departure),
                                         fontSize = MaterialTheme.typography.titleLarge.fontSize,
                                     )
                                     Spacer(modifier = Modifier.height(10.dp))
@@ -776,7 +778,7 @@ fun PlanChooseLocScreen(
                                             modifier = Modifier
                                                 .width(170.dp)
                                                 .height(70.dp),
-                                            label = { Text(text = "Choose") },
+                                            label = { Text(text =stringResource(id = R.string.choose)) },
                                             trailingIcon = {
                                                 Icon(
                                                     iconStartAttraction,
@@ -812,7 +814,7 @@ fun PlanChooseLocScreen(
                                     modifier = Modifier.width(170.dp)
                                 ) {
                                     Text(
-                                        text = "Destination",
+                                        text = stringResource(id = R.string.destination),
                                         fontSize = MaterialTheme.typography.titleLarge.fontSize,
                                     )
                                     Spacer(modifier = Modifier.height(10.dp))
@@ -826,7 +828,7 @@ fun PlanChooseLocScreen(
                                             modifier = Modifier
                                                 .width(170.dp)
                                                 .height(70.dp),
-                                            label = { Text(text = "Choose") },
+                                            label = { Text(text = stringResource(id = R.string.choose)) },
                                             trailingIcon = {
                                                 Icon(
                                                     iconEndAttraction,
@@ -860,7 +862,7 @@ fun PlanChooseLocScreen(
                                     .width(400.dp)
                             ) {
                                 Text(
-                                    text = "Select your preferred travel mode:",
+                                    text = stringResource(id = R.string.select_travel_mode),
                                     fontSize = MaterialTheme.typography.titleLarge.fontSize,
                                 )
                             }
@@ -930,7 +932,7 @@ fun PlanChooseLocScreen(
                                     .width(500.dp)
                             ) {
                                 Text(
-                                    text = "Choose Your Interests",
+                                    text = stringResource(id = R.string.choose_your_interests),
                                     fontSize = MaterialTheme.typography.headlineMedium.fontSize
                                 )
                             }
@@ -1112,8 +1114,7 @@ fun PlanChooseLocScreen(
                                                 selectedAttractionList.value,
                                                 startAttraction.value,
                                                 endAttraction.value,
-                                                // TODO: ADD ROUTES List
-                                                listOf(),
+                                                viewModel.attractionRoutes.value,
                                                 viewModel.sliderValue.value ?: 4,
                                                 viewModel.sliderLabel.value ?: "extravagant",
                                                 listOf(),
@@ -1132,7 +1133,7 @@ fun PlanChooseLocScreen(
                                     }, modifier = Modifier
                                         .width(300.dp)
                                 ) {
-                                    Text(text = "Generate")
+                                    Text(text = stringResource(id = R.string.choose))
                                 }
                             }
 

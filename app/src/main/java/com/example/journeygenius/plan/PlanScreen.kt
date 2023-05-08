@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.core.content.ContextCompat.startActivity
@@ -40,6 +41,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.journeygenius.WindowSize
 import com.example.journeygenius.WindowType
 import com.example.journeygenius.JourneyGeniusViewModel
+import com.example.journeygenius.R
 import com.example.journeygenius.rememberWindowSize
 import com.example.journeygenius.ui.theme.JourneyGeniusTheme
 import com.google.android.gms.maps.model.LatLng
@@ -104,13 +106,13 @@ fun TravelDateComponent(
         when(windowSize.height){
             WindowType.Medium -> {
                 Text(
-                    text = "Travel Date: ",
+                    text = stringResource(id = R.string.travel_date),
                     fontSize = MaterialTheme.typography.headlineLarge.fontSize
                 )
             }
             else -> {
                 Text(
-                    text = "Travel Date: ",
+                    text = stringResource(id = R.string.travel_date),
                     fontSize = MaterialTheme.typography.headlineMedium.fontSize
                 )
             }
@@ -121,23 +123,23 @@ fun TravelDateComponent(
                 when(windowSize.height){
                     WindowType.Medium -> {
                         Text(
-                            text = "Start Date: ",
+                            text = stringResource(id = R.string.start_date),
                             fontSize = MaterialTheme.typography.titleLarge.fontSize
                         )
                         Spacer(modifier = Modifier.height(20.dp))
                         Text(
-                            text = "End Date: ",
+                            text = stringResource(id = R.string.end_date),
                             fontSize = MaterialTheme.typography.titleLarge.fontSize
                         )
                     }
                     else -> {
                         Text(
-                            text = "Start Date: ",
+                            text = stringResource(id = R.string.start_date),
                             fontSize = MaterialTheme.typography.titleSmall.fontSize
                         )
                         Spacer(modifier = Modifier.height(20.dp))
                         Text(
-                            text = "End Date: ",
+                            text = stringResource(id = R.string.end_date),
                             fontSize = MaterialTheme.typography.titleSmall.fontSize
                         )
                     }
@@ -241,7 +243,7 @@ fun TravelDateComponent(
 fun BudgetComponent(viewModel: JourneyGeniusViewModel){
     Column {
         Text(
-            text = "What is your budget: ",
+            text = stringResource(id = R.string.what_is_your_budget),
             fontSize = MaterialTheme.typography.bodyLarge.fontSize
         )
         Spacer(modifier = Modifier.height(15.dp))
@@ -281,7 +283,7 @@ fun BudgetComponent(viewModel: JourneyGeniusViewModel){
 fun BudgetLandComponent(viewModel: JourneyGeniusViewModel){
     Column {
         Text(
-            text = "What is your budget: ",
+            text = stringResource(id = R.string.what_is_your_budget),
             fontSize = MaterialTheme.typography.bodyLarge.fontSize
         )
         Spacer(modifier = Modifier.height(10.dp))
@@ -446,36 +448,7 @@ fun ChooseDropdownMenu(viewModel: JourneyGeniusViewModel) {
         Icons.Filled.KeyboardArrowDown
     }
     val context = LocalContext.current
-    fun findLocOnMap(maxResult: Int, destCityName:String, context: Context){
-        val geocoder = Geocoder(context, Locale.getDefault())
-        val geocodeListener = @RequiresApi(33) object : Geocoder.GeocodeListener {
-            override fun onGeocode(results: List<Address>){
-                // do something with the addresses list
-                val latitude = results[0].latitude
-                val longitude = results[0].longitude
-                viewModel.updateSelectedCityLocation(LatLng(latitude,longitude))
-                viewModel.updateSelectedCityLatLng(listOf(latitude,longitude))
-                Log.d("lat,long", viewModel.selectedCityLatLng.value.toString())
-            }
-        }
 
-        if (Build.VERSION.SDK_INT >= 33) {
-            // declare here the geocodeListener, as it requires Android API 33
-            geocoder.getFromLocationName(destCityName,maxResult,geocodeListener)
-
-        } else {
-            // For Android SDK < 33, the addresses list will be still obtained from the getFromLocation() method
-            val addresses = geocoder.getFromLocationName(destCityName,maxResult)
-            if(addresses!=null){
-                val latitude =  addresses[0].latitude
-                val longitude =  addresses[0].longitude
-                viewModel.updateSelectedCityLocation(LatLng(latitude,longitude))
-                viewModel.updateSelectedCityLatLng(listOf(latitude,longitude))
-                Log.d("lat,long", "$latitude $longitude")
-                Pair(latitude, longitude)
-            }
-        }
-    }
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -486,7 +459,7 @@ fun ChooseDropdownMenu(viewModel: JourneyGeniusViewModel) {
             modifier = Modifier.width(150.dp)
         ) {
             Text(
-                text = "Departure",
+                text = stringResource(R.string.departure),
                 fontSize = MaterialTheme.typography.titleLarge.fontSize,
             )
             Spacer(modifier = Modifier.height(5.dp))
@@ -501,7 +474,7 @@ fun ChooseDropdownMenu(viewModel: JourneyGeniusViewModel) {
                         modifier = Modifier
                             .width(150.dp)
                             .height(60.dp),
-                        label = { Text(text = "Country") },
+                        label = { Text(text = stringResource(R.string.country)) },
                         trailingIcon = {
                             Icon(
                                 iconDepartCountry,
@@ -552,7 +525,7 @@ fun ChooseDropdownMenu(viewModel: JourneyGeniusViewModel) {
                         modifier = Modifier
                             .width(150.dp)
                             .height(60.dp),
-                        label = { Text(text = "State") },
+                        label = { Text(text = stringResource(R.string.state)) },
                         trailingIcon = {
                             Icon(
                                 iconDepartState,
@@ -596,7 +569,7 @@ fun ChooseDropdownMenu(viewModel: JourneyGeniusViewModel) {
                         modifier = Modifier
                             .width(150.dp)
                             .height(60.dp),
-                        label = { Text(text = "City") },
+                        label = { Text(text = stringResource(R.string.city)) },
                         trailingIcon = {
                             Icon(
                                 iconDepartCity,
@@ -638,7 +611,7 @@ fun ChooseDropdownMenu(viewModel: JourneyGeniusViewModel) {
             modifier = Modifier.width(170.dp)
         ) {
             Text(
-                text = "Destination",
+                text = stringResource(R.string.destination),
                 fontSize = MaterialTheme.typography.titleLarge.fontSize,
             )
             Spacer(modifier = Modifier.height(5.dp))
@@ -652,7 +625,7 @@ fun ChooseDropdownMenu(viewModel: JourneyGeniusViewModel) {
                         modifier = Modifier
                             .width(150.dp)
                             .height(60.dp),
-                        label = { Text(text = "Country") },
+                        label = { Text(text = stringResource(id = R.string.country)) },
                         trailingIcon = {
                             Icon(
                                 iconDestinCountry,
@@ -702,7 +675,7 @@ fun ChooseDropdownMenu(viewModel: JourneyGeniusViewModel) {
                         modifier = Modifier
                             .width(150.dp)
                             .height(60.dp),
-                        label = { Text(text = "State") },
+                        label = { Text(text = stringResource(id = R.string.state)) },
                         trailingIcon = {
                             Icon(
                                 iconDestinState,
@@ -746,7 +719,7 @@ fun ChooseDropdownMenu(viewModel: JourneyGeniusViewModel) {
                             .width(150.dp)
                             .height(60.dp),
 
-                        label = { Text(text = "City") },
+                        label = { Text(text = stringResource(id = R.string.city)) },
                         trailingIcon = {
                             Icon(
                                 iconDestinCity,
@@ -805,7 +778,7 @@ fun DestinationButton(navController: NavController) {
             }, modifier = Modifier
                 .align(Alignment.CenterHorizontally)
         ) {
-            Text(text = "CHOOSE YOUR ROUTE")
+            Text(text = stringResource(R.string.choose_your_route))
         }
     }
 }
@@ -890,6 +863,37 @@ fun PlanScreen(
                 }
             }
 
+        }
+    }
+}
+
+fun findLocOnMap(maxResult: Int, destCityName:String, context: Context,viewModel: JourneyGeniusViewModel){
+    val geocoder = Geocoder(context, Locale.getDefault())
+    val geocodeListener = @RequiresApi(33) object : Geocoder.GeocodeListener {
+        override fun onGeocode(results: List<Address>){
+            // do something with the addresses list
+            val latitude = results[0].latitude
+            val longitude = results[0].longitude
+            viewModel.updateSelectedCityLocation(LatLng(latitude,longitude))
+            viewModel.updateSelectedCityLatLng(listOf(latitude,longitude))
+            Log.d("lat,long", viewModel.selectedCityLatLng.value.toString())
+        }
+    }
+
+    if (Build.VERSION.SDK_INT >= 33) {
+        // declare here the geocodeListener, as it requires Android API 33
+        geocoder.getFromLocationName(destCityName,maxResult,geocodeListener)
+
+    } else {
+        // For Android SDK < 33, the addresses list will be still obtained from the getFromLocation() method
+        val addresses = geocoder.getFromLocationName(destCityName,maxResult)
+        if(addresses!=null){
+            val latitude =  addresses[0].latitude
+            val longitude =  addresses[0].longitude
+            viewModel.updateSelectedCityLocation(LatLng(latitude,longitude))
+            viewModel.updateSelectedCityLatLng(listOf(latitude,longitude))
+            Log.d("lat,long", "$latitude $longitude")
+            Pair(latitude, longitude)
         }
     }
 }

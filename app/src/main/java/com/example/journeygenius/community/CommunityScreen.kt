@@ -16,6 +16,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -24,6 +25,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.journeygenius.JourneyGeniusViewModel
+import com.example.journeygenius.R
 import com.example.journeygenius.components.CardDetailScreen
 import com.example.journeygenius.components.CustomCard
 import com.example.journeygenius.ui.theme.JourneyGeniusTheme
@@ -72,7 +74,7 @@ fun CommunityList(
                 .wrapContentWidth(align = Alignment.End)
         ) {
             Text(
-                text = "Community",
+                text = stringResource(R.string.community),
                 style = androidx.compose.ui.text.TextStyle(
                     fontWeight = FontWeight.Bold,
                     fontSize = 24.sp
@@ -97,7 +99,7 @@ fun CommunityList(
             ) {
                 Icon(
                     imageVector = Icons.Default.Refresh,
-                    contentDescription = "Refresh",
+                    contentDescription = stringResource(R.string.refresh),
                     tint = Color.White
                 )
             }

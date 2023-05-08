@@ -21,11 +21,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.example.journeygenius.JourneyGeniusViewModel
 import com.example.journeygenius.PlacesapiKey
+import com.example.journeygenius.R
 import com.example.journeygenius.ui.theme.JourneyGeniusTheme
 import com.google.android.gms.maps.model.LatLng
 
@@ -73,11 +75,11 @@ fun PlanDetail(navController: NavController, viewModel: JourneyGeniusViewModel){
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(0.dp, 20.dp)){
-                            Text(text = "Summary",
+                            Text(text = stringResource(R.string.summary),
                                 fontSize = MaterialTheme.typography.headlineLarge.fontSize)
                         }
                         Text(
-                            text = "Date: ",
+                            text = stringResource(R.string.date),
                             fontSize = MaterialTheme.typography.titleLarge.fontSize,
                         )
                         Spacer(modifier = Modifier.height(10.dp))
@@ -93,7 +95,7 @@ fun PlanDetail(navController: NavController, viewModel: JourneyGeniusViewModel){
                         }
                         Spacer(modifier = Modifier.height(25.dp))
                         Text(
-                            text = "Destination: ",
+                            text = stringResource(R.string.destionation2),
                             fontSize = MaterialTheme.typography.titleLarge.fontSize
                         )
                         Spacer(modifier = Modifier.height(10.dp))
@@ -109,7 +111,7 @@ fun PlanDetail(navController: NavController, viewModel: JourneyGeniusViewModel){
                         }
                         Spacer(modifier = Modifier.height(25.dp))
                         Text(
-                            text = "Attractions: ",
+                            text = stringResource(R.string.attractions),
                             fontSize = MaterialTheme.typography.titleLarge.fontSize
                         )
                         Spacer(modifier = Modifier.height(10.dp))
@@ -133,7 +135,7 @@ fun PlanDetail(navController: NavController, viewModel: JourneyGeniusViewModel){
 
                         Spacer(modifier = Modifier.height(15.dp))
                         Text(
-                            text = "Price Level: ",
+                            text = stringResource(R.string.price_level),
                             fontSize = MaterialTheme.typography.titleLarge.fontSize
                         )
                         Spacer(modifier = Modifier.height(10.dp))
@@ -149,7 +151,7 @@ fun PlanDetail(navController: NavController, viewModel: JourneyGeniusViewModel){
                         }
                         Spacer(modifier = Modifier.height(35.dp))
                         Text(
-                            text = "Hotel: ",
+                            text = stringResource(R.string.hotel),
                             fontSize = MaterialTheme.typography.titleLarge.fontSize
                         )
                         Spacer(modifier = Modifier.height(10.dp))
@@ -172,7 +174,7 @@ fun PlanDetail(navController: NavController, viewModel: JourneyGeniusViewModel){
                         }
                         Spacer(modifier = Modifier.height(15.dp))
                         Text(
-                            text = "Transport Mode: ",
+                            text = stringResource(R.string.transport_mode),
                             fontSize = MaterialTheme.typography.titleLarge.fontSize
                         )
                         Spacer(modifier = Modifier.height(10.dp))
@@ -207,14 +209,14 @@ fun PlanDetail(navController: NavController, viewModel: JourneyGeniusViewModel){
                                     painter = rememberImagePainter(
                                         data = "https://maps.googleapis.com/maps/api/staticmap?center=${planOnDetail.value.startAttraction.location.lat},${planOnDetail.value.startAttraction.location.lng}&markers=color:red%7Clabel:A%7C${planOnDetail.value.startAttraction.location.lat},${planOnDetail.value.startAttraction.location.lng}&markers=color:red%7Clabel:B%7C${planOnDetail.value.endAttraction.location.lat},${planOnDetail.value.endAttraction.location.lng}&zoom=13&size=300x300&key=$PlacesapiKey"
                                     ),
-                                    contentDescription = "Google Map Thumbnail",
+                                    contentDescription = stringResource(R.string.google_map_Thumbnail),
                                     modifier = Modifier
                                         .height(200.dp)
                                         .fillMaxWidth(),
                                     contentScale = ContentScale.Crop
                                 )
                                 Text(
-                                    text = "Click on the map to open in Google Maps",
+                                    text = stringResource(R.string.click_to_open_google_map),
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .padding(16.dp),
@@ -227,7 +229,7 @@ fun PlanDetail(navController: NavController, viewModel: JourneyGeniusViewModel){
                                         .width(100.dp)
                                         .align(Alignment.CenterHorizontally)
                                 ) {
-                                    Text(text = "Back")
+                                    Text(text = stringResource(R.string.back))
                                 }
 
                             }

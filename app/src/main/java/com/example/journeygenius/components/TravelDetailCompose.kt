@@ -22,11 +22,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
 import com.example.journeygenius.JourneyGeniusViewModel
 import com.example.journeygenius.PlacesapiKey
+import com.example.journeygenius.R
 import com.example.journeygenius.data.models.SinglePlan
 import com.example.journeygenius.plan.generateWaypoints
 
@@ -44,28 +46,28 @@ fun TravelDetailCompose(
         modifier = Modifier.padding(16.dp)
     ) {
         Text(
-            text = "Date: " + data.date,
+            text = stringResource(R.string.date) + data.date,
             fontSize = fontSize,
             color = MaterialTheme.colorScheme.secondary,
         )
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = "Destination: " + data.destination,
+            text = stringResource(R.string.destionation2) + data.destination,
             fontSize = fontSize,
             color = MaterialTheme.colorScheme.secondary,
         )
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = "Price: " + "$".repeat(data.priceLevel) + " " + data.priceLevelLabel,
+            text = stringResource(R.string.price) + "$".repeat(data.priceLevel) + " " + data.priceLevelLabel,
             fontSize = fontSize,
             color = MaterialTheme.colorScheme.secondary,
         )
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = "Travel Type: " + data.travelType,
+            text = stringResource(R.string.traveldetail_travel_type) + data.travelType,
             fontSize = fontSize,
             color = MaterialTheme.colorScheme.secondary,
         )
@@ -126,7 +128,7 @@ fun TravelDetailCompose(
                     painter = rememberImagePainter(
                         data = "https://maps.googleapis.com/maps/api/staticmap?center=${data.startAttraction.location.lat},${data.startAttraction.location.lng}&markers=color:red%7Clabel:A%7C${data.startAttraction.location.lat},${data.startAttraction.location.lng}&markers=color:red%7Clabel:B%7C${data.endAttraction.location.lat},${data.endAttraction.location.lng}&zoom=13&size=300x300&key=$PlacesapiKey"
                     ),
-                    contentDescription = "Google Map Thumbnail",
+                    contentDescription = stringResource(R.string.google_map_Thumbnail),
                     modifier = Modifier
                         .height(200.dp)
                         .fillMaxWidth(),
@@ -134,7 +136,7 @@ fun TravelDetailCompose(
                 )
                 Spacer(modifier = Modifier.height(20.dp))
                 Text(
-                    text = "Click on the map to open in Google Maps",
+                    text = stringResource(R.string.click_to_open_google_map),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 16.dp, end = 16.dp),

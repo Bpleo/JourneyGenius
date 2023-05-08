@@ -16,6 +16,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -28,6 +30,7 @@ import com.example.journeygenius.data.models.Photo
 import android.content.Context;
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
+import com.example.journeygenius.R
 
 @Composable
 fun CardDetailScreen(
@@ -124,7 +127,9 @@ fun CardDetailScreen(
                             modifier = Modifier
                                 .padding(top = 8.dp)
                         ) {
-                            Text(text = if (showMorePhoto.value) "Hide Photos" else "More Photos")
+                            Text(text = if (showMorePhoto.value) stringResource(R.string.hide_photo) else stringResource(
+                                id = R.string.more_photos
+                            ))
                         }
                     }
                 }
@@ -199,7 +204,7 @@ fun CardDetailScreen(
                 },
                 modifier = Modifier.padding(end = 16.dp)
             ) {
-                Text(text = "Close")
+                Text(text = stringResource(R.string.close))
             }
 
             OutlinedButton(
@@ -214,7 +219,9 @@ fun CardDetailScreen(
                     }
                           },
             ) {
-                Text(text = if (userLikedPost.value) "Unlike" else "Like")
+                Text(text = if (userLikedPost.value) stringResource(R.string.unlike) else stringResource(
+                                    R.string.like)
+                                )
             }
         }
 

@@ -7,7 +7,9 @@ import androidx.compose.material3.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
+import com.example.journeygenius.R
 
 
 @Composable
@@ -16,9 +18,9 @@ fun PersonalSettingScreen(navController: NavHostController) {
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        PersonalTopBar(context = LocalContext.current.applicationContext, title = "Settings", navController = navController)
+        PersonalTopBar(context = LocalContext.current.applicationContext, title = stringResource(R.string.settings), navController = navController)
         Text(
-            text = "Personal Settings",
+            text = stringResource(R.string.personal_settings),
             fontSize = MaterialTheme.typography.bodyLarge.fontSize
         )
     }

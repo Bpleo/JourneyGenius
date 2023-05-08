@@ -7,8 +7,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.journeygenius.R
 import com.example.journeygenius.data.models.Hotel
 
 @Composable
@@ -22,7 +24,7 @@ fun HotelDetailCompose(
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = "• Price: " + "$".repeat(data.priceLevel),
+            text = stringResource(R.string.hotelPrice) + "$".repeat(data.priceLevel),
             fontSize = fontSize,
             color = MaterialTheme.colorScheme.secondary,
         )
