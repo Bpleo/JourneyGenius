@@ -64,20 +64,21 @@ class JourneyGeniusViewModel(
 
     private fun realTimeDataFetch(
         limit: Long = 10,
-        startAtValue: String = "",
         onComplete: (Map<String, Plans>, String) -> Unit
     ) {
-        val query = realtime.child("planList").orderByKey().limitToFirst(limit.toInt())
-        if (startAtValue.isNotEmpty()){
-            query.startAt(startAtValue)
+        var query = realtime.child("planList").orderByKey().limitToFirst(limit.toInt())
+        if (_startAtValue.value.isNotEmpty()){
+            query = query.startAt(_startAtValue.value)
         }
         query.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val groupListData = snapshot.value as? Map<String, Any>?
                 val groupList = getGroupList(groupListData)
-                Log.d("REALTIME1", groupList.toString())
+//                Log.d("REALTIME1", groupList.toString())
                 val nextStartAtValue = snapshot.children.lastOrNull()?.key.orEmpty()
-                onComplete(groupList, nextStartAtValue)
+                _startAtValue.value = nextStartAtValue
+                if (groupList != null)
+                    onComplete(groupList, nextStartAtValue)
             }
             override fun onCancelled(error: DatabaseError) {
                 Log.d("DATA", "Realtime pulled data false", error.toException())
@@ -85,10 +86,10 @@ class JourneyGeniusViewModel(
         })
     }
 
-    suspend fun fetchGroupData(limit: Long, startAtValue: String = ""): Map<String, Plans> {
+    suspend fun fetchGroupData(limit: Long): Map<String, Plans> {
         return suspendCoroutine { continuation ->
-            realTimeDataFetch(limit, startAtValue) { groupListData, _ ->
-                Log.d("REALTIME2", groupListData.toString())
+            realTimeDataFetch(limit) { groupListData, _ ->
+//                Log.d("REALTIME2", groupListData.toString())
                 continuation.resume(groupListData)
             }
         }
@@ -104,8 +105,8 @@ class JourneyGeniusViewModel(
     fun fetchGroupDataAndPrint(limit: Long, startAtValue: String = "") {
         viewModelScope.launch {
             try {
-                val groupListData = fetchGroupData(limit, startAtValue)
-                Log.d("REALTIME3",groupListData.toString())
+                val groupListData = fetchGroupData(limit)
+//                Log.d("REALTIME3",groupListData.toString())
                 _communityPlanList.value = _communityPlanList.value + groupListData
             } catch (e: Exception) {
                 Log.e("fetchGroupDataAndPrint","Error fetching data: ${e.message}")
@@ -406,6 +407,9 @@ class JourneyGeniusViewModel(
     }
 
     private val _startAtValue = mutableStateOf("")
+    fun updateStartAtValue(value: String){
+
+    }
 
     //pull plan list from firestore and add to local vm
     fun signIn() {
@@ -424,11 +428,14 @@ class JourneyGeniusViewModel(
                             // get a list of plans
                             val groupListData =
                                 documentSnapshot.get("Plan_List") as? Map<String, Any>
-                            val groupList: Map<String, Plans> = getGroupList(groupListData)
+                            var groupList: Map<String, Plans> = emptyMap()
+                            if (groupListData != null)
+                                groupList = getGroupList(groupListData)
                             val likedListData = documentSnapshot.get("likedPlanList") as List<String>
                             updateLikedPlanList(likedListData)
                             // append groupList to current vm
-                            updatePlanGroupList(groupList)
+                            if (groupList != null)
+                                updatePlanGroupList(groupList)
                         } else {
                             Log.d("FIRESTORE", "No data found")
                         }

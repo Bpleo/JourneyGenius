@@ -40,13 +40,14 @@ fun SignUpField(
           )
           Spacer(modifier = Modifier.height(40.dp))
           Text(
-              text = "Password: ",
+              text = "Password: \n(At least 6 letters)",
               fontSize = MaterialTheme.typography.bodyLarge.fontSize,
               color = MaterialTheme.colorScheme.primary,
           )
           Spacer(modifier = Modifier.height(40.dp))
           Text(
-              text = "Verify Password: ",
+              text = "Verify Password: \n" +
+                      "(At least 6 letters)",
               fontSize = MaterialTheme.typography.bodyLarge.fontSize,
               color = MaterialTheme.colorScheme.primary,
           )
@@ -144,7 +145,7 @@ fun SignUpButton(
                             val currentUser = auth.currentUser
                             val uid = currentUser!!.uid
                             val user = User(
-                                userName = userName,
+                                name = userName,
                                 email = email,
                                 pwd = pwd,
                                 id = uid,
