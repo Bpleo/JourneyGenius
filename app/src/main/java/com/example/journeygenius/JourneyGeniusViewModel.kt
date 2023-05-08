@@ -440,6 +440,53 @@ class JourneyGeniusViewModel(
         }
     }
 
+    //change given plan's visibility, either make it public or private by given variable
+    fun updatePlanVisibility(public: Boolean, planId: String){
+        val user = auth.currentUser
+        val fireStoreUpdates = mapOf(
+            "Plan_List.$planId.public" to public
+        )
+        if (user != null) {
+            val planGroupList = _planGroupList.value.toMutableMap()
+            val updatePlan = planGroupList[planId]
+            if (updatePlan != null){
+                updatePlan.isPublic = public
+                planGroupList[planId] = updatePlan
+                updatePlanGroupList(planGroupList)
+                if (public) {
+                    db.collection("users").document(user.uid).update(fireStoreUpdates)
+                        .addOnSuccessListener {
+                            realtime.child("planList").child(planId).setValue(updatePlan)
+                                .addOnSuccessListener {
+                                    Log.d("DATA","$planId change to public")
+                                }
+                                .addOnFailureListener {exception ->
+                                    Log.e("DATA","Error updating likes field: $exception")
+                                }
+                        }
+                        .addOnFailureListener {exception ->
+                            Log.e("DATA","Error updating likes field: $exception")
+                        }
+                } else {
+                    db.collection("users").document(user.uid).update(fireStoreUpdates)
+                        .addOnSuccessListener {
+                            realtime.child("planList").child(planId).removeValue()
+                                .addOnSuccessListener {
+                                    Log.d("DATA","$planId change to private")
+                                }
+                                .addOnFailureListener {
+                                        exception ->
+                                    Log.e("DATA","Error updating likes field: $exception")
+                                }
+                        }
+                        .addOnFailureListener { exception ->
+                            Log.e("DATA","Error updating likes field: $exception")
+                        }
+                }
+            }
+        }
+    }
+
     fun updateLikes(likes: Int, planId: String, isLikeAction: Boolean){
         val user = auth.currentUser
         val fireStoreUpdates = mapOf(
@@ -463,7 +510,6 @@ class JourneyGeniusViewModel(
                 communityPlanList[planId] = updatePlan
                 updateCommunityPlanList(communityPlanList)
             }
-
             updateLikedPlanList(list)
             db.collection("users").document(user.uid).update("likedPlanList",list).addOnSuccessListener {
                 db.collection("users").document(user.uid).update(fireStoreUpdates)
@@ -473,15 +519,14 @@ class JourneyGeniusViewModel(
                                 Log.d("DATA", "$planId's like updates to $likes")
                             }
                             .addOnFailureListener { exception ->
-                                println("Error updating likes field: $exception")
+                                Log.e("DATA","Error updating likes field: $exception")
                             }
                     }
                     .addOnFailureListener { exception ->
-                        println("Error updating likes field: $exception")
+                        Log.e("DATA","Error updating likes field: $exception")
                     }
             }
         }
-
     }
 
     private var _userName = mutableStateOf(TextFieldValue())
