@@ -73,6 +73,13 @@ fun PersonalScreen(
         composable("Personal Plan List"){
             PersonalListScreen(
                 viewModel = viewModel,
+                category = "Personal",
+                navController = personalNavController)
+        }
+        composable("Personal Liked Plan List"){
+            PersonalListScreen(
+                viewModel = viewModel,
+                category = "Liked",
                 navController = personalNavController)
         }
         composable("card_detail/{planId}") { backStackEntry ->
@@ -87,8 +94,17 @@ fun PersonalScreen(
             } else {
                 PersonalListScreen(
                     viewModel = viewModel,
+                    category = "Personal",
                     navController = personalNavController)
             }
+        }
+        composable("liked_card_detail/{planId}") { backStackEntry ->
+            CardDetailScreen(
+                planId = backStackEntry.arguments?.getString("planId") ?: "",
+                viewModel = viewModel,
+                navController = personalNavController,
+                category = "Community"
+            )
         }
     }
 }
@@ -131,6 +147,13 @@ fun PersonalMenu(
                     icon = Icons.Outlined.FavoriteBorder,
                     title = stringResource(R.string.my_plan_list),
                     id = "Plan List"
+                ), context = context, navController = personalNavController)
+            }
+            item {
+                OptionsItemStyle(item = OptionsData(
+                    icon = Icons.Outlined.FavoriteBorder,
+                    title = stringResource(R.string.liked_plan_list),
+                    id = "Liked Plan List"
                 ), context = context, navController = personalNavController)
             }
             item {

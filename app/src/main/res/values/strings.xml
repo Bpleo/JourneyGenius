@@ -63,6 +63,7 @@
     <string name="verify_pswd">Verify Password: </string>
     <string name="reset_pswd">Reset Password</string>
     <string name="my_plan_list">My Plan List</string>
+    <string name="liked_plan_list">Liked Plan List</string>
     <string name="settings">Settings</string>
     <string name="personal_settings">Personal Settings</string>
     <string name="log_out">Log out</string>

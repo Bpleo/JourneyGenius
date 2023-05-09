@@ -66,6 +66,7 @@
     <string name="verify_pswd">确认密码: </string>
     <string name="reset_pswd">重置密码</string>
     <string name="my_plan_list">我的旅行计划</string>
+    <string name="liked_plan_list">收藏的旅行计划</string>
     <string name="settings">设置</string>
     <string name="personal_settings">个人设置</string>
     <string name="log_out">登出</string>

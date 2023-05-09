@@ -1,5 +1,6 @@
 package com.example.journeygenius.personal
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -22,21 +23,34 @@ import com.google.firebase.firestore.FirebaseFirestore
 @Composable
 fun PersonalListScreen(
     viewModel: JourneyGeniusViewModel,
+    category: String,
     navController: NavHostController
 ){
     LaunchedEffect(Unit) {
-        viewModel.updatePlanGroupList(emptyMap())
-        viewModel.signIn()
+        if (category == "Personal") {
+            viewModel.updatePlanGroupList(emptyMap())
+            viewModel.signIn()
+        } else if (category == "Liked") {
+            viewModel.updateCommunityPlanList(emptyMap())
+            viewModel.updateStartAtValue("")
+            viewModel.fetchGroupDataAndPrint(limit = 10)
+        }
     }
 
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ){
-        PersonalTopBar(context = LocalContext.current.applicationContext, title = stringResource(R.string.my_plan_list), navController = navController)
+        var title = ""
+        if (category == "Personal") {
+            title = stringResource(R.string.my_plan_list)
+        } else if (category == "Liked") {
+            title = stringResource(R.string.liked_plan_list)
+        }
+        PersonalTopBar(context = LocalContext.current.applicationContext, title = title, navController = navController)
         Box(
             modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.TopStart
         ) {
             JourneyGeniusTheme {
                 Column {
@@ -46,20 +60,38 @@ fun PersonalListScreen(
                         verticalArrangement = Arrangement.spacedBy(16.dp),
                         modifier = Modifier.padding(bottom = 75.dp)
                     ) {
-                        val plansList = viewModel.planGroupList.value.entries.toList()
-
-                        items(plansList.size) { index ->
-                            val (planId, plan) = plansList[index]
-                            CustomCard(
-                                id = planId,
-                                data = plan,
-                                category = "Personal"
-                            ) { id->
-                                // Navigate to the CardDetailScreen with the given plan ID
-                                navController.navigate("card_detail/$id")
+                        if (category == "Personal") {
+                            val plansList = viewModel.planGroupList.value.entries.toList()
+                            items(plansList.size) { index ->
+                                val (planId, plan) = plansList[index]
+                                CustomCard(
+                                    id = planId,
+                                    data = plan,
+                                    category = "Personal"
+                                ) { id->
+                                    // Navigate to the CardDetailScreen with the given plan ID
+                                    navController.navigate("card_detail/$id")
+                                }
+                            }
+                        } else if (category == "Liked") {
+                            val plansList = viewModel.likedPlanList.value.toList()
+                            items(plansList.size) { index ->
+                                val plan = viewModel.getPlanById("Community", plansList[index])
+                                Log.d("Data", plansList[index] + plan)
+                                plan?.let {
+                                    CustomCard(
+                                        id = plansList[index],
+                                        data = it,
+                                        category = "Community"
+                                    ) { id->
+                                        navController.navigate("liked_card_detail/$id")
+                                    }
+                                }
                             }
                         }
+
                     }
+
                 }
             }
         }

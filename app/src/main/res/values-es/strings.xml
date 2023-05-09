@@ -64,6 +64,7 @@
     <string name="verify_pswd">Verificar contraseña: </string>
     <string name="reset_pswd">Restablecer contraseña</string>
     <string name="my_plan_list">Mi lista de planes</string>
+    <string name="liked_plan_list">Lista de planes favoritos</string>
     <string name="settings">Ajustes</string>
     <string name="personal_settings">Ajustes personales</string>
     <string name="log_out">cerrar sesión</string>
