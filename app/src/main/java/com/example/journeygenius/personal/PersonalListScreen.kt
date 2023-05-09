@@ -15,10 +15,7 @@ import androidx.navigation.NavHostController
 import com.example.journeygenius.JourneyGeniusViewModel
 import com.example.journeygenius.R
 import com.example.journeygenius.components.CustomCard
-import com.example.journeygenius.data.models.Plans
-import com.example.journeygenius.rememberWindowSize
 import com.example.journeygenius.ui.theme.JourneyGeniusTheme
-import com.google.firebase.firestore.FirebaseFirestore
 
 @Composable
 fun PersonalListScreen(

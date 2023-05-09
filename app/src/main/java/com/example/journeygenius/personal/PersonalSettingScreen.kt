@@ -1,7 +1,6 @@
 package com.example.journeygenius.personal
 
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -13,13 +12,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.journeygenius.JourneyGeniusViewModel
 import com.example.journeygenius.R
 import com.example.journeygenius.ui.theme.JourneyGeniusTheme
-import com.google.android.gms.maps.model.LatLng
 import java.util.*
 
 
@@ -125,7 +122,6 @@ fun LanguageField(viewModel: JourneyGeniusViewModel) {
                                 }
                             }
                             context.resources.updateConfiguration(config, context.resources.displayMetrics)
-                            Log.d("Data", "Current Language "+Locale.getDefault().toString())
                         })
                     }
 
