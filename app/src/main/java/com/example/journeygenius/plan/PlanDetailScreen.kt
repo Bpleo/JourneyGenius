@@ -29,8 +29,8 @@ import com.example.journeygenius.JourneyGeniusViewModel
 import com.example.journeygenius.PlacesapiKey
 import com.example.journeygenius.R
 import com.example.journeygenius.ui.theme.JourneyGeniusTheme
-import com.google.android.gms.maps.model.LatLng
 
+//function helps select middle stops
 fun generateWaypoints(viewModel: JourneyGeniusViewModel):String{
     val sb=StringBuilder()
     val routesList=viewModel.attractionRoutes.value
@@ -48,6 +48,7 @@ fun generateWaypoints(viewModel: JourneyGeniusViewModel):String{
     return sb.toString()
 }
 
+//show plan detail
 @Composable
 fun PlanDetail(navController: NavController, viewModel: JourneyGeniusViewModel){
     val planOnDetail= remember{
@@ -197,6 +198,7 @@ fun PlanDetail(navController: NavController, viewModel: JourneyGeniusViewModel){
                                 .padding(8.dp),
                             contentAlignment = Alignment.BottomCenter
                         ) {
+                            //display google map thumbnail
                             Column(
                                 modifier = Modifier
                                     .clickable(onClick = {

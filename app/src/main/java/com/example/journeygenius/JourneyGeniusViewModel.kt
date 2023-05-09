@@ -587,7 +587,7 @@ class JourneyGeniusViewModel(
         }
     }
 
-
+    //languages app supports
     private var _languageList = mutableStateOf(
         mapOf<String, String>(
             "en" to "English",
@@ -694,7 +694,6 @@ class JourneyGeniusViewModel(
         _dateRange.value = Range(start, end)
     }
 
-    // TODO: get local location 
     private var _departCountry = mutableStateOf("")
     val departCountry: MutableState<String> = _departCountry
     fun updateDepartCountry(value: String) {
@@ -1170,6 +1169,7 @@ class JourneyGeniusViewModel(
         response.results.firstOrNull()?.geometry?.location
     }
 
+    //call this function to search attractions near location input
     suspend fun searchNearbyPlaces(location: Location, radius: Int = 5000000, apiKey: String) {
         withContext(Dispatchers.IO) {
             try {
@@ -1199,7 +1199,6 @@ class JourneyGeniusViewModel(
         }
     }
 
-
     suspend fun getNearbyPlaces(
         location: Location,
         radius: Int = 5000000,
@@ -1226,13 +1225,14 @@ class JourneyGeniusViewModel(
                     )
                 }
             } catch (e: Exception) {
-                // handle the exception here, e.g. log or display an error message
+                // handle the exception here
                 emptyList()
             }
         }
     }
 
-
+    //call this function to search hotels near location input
+    //if no hotel match price level, then show all hotels nearby
     suspend fun searchNearbyHotels(
         placeName: String,
         location: Location,
@@ -1317,7 +1317,8 @@ class JourneyGeniusViewModel(
         }
     }
 
-
+//return a routes start from start attraction to end attraction,
+// and the route will pass all waypoints
     suspend fun getRoutes(
         from: LatLng,
         to: LatLng,
@@ -1413,6 +1414,7 @@ class JourneyGeniusViewModel(
         }
     }
 
+    //call geonames api to get all countries data (coordinates and country name
     private suspend fun getAllCountries() {
         withContext(Dispatchers.IO) {
             try {
@@ -1434,7 +1436,7 @@ class JourneyGeniusViewModel(
             }
         }
     }
-
+    //call geonames api to get all states data (coordinates and state name
     suspend fun getAllStates(geoNameId: Int): Map<String, Int> = withContext(Dispatchers.IO) {
         try {
             val url =
@@ -1459,7 +1461,7 @@ class JourneyGeniusViewModel(
 
     // TODO: Clean Rubbish
     suspend fun getAllCities(geoNameId: Int): Map<String, LatLng> = withContext(Dispatchers.IO) {
-
+//if state name input is in US OR Canada, need call function again to get cities name. country->state->county->city
         val CAandUSiDList = listOf(
             5883102,
             5909050,
@@ -1584,6 +1586,7 @@ class JourneyGeniusViewModel(
 
     }
 
+    //call placephoto api to get photos from google map
     fun getPhotoUrl(photoReference: String, apiKey: String): String {
         return "https://maps.googleapis.com/maps/api/place/photo?maxwidth=100&photoreference=$photoReference&key=$apiKey"
     }
@@ -1593,6 +1596,7 @@ class JourneyGeniusViewModel(
         return list.contains(planId)
     }
 
+    //use geonames api to get location name by inputting lat and lng
     suspend fun getNameByLatLng(value: Location) = withContext(Dispatchers.IO) {
         val lat = value.lat
         val lng = value.lng

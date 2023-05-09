@@ -17,6 +17,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
+//a component for setting swipe to dismiss UI
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SwipeBackground(dismissState: DismissState) {

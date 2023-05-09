@@ -1,15 +1,9 @@
 package com.example.journeygenius.components
 
 import android.annotation.SuppressLint
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import com.google.accompanist.permissions.*
 import android.content.Context
 import android.location.LocationManager
@@ -19,6 +13,8 @@ import com.example.journeygenius.JourneyGeniusViewModel
 import com.example.journeygenius.R
 import com.example.journeygenius.data.models.Location
 
+
+//a component used to request location information
 @ExperimentalPermissionsApi
 @Composable
 fun RequestPermission(
@@ -36,7 +32,7 @@ fun RequestPermission(
         viewModel
     )
 }
-
+//handle different status
 @SuppressLint("MissingPermission")
 @ExperimentalPermissionsApi
 @Composable
@@ -57,7 +53,7 @@ fun HandleRequest(
         }
     }
 }
-
+//a UI for request
 @Composable
 fun Content(showButton: Boolean = true, onClick: () -> Unit) {
     if (showButton) {

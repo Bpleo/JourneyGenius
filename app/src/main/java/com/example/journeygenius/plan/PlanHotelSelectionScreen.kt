@@ -31,6 +31,7 @@ import com.google.maps.android.compose.*
 import kotlinx.coroutines.launch
 import java.util.ArrayList
 
+//helps generate directions api url
 fun getURL(
     from: LatLng,
     to: LatLng,
@@ -51,7 +52,7 @@ fun getURL(
     val params = "$origin&$dest&$Key&waypoints=$waypointString&mode=$travelModeOption"
     return "https://maps.googleapis.com/maps/api/directions/json?$params"
 }
-
+//decode routes result from directions api
 fun decodePoly(encoded: String): List<LatLng> {
     val poly = ArrayList<LatLng>()
     var index = 0
