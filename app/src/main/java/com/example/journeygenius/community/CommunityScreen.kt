@@ -8,10 +8,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -86,7 +83,7 @@ fun CommunityList(
                     .padding(start = 32.dp, top = 16.dp)
                     .weight(1f)
             )
-            IconButton(
+            Button(
                 onClick = {
                     viewModel.fetchGroupDataAndPrint(limit = 10)
                     coroutineScope.launch {
@@ -94,16 +91,11 @@ fun CommunityList(
                     }
                 },
                 modifier = Modifier
-                    .background(
-                        color = Color.Black,
-                        shape = MaterialTheme.shapes.medium
-                    )
                     .padding(8.dp)
             ) {
-                Icon(
-                    imageVector = Icons.Default.Refresh,
-                    contentDescription = stringResource(R.string.refresh),
-                    tint = Color.White
+                Text(
+                    text="More",
+                    color = Color.White
                 )
             }
         }

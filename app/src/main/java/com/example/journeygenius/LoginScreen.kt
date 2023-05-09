@@ -293,7 +293,7 @@ fun LoginScreen(
                                     Toast.makeText(context, "Please Enter Email!", Toast.LENGTH_SHORT).show()
                                 } else {
                                     Toast.makeText(context, "Reset Email is sent to entered email", Toast.LENGTH_SHORT).show()
-                                    viewModel.resetPwd()
+                                    viewModel.resetPwd(context)
                                 }
                             }
                         )

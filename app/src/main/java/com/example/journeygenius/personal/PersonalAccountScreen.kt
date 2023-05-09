@@ -166,51 +166,20 @@ fun UserNameField(
 
 @Composable
 fun PwdField(viewModel: JourneyGeniusViewModel, db: FirebaseFirestore, auth: FirebaseAuth) {
-    Column(){
+    val context = LocalContext.current
+    Button(
+        onClick = {
+            viewModel.resetPwd(context)
+        },
+        contentPadding = PaddingValues(0.dp,8.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(0.dp, 8.dp)
+    ){
         Text(
-            text = stringResource(R.string.password),
-            fontSize = MaterialTheme.typography.titleLarge.fontSize,
-            color = MaterialTheme.colorScheme.primary,
+            text = stringResource(R.string.reset_pswd),
+            textAlign = TextAlign.Center
         )
-        Row{
-            PasswordTextField(
-                password = viewModel.pwd.value,
-                onPasswordChange = {newPwd ->
-                    viewModel.updatePwd(newPwd)
-                },
-                placeholder = stringResource(R.string.enter_ur_pswd)
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-        }
-        Text(
-            text = stringResource(R.string.verify_pswd),
-            fontSize = MaterialTheme.typography.titleLarge.fontSize,
-            color = MaterialTheme.colorScheme.primary,
-        )
-        Row{
-            PasswordTextField(
-                password = viewModel.verifyPwd.value,
-                onPasswordChange = {newPwd ->
-                    viewModel.updateVerifyPwd(newPwd)
-                },
-                placeholder = stringResource(R.string.verify_pswd)
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Button(
-                onClick = {
-                          viewModel.resetPwd()
-                },
-                contentPadding = PaddingValues(0.dp,8.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(0.dp, 8.dp)
-            ){
-                Text(
-                    text = stringResource(R.string.reset_pswd),
-                    textAlign = TextAlign.Center
-                )
-            }
-        }
     }
 }
 

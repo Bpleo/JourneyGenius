@@ -660,13 +660,15 @@ class JourneyGeniusViewModel(
         _pwd.value = pwd
     }
 
-    fun resetPwd() {
+    fun resetPwd(context: Context) {
         val newPwd = _pwd.value
         auth.sendPasswordResetEmail(_email.value.text)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     db.collection("users").document(auth.currentUser!!.uid)
-                        .update("password", newPwd)
+                        .update("password", newPwd).addOnSuccessListener {
+                            Toast.makeText(context,"Password Reset Email Sent!",Toast.LENGTH_SHORT).show()
+                        }
                     Log.d("USER", "password updated successfully")
                 } else {
                     Log.w("USER", "password update failed", task.exception)
