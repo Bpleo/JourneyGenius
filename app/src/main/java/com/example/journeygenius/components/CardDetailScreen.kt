@@ -55,6 +55,8 @@ fun CardDetailScreen(
 
     val plan = viewModel.getPlanById(category, planId)
 
+    Log.d("Data", "Card detail" + plan.toString())
+
     val allPhotos: List<Photo> = plan!!.plans.flatMap { singlePlan ->
         singlePlan.attractions.flatMap { place ->
             place.photos ?: emptyList()
@@ -279,9 +281,8 @@ fun CardDetailScreen(
                     Button(
                         onClick = {
                             Log.d("Data", "Clicked deleting plan $planId")
-//                            viewModel.deletePlanListFromGroup(planId)
-                            delPlanAlertDialog.value = false
-//                          navController.navigate("Personal Plan List")
+                            viewModel.deletePlanListFromGroup(planId)
+                            navController.navigate("Personal Plan List")
                         }) {
                         Text("Confirm")
                     }
