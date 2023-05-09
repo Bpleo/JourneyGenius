@@ -36,6 +36,8 @@ fun CommunityScreen(viewModel: JourneyGeniusViewModel) {
     val nestedNavController = rememberNavController()
 
     LaunchedEffect(Unit) {
+        viewModel.updateCommunityPlanList(emptyMap())
+        viewModel.updateStartAtValue("")
         viewModel.fetchGroupDataAndPrint(limit = 10)
     }
 

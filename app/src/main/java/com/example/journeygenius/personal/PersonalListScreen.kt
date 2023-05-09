@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -23,7 +24,10 @@ fun PersonalListScreen(
     viewModel: JourneyGeniusViewModel,
     navController: NavHostController
 ){
-    val windowSize = rememberWindowSize()
+    LaunchedEffect(Unit) {
+        viewModel.updatePlanGroupList(emptyMap())
+        viewModel.signIn()
+    }
 
     Column(
         modifier = Modifier.fillMaxSize(),

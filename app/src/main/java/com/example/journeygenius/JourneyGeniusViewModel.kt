@@ -99,7 +99,7 @@ class JourneyGeniusViewModel(
     private val _communityPlanList = mutableStateOf(mapOf<String, Plans>())
     val communityPlanList: MutableState<Map<String, Plans>> = _communityPlanList
 
-    private fun updateCommunityPlanList(value: Map<String, Plans>) {
+    fun updateCommunityPlanList(value: Map<String, Plans>) {
         _communityPlanList.value = value
     }
 
