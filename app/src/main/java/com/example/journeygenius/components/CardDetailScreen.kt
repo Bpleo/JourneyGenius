@@ -57,11 +57,12 @@ fun CardDetailScreen(
 
     Log.d("Data", "Card detail" + plan.toString())
 
-    val allPhotos: List<Photo> = plan!!.plans.flatMap { singlePlan ->
+    val allPhotos: List<Photo> = plan?.plans?.flatMap { singlePlan ->
         singlePlan.attractions.flatMap { place ->
             place.photos ?: emptyList()
         }
     }
+        ?: emptyList()
 
     val photoUrls: List<String> = allPhotos.mapNotNull { photo ->
         if (photo.photo_reference != null) {
@@ -75,10 +76,10 @@ fun CardDetailScreen(
 
     val showMorePhoto = remember { mutableStateOf(false) }
 
-    val localLikes = remember { mutableStateOf(plan.likes) }
+    val localLikes = remember { plan?.let { mutableStateOf(it.likes) } }
 
-    val publicStatus = remember { mutableStateOf(plan.isPublic) }
-    val initialPublicStatus = remember { publicStatus.value }
+    val publicStatus = remember { plan?.let { mutableStateOf(it.isPublic) } }
+    val initialPublicStatus = remember { publicStatus?.value ?: false }
 
     val delPlanAlertDialog = remember { mutableStateOf(false)  }
 
@@ -110,19 +111,33 @@ fun CardDetailScreen(
                 }
             }
             else {
-                item {
-                    AsyncImage(
-                        model = firstImageUrl,
-                        contentDescription = "Plan Image",
-                        contentScale = ContentScale.FillWidth,
-                        modifier = Modifier
-                            .height(singleImageHeight)
-                            .fillMaxWidth()
-                            .clickable {
-                                selectedImageUrl.value = firstImageUrl
-                                showDialog.value = true
-                            }
-                    )
+                if (photoUrls.isNotEmpty()){
+                    item {
+                        AsyncImage(
+                            model = firstImageUrl,
+                            contentDescription = "Plan Image",
+                            contentScale = ContentScale.FillWidth,
+                            modifier = Modifier
+                                .height(singleImageHeight)
+                                .fillMaxWidth()
+                                .clickable {
+                                    selectedImageUrl.value = firstImageUrl
+                                    showDialog.value = true
+                                }
+                        )
+                    }
+                }
+                else {
+                    item {
+                        Image(
+                            painter = painterResource(id = R.drawable.demo_image_horizontal),
+                            contentDescription = "Image",
+                            modifier = Modifier
+                                .height(150.dp)
+                                .fillMaxWidth(),
+                            contentScale = ContentScale.Crop,
+                        )
+                    }
                 }
             }
 
@@ -169,12 +184,14 @@ fun CardDetailScreen(
                         modifier = Modifier
                             .size(15.dp)
                     )
-                    Text(
-                        text = formatLikesString(localLikes.value),
-                        fontSize = 15.sp,
-                        color = MaterialTheme.colorScheme.secondary,
-                        fontWeight = FontWeight.Bold,
-                    )
+                    if (localLikes != null) {
+                        Text(
+                            text = formatLikesString(localLikes.value),
+                            fontSize = 15.sp,
+                            color = MaterialTheme.colorScheme.secondary,
+                            fontWeight = FontWeight.Bold,
+                        )
+                    }
                 }
             }
 
@@ -208,11 +225,15 @@ fun CardDetailScreen(
             OutlinedButton(
                 onClick = {
                     if (initialLikeStatus != userLikedPost.value) {
-                        viewModel.updateLikes(localLikes.value, planId, userLikedPost.value)
+                        if (localLikes != null) {
+                            viewModel.updateLikes(localLikes.value, planId, userLikedPost.value)
+                        }
                     }
-                    if (initialPublicStatus != publicStatus.value) {
-                        viewModel.updatePlanVisibility(planId = planId, public = publicStatus.value)
-                        Log.d("Data", "Change public status to "+ publicStatus.value.toString())
+                    if (publicStatus != null) {
+                        if (initialPublicStatus != publicStatus.value) {
+                            viewModel.updatePlanVisibility(planId = planId, public = publicStatus.value)
+                            Log.d("Data", "Change public status to "+ publicStatus.value.toString())
+                        }
                     }
                     navController.popBackStack()
                 },
@@ -223,20 +244,24 @@ fun CardDetailScreen(
 
             if (category == "Personal") {
                 Row(verticalAlignment = Alignment.CenterVertically){
-                    Switch(
-                        checked = publicStatus.value,
-                        onCheckedChange = {
-                            publicStatus.value = !publicStatus.value
-//                            Log.d("Data", !publicStatus.value + "->"+ publicStatus.value)
-                        },
-                        modifier = Modifier.padding(start = 16.dp, end = 8.dp)
-                    )
-                    Text(
-                        text = if (publicStatus.value) stringResource(R.string.Public) else stringResource(
-                            R.string.Private),
-                        style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(end = 16.dp)
-                    )
+                    if (publicStatus != null) {
+                        Switch(
+                            checked = publicStatus.value,
+                            onCheckedChange = {
+                                publicStatus.value = !publicStatus.value
+                //                            Log.d("Data", !publicStatus.value + "->"+ publicStatus.value)
+                            },
+                            modifier = Modifier.padding(start = 16.dp, end = 8.dp)
+                        )
+                    }
+                    if (publicStatus != null) {
+                        Text(
+                            text = if (publicStatus.value) stringResource(R.string.Public) else stringResource(
+                                R.string.Private),
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.padding(end = 16.dp)
+                        )
+                    }
                     OutlinedButton(
                         onClick = {
                             delPlanAlertDialog.value = true
@@ -251,11 +276,12 @@ fun CardDetailScreen(
                     onClick = {
                         userLikedPost.value = !userLikedPost.value
 
-                        if (userLikedPost.value) {
-                            localLikes.value += 1
-                        }
-                        else {
-                            localLikes.value -= 1
+                        if (localLikes != null) {
+                            if (userLikedPost.value) {
+                                localLikes.value += 1
+                            } else {
+                                localLikes.value -= 1
+                            }
                         }
                     },
                 ) {
