@@ -67,4 +67,9 @@
     <string name="log_out">Log out</string>
     <string name="language">Language</string>
     <string name="reset_language">Reset Language</string>
+    <string name="bicycling">Bicycling</string>
+    <string name="walking">Walking</string>
+    <string name="Driving">Driving</string>
+    <string name="transit">Transit</string>
+
 </resources>

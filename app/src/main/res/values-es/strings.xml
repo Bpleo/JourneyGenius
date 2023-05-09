@@ -69,4 +69,8 @@
 
     <string name="language">idioma</string>
     <string name="reset_language">Restablecer idioma</string>
+    <string name="bicycling">Bicicleta</string>
+    <string name="walking">Caminar</string>
+    <string name="Driving">Conducir</string>
+    <string name="transit">Tránsito</string>
 </resources>

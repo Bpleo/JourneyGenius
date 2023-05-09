@@ -70,4 +70,8 @@
     <string name="log_out">登出</string>
     <string name="language">语言</string>
     <string name="reset_language">重置语言</string>
+    <string name="bicycling">骑行</string>
+    <string name="walking">步行</string>
+    <string name="Driving">驾车</string>
+    <string name="transit">公共交通</string>
 </resources>

@@ -218,10 +218,10 @@ fun PlanChooseLocScreen(
         "Seoul" to seoulCities,
     )
 
-    val label1 = "Bicycling"
-    val label2 = "Walking"
-    val label3 = "Driving"
-    val label4 = "Transit"
+    val label1 = stringResource(R.string.bicycling)
+    val label2 = stringResource(R.string.walking)
+    val label3 = stringResource(R.string.Driving)
+    val label4 = stringResource(R.string.transit)
 
     var startAttractionExpanded by remember { mutableStateOf(false) }
     var endAttractionExpanded by remember { mutableStateOf(false) }
