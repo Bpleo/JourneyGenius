@@ -33,6 +33,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import com.example.journeygenius.R
 
+/**
+ * Card Detail Screen
+ * Called when user click one item
+ * Reusable for community and personal plan
+ */
 @Composable
 fun CardDetailScreen(
     planId: String,

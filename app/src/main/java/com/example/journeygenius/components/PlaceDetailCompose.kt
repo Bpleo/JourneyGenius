@@ -22,6 +22,11 @@ import com.gowtham.ratingbar.RatingBar
 import com.gowtham.ratingbar.RatingBarConfig
 import com.gowtham.ratingbar.RatingBarStyle
 
+/**
+ * Place Detail Composable
+ * A block used to display Place information
+ * Reusable
+ */
 @Composable
 fun PlaceDetailCompose(
     modifier: Modifier = Modifier,

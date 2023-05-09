@@ -31,6 +31,11 @@ import com.example.journeygenius.JourneyGeniusViewModel
 import com.example.journeygenius.R
 
 
+/**
+ * Travel Card Composable
+ * An expandable card that control the state of a single travel detail block
+ * Reusable
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TravelExpandableCard(

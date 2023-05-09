@@ -28,16 +28,23 @@ import com.example.journeygenius.components.CustomCard
 import com.example.journeygenius.ui.theme.JourneyGeniusTheme
 import kotlinx.coroutines.launch
 
+/**
+ * Community Screen Composable
+ * Include all functionalities within the community compose
+ */
 @Composable
 fun CommunityScreen(viewModel: JourneyGeniusViewModel) {
+    // own nav controller
     val nestedNavController = rememberNavController()
 
+    // get data here
     LaunchedEffect(Unit) {
         viewModel.updateCommunityPlanList(emptyMap())
         viewModel.updateStartAtValue("")
         viewModel.fetchGroupDataAndPrint(limit = 10)
     }
 
+    // define path of nav controller
     JourneyGeniusTheme {
         NavHost(
             navController = nestedNavController,
@@ -58,6 +65,10 @@ fun CommunityScreen(viewModel: JourneyGeniusViewModel) {
     }
 }
 
+/**
+ * Community List composable
+ * Maintain community list and items
+ */
 @Composable
 fun CommunityList(
     viewModel: JourneyGeniusViewModel,

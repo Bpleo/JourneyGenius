@@ -25,6 +25,11 @@ import com.example.journeygenius.R
 import com.example.journeygenius.data.models.Photo
 import com.example.journeygenius.data.models.Plans
 
+/**
+ * CustomCard Composable
+ * Defines how each item is presented in CommunityList
+ * Reusable
+ */
 @Composable
 fun CustomCard(
     id: String,
@@ -145,7 +150,7 @@ fun CustomCard(
     }
 }
 
-
+// Helper function to properly format like number
 fun formatLikesString(likes: Int): String {
     return when {
         likes >= 1000 -> {
@@ -159,6 +164,7 @@ fun formatLikesString(likes: Int): String {
     }
 }
 
+// Helper function to get photo url from Place API
 fun getPhotoUrl(photoReference: String, apiKey: String): String {
     return "https://maps.googleapis.com/maps/api/place/photo?maxwidth=5000&photoreference=$photoReference&key=$apiKey"
 }

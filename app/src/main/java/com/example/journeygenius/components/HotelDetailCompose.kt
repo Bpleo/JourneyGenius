@@ -13,6 +13,11 @@ import androidx.compose.ui.unit.sp
 import com.example.journeygenius.R
 import com.example.journeygenius.data.models.Hotel
 
+/**
+ * Hotel Detail Composable
+ * A block used to display Hotel information
+ * Reusable
+ */
 @Composable
 fun HotelDetailCompose(
     data: Hotel

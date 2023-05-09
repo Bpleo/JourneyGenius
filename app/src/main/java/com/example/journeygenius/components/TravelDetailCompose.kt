@@ -32,6 +32,11 @@ import com.example.journeygenius.R
 import com.example.journeygenius.data.models.SinglePlan
 import com.example.journeygenius.plan.generateWaypoints
 
+/**
+ * Travel Detail Composable
+ * A block used to display single travel detail
+ * Reusable
+ */
 @Composable
 fun TravelDetailCompose(
     data : SinglePlan,
