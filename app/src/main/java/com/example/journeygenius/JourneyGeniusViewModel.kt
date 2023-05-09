@@ -457,7 +457,7 @@ class JourneyGeniusViewModel(
         }
     }
 
-    fun deletePlanListFromGroup(planId: String){
+    fun deletePlanListFromGroup(planId: String) {
         val user = auth.currentUser
         if (user != null){
             val planGroupList = _planGroupList.value.toMutableMap()

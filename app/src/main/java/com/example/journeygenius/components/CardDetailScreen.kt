@@ -78,6 +78,7 @@ fun CardDetailScreen(
     val publicStatus = remember { mutableStateOf(plan.isPublic) }
     val initialPublicStatus = remember { publicStatus.value }
 
+    val delPlanAlertDialog = remember { mutableStateOf(false)  }
 
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
@@ -234,6 +235,14 @@ fun CardDetailScreen(
                         style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(end = 16.dp)
                     )
+                    OutlinedButton(
+                        onClick = {
+                            delPlanAlertDialog.value = true
+                        },
+                    ) {
+                        Text(text = stringResource(R.string.delete)
+                        )
+                    }
                 }
             } else if (category == "Community") {
                 OutlinedButton(
@@ -253,6 +262,39 @@ fun CardDetailScreen(
                     )
                 }
             }
+        }
+
+        if (delPlanAlertDialog.value) {
+            AlertDialog(
+                onDismissRequest = {
+                    delPlanAlertDialog.value = false
+                },
+                title = {
+                    Text(text = stringResource(R.string.delete_the_plan))
+                },
+                text = {
+                    Text(stringResource(R.string.action_cnt_recover))
+                },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            Log.d("Data", "Clicked deleting plan $planId")
+//                            viewModel.deletePlanListFromGroup(planId)
+                            delPlanAlertDialog.value = false
+//                          navController.navigate("Personal Plan List")
+                        }) {
+                        Text("Confirm")
+                    }
+                },
+                dismissButton = {
+                    Button(
+                        onClick = {
+                            delPlanAlertDialog.value = false
+                        }) {
+                        Text("Dismiss")
+                    }
+                }
+            )
         }
 
         if (showDialog.value) {
