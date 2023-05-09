@@ -85,5 +85,6 @@
     <string name="give_permission">Give Permission</string>
     <string name="cancel">Cancel</string>
     <string name="enable">Enable</string>
+    <string name="more">More</string>
 
 </resources>

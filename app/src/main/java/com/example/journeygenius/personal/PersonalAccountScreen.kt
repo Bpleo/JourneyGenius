@@ -69,7 +69,21 @@ fun PersonalAccountScreen(
                         }
                     }
                     else -> {
-
+                        Column(
+                            modifier = Modifier.padding(horizontal = 8.dp)
+                        ) {
+                            UserNameField(
+                                viewModel, db, auth
+                            )
+                            Spacer(modifier = Modifier.height(32.dp))
+                            EmailField(
+                                viewModel, db, auth
+                            )
+                            Spacer(modifier = Modifier.height(32.dp))
+                            PwdField(
+                                viewModel, db, auth
+                            )
+                        }
                     }
                 }
             }
@@ -107,7 +121,7 @@ fun EmailField(viewModel: JourneyGeniusViewModel, db: FirebaseFirestore, auth: F
                     viewModel.resetEmail(viewModel.email.value)
                 },
                 contentPadding = PaddingValues(0.dp, 8.dp),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth().padding(16.dp,0.dp)
             ){
                 Text(
                     text = stringResource(R.string.reset_email),
@@ -153,7 +167,7 @@ fun UserNameField(
                           viewModel.resetUserName(viewModel.userName.value)
                 },
                 contentPadding = PaddingValues(0.dp, 8.dp),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth().padding(16.dp,0.dp)
             ){
                 Text(
                     text = stringResource(R.string.reset_username),
