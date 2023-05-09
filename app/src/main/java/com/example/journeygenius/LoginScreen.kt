@@ -1,6 +1,7 @@
 package com.example.journeygenius
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.clickable
@@ -246,6 +247,9 @@ fun LoginScreen(
                             )
                                 .addOnCompleteListener(mainActivity) { task ->
                                     if (task.isSuccessful) {
+                                        Toast.makeText(context,"Log in suceess!", Toast.LENGTH_SHORT).show()
+                                        val user = auth.currentUser
+                                        Log.d("USER", (user != null).toString())
                                         viewModel.signIn()
                                         navController.navigate("Main") {
                                             popUpTo(0)

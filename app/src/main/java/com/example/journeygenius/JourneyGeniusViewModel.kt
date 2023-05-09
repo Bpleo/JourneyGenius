@@ -410,7 +410,7 @@ class JourneyGeniusViewModel(
     }
 
     fun signOut() {
-        Firebase.auth.signOut()
+//        auth.signOut()
         updateUserName(TextFieldValue(""))
         updateEmail(TextFieldValue(""))
         updatePwd("")
