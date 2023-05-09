@@ -66,11 +66,15 @@
     <string name="settings">Ajustes</string>
     <string name="personal_settings">Ajustes personales</string>
     <string name="log_out">cerrar sesión</string>
-
     <string name="language">idioma</string>
     <string name="reset_language">Restablecer idioma</string>
     <string name="bicycling">Bicicleta</string>
     <string name="walking">Caminar</string>
     <string name="Driving">Conducir</string>
     <string name="transit">Tránsito</string>
+    <string name="delete">Borrar</string>
+    <string name="delete_the_plan">Eliminar el plan?</string>
+    <string name="action_cnt_recover">La acción no se puede recuperar.</string>
+    <string name="confirm">Confirmar</string>
+    <string name="dismiss">Cancelar</string>
 </resources>

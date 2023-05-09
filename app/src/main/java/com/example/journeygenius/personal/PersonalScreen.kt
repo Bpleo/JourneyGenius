@@ -76,12 +76,19 @@ fun PersonalScreen(
                 navController = personalNavController)
         }
         composable("card_detail/{planId}") { backStackEntry ->
-            CardDetailScreen(
-                planId = backStackEntry.arguments?.getString("planId") ?: "",
-                viewModel = viewModel,
-                navController = personalNavController,
-                category =  "Personal"
-            )
+            val plan = viewModel.getPlanById("Personal", backStackEntry.arguments?.getString("planId") ?: "")
+            if (plan != null) {
+                CardDetailScreen(
+                    planId = backStackEntry.arguments?.getString("planId") ?: "",
+                    viewModel = viewModel,
+                    navController = personalNavController,
+                    category =  "Personal"
+                )
+            } else {
+                PersonalListScreen(
+                    viewModel = viewModel,
+                    navController = personalNavController)
+            }
         }
     }
 }

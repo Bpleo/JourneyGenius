@@ -74,4 +74,9 @@
     <string name="walking">步行</string>
     <string name="Driving">驾车</string>
     <string name="transit">公共交通</string>
+    <string name="delete">删除</string>
+    <string name="delete_the_plan">确定要删除计划吗?</string>
+    <string name="action_cnt_recover">该动作无法恢复。</string>
+    <string name="confirm">确认</string>
+    <string name="dismiss">取消</string>
 </resources>

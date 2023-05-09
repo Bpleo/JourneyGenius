@@ -67,6 +67,11 @@
     <string name="log_out">Log out</string>
     <string name="language">Language</string>
     <string name="reset_language">Reset Language</string>
+    <string name="delete">Delete</string>
+    <string name="delete_the_plan">Delete the plan?</string>
+    <string name="action_cnt_recover">The action cannot be recovered.</string>
+    <string name="confirm">Confirm</string>
+    <string name="dismiss">Dismiss</string>
     <string name="bicycling">Bicycling</string>
     <string name="walking">Walking</string>
     <string name="Driving">Driving</string>
