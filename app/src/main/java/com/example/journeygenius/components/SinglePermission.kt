@@ -30,13 +30,8 @@ fun RequestPermission(
 
     HandleRequest(
         permissionState = permissionState,
-        deniedContent = { shouldShowRationale ->
-            PermissionDeniedContent(
-                rationaleMessage = rationaleMessage,
-                shouldShowRationale = shouldShowRationale
-            ) {
-                permissionState.launchPermissionRequest()
-            }
+        deniedContent = {
+            Content(onClick = { permissionState.launchPermissionRequest() })
         },
         viewModel
     )
@@ -78,40 +73,40 @@ fun Content(showButton: Boolean = true, onClick: () -> Unit) {
     }
 }
 
-@ExperimentalPermissionsApi
-@Composable
-fun PermissionDeniedContent(
-    rationaleMessage: String,
-    shouldShowRationale: Boolean,
-    onRequestPermission: () -> Unit
-) {
-
-    if (shouldShowRationale) {
-
-        AlertDialog(
-            onDismissRequest = {},
-            title = {
-                Text(
-                    text = stringResource(R.string.permission_request),
-                    style = TextStyle(
-                        fontSize = MaterialTheme.typography.headlineLarge.fontSize,
-                        fontWeight = FontWeight.Bold
-                    )
-                )
-            },
-            text = {
-                Text(rationaleMessage)
-            },
-            confirmButton = {
-                Button(onClick = onRequestPermission) {
-                    Text(stringResource(R.string.give_permission))
-                }
-            }
-        )
-
-    }
-    else {
-        Content(onClick = onRequestPermission)
-    }
-
-}
+//@ExperimentalPermissionsApi
+//@Composable
+//fun PermissionDeniedContent(
+//    rationaleMessage: String,
+//    shouldShowRationale: Boolean,
+//    onRequestPermission: () -> Unit
+//) {
+//
+//    if (shouldShowRationale) {
+//
+//        AlertDialog(
+//            onDismissRequest = {},
+//            title = {
+//                Text(
+//                    text = stringResource(R.string.permission_request),
+//                    style = TextStyle(
+//                        fontSize = MaterialTheme.typography.headlineLarge.fontSize,
+//                        fontWeight = FontWeight.Bold
+//                    )
+//                )
+//            },
+//            text = {
+//                Text(rationaleMessage)
+//            },
+//            confirmButton = {
+//                Button(onClick = onRequestPermission) {
+//                    Text(stringResource(R.string.give_permission))
+//                }
+//            }
+//        )
+//
+//    }
+//    else {
+//        Content(onClick = onRequestPermission)
+//    }
+//
+//}
