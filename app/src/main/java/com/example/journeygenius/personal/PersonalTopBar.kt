@@ -13,11 +13,16 @@ import androidx.navigation.NavHostController
 import com.example.journeygenius.ui.theme.JourneyGeniusTheme
 
 
+/**
+ * Top Bar component
+ * Render the component of top bar in personal screen
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PersonalTopBar(context: Context, title: String, navController: NavHostController) {
     JourneyGeniusTheme {
         TopAppBar(
+            // Title
             title = {
                 Text(
                     text = title,
@@ -26,6 +31,7 @@ fun PersonalTopBar(context: Context, title: String, navController: NavHostContro
                 )
             },
             colors = TopAppBarDefaults.smallTopAppBarColors(MaterialTheme.colorScheme.background),
+            // Navigate back to the personal meny screen
             navigationIcon = {
                 IconButton(onClick = {
                     navController.navigate("Personal Menu")

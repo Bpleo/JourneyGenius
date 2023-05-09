@@ -20,6 +20,10 @@ import com.example.journeygenius.ui.theme.JourneyGeniusTheme
 import java.util.*
 
 
+/**
+ * Personal setting Composable
+ * Display the personal setting screen
+ */
 @Composable
 fun PersonalSettingScreen(
     viewModel: JourneyGeniusViewModel,
@@ -33,6 +37,7 @@ fun PersonalSettingScreen(
                 modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                // Top Bar
                 PersonalTopBar(context = LocalContext.current.applicationContext, title = stringResource(R.string.settings), navController = navController)
                 Box(
                     modifier = Modifier.fillMaxSize(),
@@ -41,6 +46,7 @@ fun PersonalSettingScreen(
                     Column(
                         modifier = Modifier.padding(horizontal = 8.dp)
                     ) {
+                        // Language setting
                         LanguageField(viewModel = viewModel)
                     }
                 }
@@ -49,6 +55,11 @@ fun PersonalSettingScreen(
     }
 
 }
+
+/**
+ * Language field composable
+ * Render the component of choosing language
+ */
 @Composable
 fun LanguageField(viewModel: JourneyGeniusViewModel) {
     var languageExpanded by remember { mutableStateOf(false) }
@@ -72,11 +83,13 @@ fun LanguageField(viewModel: JourneyGeniusViewModel) {
     Column(){
 
         Row{
+            // Text of language
             Text(
                 text = stringResource(R.string.language),
                 fontSize = MaterialTheme.typography.titleLarge.fontSize,
                 color = MaterialTheme.colorScheme.primary,
             )
+            // Drop down menu of the languages
             Box {
                 languageList[language.value]?.let {
                     OutlinedTextField(value = it,
@@ -103,6 +116,7 @@ fun LanguageField(viewModel: JourneyGeniusViewModel) {
                 ) {
                     languageList.forEach { language ->
                         DropdownMenuItem(text = { Text(language.value) }, onClick = {
+                            // Change the language to the selected language
                             viewModel.updateLanguage(language.key)
                             languageExpanded = false
 

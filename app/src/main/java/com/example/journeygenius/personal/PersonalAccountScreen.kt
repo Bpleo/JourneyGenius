@@ -19,6 +19,10 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
 
+/**
+ * Personal Account Composable
+ * Display the screen of personal account
+ */
 @Composable
 fun PersonalAccountScreen(
     viewModel: JourneyGeniusViewModel,
@@ -32,6 +36,7 @@ fun PersonalAccountScreen(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            // Top Bar
             PersonalTopBar(
                 context = LocalContext.current.applicationContext,
                 title = stringResource(R.string.details),
@@ -46,14 +51,19 @@ fun PersonalAccountScreen(
                         Column(
                             modifier = Modifier.padding(horizontal = 8.dp)
                         ) {
+                            // Username
                             UserNameField(
                                 viewModel, db, auth
                             )
+                            // Spacer
                             Spacer(modifier = Modifier.height(16.dp))
+                            // Email
                             EmailField(
                                 viewModel, db, auth
                             )
+                            // Spacer
                             Spacer(modifier = Modifier.height(16.dp))
+                            // Password
                             PwdField(
                                 viewModel, db, auth
                             )
@@ -82,16 +92,22 @@ fun PersonalAccountScreen(
     }
 }
 
+/**
+ * Email field composable
+ * Render the component of email field
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EmailField(viewModel: JourneyGeniusViewModel, db: FirebaseFirestore, auth: FirebaseAuth) {
     Column(){
+        // Text of email
         Text(
             text = stringResource(R.string.email),
             fontSize = MaterialTheme.typography.titleLarge.fontSize,
             color = MaterialTheme.colorScheme.primary,
         )
         Row{
+            // Text field for entering the email
             TextField(
                 value = viewModel.email.value,
                 onValueChange = { newEmail ->
@@ -107,6 +123,7 @@ fun EmailField(viewModel: JourneyGeniusViewModel, db: FirebaseFirestore, auth: F
                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
             )
             Spacer(modifier = Modifier.width(8.dp))
+            // Button for reset the email
             Button(
                 onClick = {
                     viewModel.resetEmail(viewModel.email.value)
@@ -123,6 +140,10 @@ fun EmailField(viewModel: JourneyGeniusViewModel, db: FirebaseFirestore, auth: F
     }
 }
 
+/**
+ * Username field composable
+ * Render the component of username field
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserNameField(
@@ -132,12 +153,14 @@ fun UserNameField(
 ) {
     val uid = auth.currentUser?.uid
     Column(){
+        // Text for username
         Text(
             text = stringResource(R.string.user_name),
             fontSize = MaterialTheme.typography.titleLarge.fontSize,
             color = MaterialTheme.colorScheme.primary,
         )
         Row{
+            // Text field for entering the username
             TextField(
                 value = viewModel.userName.value,
                 onValueChange = { newUserName ->
@@ -153,6 +176,7 @@ fun UserNameField(
                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
             )
             Spacer(modifier = Modifier.width(8.dp))
+            // Button for reset the username
             Button(
                 onClick = {
                           viewModel.resetUserName(viewModel.userName.value)
@@ -169,9 +193,14 @@ fun UserNameField(
     }
 }
 
+/**
+ * Password composable
+ * Render the component of password field
+ */
 @Composable
 fun PwdField(viewModel: JourneyGeniusViewModel, db: FirebaseFirestore, auth: FirebaseAuth) {
     val context = LocalContext.current
+    // Button for reset the password
     Button(
         onClick = {
             viewModel.resetPwd(context)

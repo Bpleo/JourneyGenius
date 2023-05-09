@@ -38,6 +38,10 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
+/**
+ * Personal Screen Composable
+ * Set up the navigation in the personal screen
+ */
 @Composable
 fun PersonalScreen(
     db: FirebaseFirestore,
@@ -45,6 +49,7 @@ fun PersonalScreen(
     navController: NavHostController,
     auth: FirebaseAuth
 ) {
+    // Personal navigation controller
     val personalNavController = rememberNavController()
     NavHost(
         navController = personalNavController,
@@ -106,8 +111,10 @@ fun PersonalScreen(
     }
 }
 
-//private val optionsList: ArrayList<OptionsData> = ArrayList()
-
+/**
+ * Personal Menu composable
+ * The main entry for the personal screen
+ */
 @Composable
 fun PersonalMenu(
     context: Context,
@@ -124,6 +131,7 @@ fun PersonalMenu(
         LazyColumn(
             modifier = Modifier.padding(bottom = 75.dp)
         ) {
+            // User Detail
             item {
                 UserDetails(
                     context = context,
@@ -132,6 +140,7 @@ fun PersonalMenu(
                 )
             }
             // Show the options
+            // Account
             item {
                 OptionsItemStyle(item = OptionsData(
                     icon = Icons.Outlined.Person,
@@ -139,13 +148,15 @@ fun PersonalMenu(
                     id = "Account"
                 ), context = context, navController = personalNavController)
             }
+            // My plan list
             item {
                 OptionsItemStyle(item = OptionsData(
-                    icon = Icons.Outlined.FavoriteBorder,
+                    icon = Icons.Outlined.Menu,
                     title = stringResource(R.string.my_plan_list),
                     id = "Plan List"
                 ), context = context, navController = personalNavController)
             }
+            // Liked plan list
             item {
                 OptionsItemStyle(item = OptionsData(
                     icon = Icons.Outlined.FavoriteBorder,
@@ -153,6 +164,7 @@ fun PersonalMenu(
                     id = "Liked Plan List"
                 ), context = context, navController = personalNavController)
             }
+            // Settings
             item {
                 OptionsItemStyle(item = OptionsData(
                     icon = Icons.Outlined.Settings,
@@ -160,6 +172,7 @@ fun PersonalMenu(
                     id = "Settings"
                 ), context = context, navController = personalNavController)
             }
+            // Log out
             item {
                 OptionsItemStyle(
                     item = OptionsData(
@@ -174,6 +187,10 @@ fun PersonalMenu(
 }
 
 
+/**
+ * User Detail Composable
+ * Render the component of user detail
+ */
 @Composable
 private fun UserDetails(context: Context, name: String, email: String) {
     Row(
@@ -219,6 +236,9 @@ private fun UserDetails(context: Context, name: String, email: String) {
     }
 }
 
+/**
+ * Styling the options in the personal menu
+ */
 @Composable
 private fun OptionsItemStyle(
     item: OptionsData,
@@ -288,6 +308,9 @@ private fun OptionsItemStyle(
     }
 }
 
+/**
+ * data type for the options
+ */
 data class OptionsData(val icon: ImageVector, val title: String, val id: String)
 
 
