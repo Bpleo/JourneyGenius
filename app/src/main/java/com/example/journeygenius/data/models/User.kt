@@ -5,6 +5,6 @@ data class User(
     val name: String,
     val email: String,
     val pwd: String,
-    val Plan_List: List<Plans>,
+    val Plan_List: Map<String, Plans>,
     val likedPlanList: List<String>
 )

@@ -297,7 +297,9 @@ fun PlanHotelSelectionScreen(
                                             viewModel.planGroup.value.title,
                                             viewModel.planGroup.value.description,
                                             viewModel.planGroup.value.isPublic,
-                                            planList
+                                            planList,
+                                            viewModel.planGroup.value.likes,
+                                            viewModel.planGroup.value.userId
                                         )
                                     )
                                     navController.navigate("Plan List")
@@ -434,7 +436,9 @@ fun PlanHotelSelectionScreen(
                                                 viewModel.planGroup.value.title,
                                                 viewModel.planGroup.value.description,
                                                 viewModel.planGroup.value.isPublic,
-                                                planList
+                                                planList,
+                                                viewModel.planGroup.value.likes,
+                                                viewModel.planGroup.value.userId
                                             )
                                         )
                                         navController.navigate("Plan List")

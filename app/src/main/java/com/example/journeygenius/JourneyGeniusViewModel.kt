@@ -48,7 +48,8 @@ class JourneyGeniusViewModel(
             description = planDescription.value,
             isPublic = isPublic.value,
             plans = planList.value,
-            likes = planLikes.value
+            likes = planLikes.value,
+            userId = auth.currentUser!!.uid
         )
         if (shareable) {
             realtime.child("planList").child(planId).setValue(plans)
@@ -132,6 +133,7 @@ class JourneyGeniusViewModel(
                 val title = planListData["title"] as? String
                 val likesData = planListData["likes"] as? Long
                 val likes = likesData?.toInt()
+                val userId = planListData["userId"] as? String
                 // get a list of single plans
                 val plansData =
                     planListData["plans"] as? List<Map<String, Any>>
@@ -392,9 +394,9 @@ class JourneyGeniusViewModel(
                             null
                     } ?: emptyList()
                 // get a Plans object
-                if (title != null && description != null && public != null && plans != null && likes != null) {
+                if (title != null && description != null && public != null && plans != null && likes != null && userId != null) {
                     Log.d("DATA", "plan list pulled")
-                    Plans(title, description, public, plans, likes)
+                    Plans(title, description, public, plans, likes, userId)
                 } else
                     null
             }
@@ -555,6 +557,7 @@ class JourneyGeniusViewModel(
                     list.remove(planId)
             }
             val updatePlan = communityPlanList[planId]
+            val userId = updatePlan!!.userId
             if (updatePlan != null) {
                 updatePlan.likes = likes
                 communityPlanList[planId] = updatePlan
@@ -563,7 +566,7 @@ class JourneyGeniusViewModel(
             updateLikedPlanList(list)
             db.collection("users").document(user.uid).update("likedPlanList", list)
                 .addOnSuccessListener {
-                    db.collection("users").document(user.uid).update(fireStoreUpdates)
+                    db.collection("users").document(userId).update(fireStoreUpdates)
                         .addOnSuccessListener {
                             realtime.updateChildren(realtimeUpdates)
                                 .addOnSuccessListener {
@@ -892,14 +895,16 @@ class JourneyGeniusViewModel(
                     planGroup.value.title,
                     planGroup.value.description,
                     planGroup.value.isPublic,
-                    planList.value
+                    planList.value,
+                    planGroup.value.likes,
+                    planGroup.value.userId
                 )
             )
         }
 
     }
 
-    private var _planGroup = mutableStateOf(Plans("", "", true, listOf()))
+    private var _planGroup = mutableStateOf(Plans("", "", true, listOf(),0,""))
     val planGroup: MutableState<Plans> = _planGroup
     fun updatePlanGroup(value: Plans) {
         _planGroup.value = value
@@ -919,7 +924,7 @@ class JourneyGeniusViewModel(
         val description = planGroup.value.description
         val planList = planGroup.value.plans
         val title = planGroup.value.title
-        updatePlanGroup(Plans(title, description, isPublic, planList, planGroup.value.likes))
+        updatePlanGroup(Plans(title, description, isPublic, planList, planGroup.value.likes,planGroup.value.userId))
         Log.d("updatePlanGroup", planGroup.value.toString())
     }
 
@@ -936,7 +941,7 @@ class JourneyGeniusViewModel(
         val description = planGroup.value.description
         val planList = planGroup.value.plans
         val planLikes = planGroup.value.likes
-        updatePlanGroup(Plans(planTitle.value, description, isPublic, planList, planLikes))
+        updatePlanGroup(Plans(planTitle.value, description, isPublic, planList, planLikes, planGroup.value.userId))
         Log.d("updatePlanGroup", planGroup.value.toString())
     }
 
@@ -953,7 +958,7 @@ class JourneyGeniusViewModel(
         val isPublic = planGroup.value.isPublic
         val planList = planGroup.value.plans
         val planLikes = planGroup.value.likes
-        updatePlanGroup(Plans(title, planDescription.value, isPublic, planList, planLikes))
+        updatePlanGroup(Plans(title, planDescription.value, isPublic, planList, planLikes, planGroup.value.userId))
         Log.d("updatePlanGroup", planGroup.value.toString())
     }
 
@@ -1147,7 +1152,7 @@ class JourneyGeniusViewModel(
         val description = planGroup.value.description
         val planList = planGroup.value.plans
         val planLikes = planGroup.value.likes
-        updatePlanGroup(Plans(title, description, isChecked, planList, planLikes))
+        updatePlanGroup(Plans(title, description, isChecked, planList, planLikes, planGroup.value.userId))
         Log.d("updatePlanGroup", planGroup.value.toString())
     }
 

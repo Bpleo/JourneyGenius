@@ -149,7 +149,7 @@ fun SignUpButton(
                                 email = email,
                                 pwd = pwd,
                                 id = uid,
-                                Plan_List = listOf<Plans>(),
+                                Plan_List = mapOf(),
                                 likedPlanList = listOf<String>())
                             db.collection("users").document(uid).set(user)
                                 .addOnSuccessListener {

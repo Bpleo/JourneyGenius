@@ -267,7 +267,7 @@ fun PlanList(
                                     listOf(), 4, "extravagant", listOf(), ""
                                 )
                             )
-                            planViewModel.updatePlanGroup(Plans("", "", isPublic, listOf()))
+                            planViewModel.updatePlanGroup(Plans("", "", isPublic, listOf(),0,""))
                             planViewModel.updateStartAttraction(
                                 Place(
                                     "",
