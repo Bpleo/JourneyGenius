@@ -79,4 +79,12 @@
     <string name="action_cnt_recover">该动作无法恢复。</string>
     <string name="confirm">确认</string>
     <string name="dismiss">取消</string>
+    <string name="turn_on_loc_service">开启定位服务</string>
+    <string name="explore_the_world">探索世界而不迷路，并保持你的位置跟踪。</string>
+    <string name="give_app_permission">给这个应用程序一个权限来进行。如果它不起作用，那么你就必须从设置中手动进行。</string>
+    <string name="to_use_app_func">为了更好的使用体验，请给予我们一些权限</string>
+    <string name="permission_request">权限请求</string>
+    <string name="give_permission">给予权限</string>
+    <string name="cancel">取消</string>
+    <string name="enable">允许</string>
 </resources>

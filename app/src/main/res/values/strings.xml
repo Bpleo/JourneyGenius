@@ -76,5 +76,13 @@
     <string name="walking">Walking</string>
     <string name="Driving">Driving</string>
     <string name="transit">Transit</string>
+    <string name="turn_on_loc_service">Turn On Location Service</string>
+    <string name="explore_the_world">Explore the world without getting lost and keep the track of your location.</string>
+    <string name="give_app_permission">Give this app a permission to proceed. If it doesn\'t work, then you\'ll have to do it manually from the settings.</string>
+    <string name="to_use_app_func">To use this app\'s functionalities, you need to give us the permission.</string>
+    <string name="permission_request">Permission Request</string>
+    <string name="give_permission">Give Permission</string>
+    <string name="cancel">Cancel</string>
+    <string name="enable">Enable</string>
 
 </resources>

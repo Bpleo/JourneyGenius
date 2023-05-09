@@ -14,14 +14,16 @@ import com.google.accompanist.permissions.*
 import android.content.Context
 import android.location.LocationManager
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import com.example.journeygenius.JourneyGeniusViewModel
+import com.example.journeygenius.R
 import com.example.journeygenius.data.models.Location
 
 @ExperimentalPermissionsApi
 @Composable
 fun RequestPermission(
     permission: String,
-    rationaleMessage: String = "To use this app's functionalities, you need to give us the permission.",
+    rationaleMessage: String = stringResource(R.string.to_use_app_func),
     viewModel: JourneyGeniusViewModel
 ) {
     val permissionState = rememberPermissionState(permission)
@@ -36,12 +38,6 @@ fun RequestPermission(
                 permissionState.launchPermissionRequest()
             }
         },
-        content = {
-            /*   Content(
-                   text = "PERMISSION GRANTED!",
-                   showButton = false
-               ) {}*/
-        },
         viewModel
     )
 }
@@ -52,7 +48,6 @@ fun RequestPermission(
 fun HandleRequest(
     permissionState: PermissionState,
     deniedContent: @Composable (Boolean) -> Unit,
-    content: @Composable () -> Unit,
     viewModel:JourneyGeniusViewModel
 ) {
     when (permissionState.status) {
@@ -74,8 +69,8 @@ fun Content(showButton: Boolean = true, onClick: () -> Unit) {
         val enableLocation = remember { mutableStateOf(true) }
         if (enableLocation.value) {
             CustomDialogLocation(
-                title = "Turn On Location Service",
-                desc = "Explore the world without getting lost and keep the track of your location.\n\nGive this app a permission to proceed. If it doesn't work, then you'll have to do it manually from the settings.",
+                title = stringResource(R.string.turn_on_loc_service),
+                desc = stringResource(R.string.explore_the_world)+"\n\n"+ stringResource(R.string.give_app_permission),
                 enableLocation,
                 onClick
             )
@@ -97,7 +92,7 @@ fun PermissionDeniedContent(
             onDismissRequest = {},
             title = {
                 Text(
-                    text = "Permission Request",
+                    text = stringResource(R.string.permission_request),
                     style = TextStyle(
                         fontSize = MaterialTheme.typography.headlineLarge.fontSize,
                         fontWeight = FontWeight.Bold
@@ -109,7 +104,7 @@ fun PermissionDeniedContent(
             },
             confirmButton = {
                 Button(onClick = onRequestPermission) {
-                    Text("Give Permission")
+                    Text(stringResource(R.string.give_permission))
                 }
             }
         )

@@ -77,4 +77,12 @@
     <string name="action_cnt_recover">La acción no se puede recuperar.</string>
     <string name="confirm">Confirmar</string>
     <string name="dismiss">Cancelar</string>
+    <string name="turn_on_loc_service">Activar el servicio de localización</string>
+    <string name="explore_the_world">Explora el mundo sin perderte y mantén el rastro de tu ubicación.</string>
+    <string name="give_app_permission">Dale permiso a esta aplicación para continuar. Si no funciona, entonces usted tiene que hacerlo manualmente desde la configuración.</string>
+    <string name="to_use_app_func">Para utilizar las funciones de esta aplicación, debe darnos permiso.</string>
+    <string name="permission_request">Solicitud de permiso</string>
+    <string name="give_permission">Dar permiso</string>
+    <string name="cancel">Cancela</string>
+    <string name="enable">Activar</string>
 </resources>

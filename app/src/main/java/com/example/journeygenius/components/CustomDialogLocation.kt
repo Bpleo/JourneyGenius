@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -34,8 +35,6 @@ fun CustomDialogLocation(
     ) {
         Box(
             modifier = Modifier.padding(top = 20.dp, bottom = 20.dp)
-                // .width(300.dp)
-                // .height(164.dp)
                 .background(
                     color = MaterialTheme.colorScheme.onPrimary,
                     shape = RoundedCornerShape(25.dp,5.dp,25.dp,5.dp)
@@ -47,29 +46,20 @@ fun CustomDialogLocation(
                 modifier = Modifier.padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-
-
-                //.........................Image: preview
                 Image(
                     painter = painterResource(id = R.drawable.permission_location),
                     contentDescription = null,
                     contentScale = ContentScale.Fit,
-                    /*  colorFilter  = ColorFilter.tint(
-                          color = MaterialTheme.colorScheme.primary
-                      ),*/
                     modifier = Modifier
                         .padding(top = 5.dp)
                         .height(320.dp)
                         .fillMaxWidth(),
 
                     )
-                //.........................Spacer
-                //.........................Text: title
                 Text(
                     text = title!!,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
-                        //  .padding(top = 5.dp)
                         .fillMaxWidth(),
                     letterSpacing = 2.sp,
                     fontWeight = FontWeight.Bold,
@@ -77,7 +67,6 @@ fun CustomDialogLocation(
                     color = MaterialTheme.colorScheme.primary,
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-                //.........................Text : description
                 Text(
                     text = desc!!,
                     textAlign = TextAlign.Center,
@@ -88,10 +77,7 @@ fun CustomDialogLocation(
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.primary,
                 )
-                //.........................Spacer
                 Spacer(modifier = Modifier.height(24.dp))
-
-                //.........................Button : OK button
                 val cornerRadius = 16.dp
                 val gradientColors = listOf(Color(0xFFff669f), Color(0xFFff8961))
                 val roundedCornerShape = RoundedCornerShape(topStart = 30.dp,bottomEnd = 30.dp)
@@ -119,23 +105,17 @@ fun CustomDialogLocation(
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text ="Enable",
+                            text = stringResource(R.string.enable),
                             fontSize = 20.sp,
                             color = Color.White
                         )
                     }
                 }
 
-
-                //.........................Spacer
                 Spacer(modifier = Modifier.height(12.dp))
-
-
                 TextButton(onClick = {
                     enableLocation.value = false
-                }) { Text("Cancel", style = MaterialTheme.typography.labelLarge) }
-
-
+                }) { Text(stringResource(R.string.cancel), style = MaterialTheme.typography.labelLarge) }
                 Spacer(modifier = Modifier.height(24.dp))
 
             }
