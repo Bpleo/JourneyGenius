@@ -284,7 +284,7 @@ fun CardDetailScreen(
                             viewModel.deletePlanListFromGroup(planId)
                             navController.navigate("Personal Plan List")
                         }) {
-                        Text("Confirm")
+                        Text(stringResource(R.string.confirm))
                     }
                 },
                 dismissButton = {
@@ -292,7 +292,7 @@ fun CardDetailScreen(
                         onClick = {
                             delPlanAlertDialog.value = false
                         }) {
-                        Text("Dismiss")
+                        Text(stringResource(R.string.dismiss))
                     }
                 }
             )

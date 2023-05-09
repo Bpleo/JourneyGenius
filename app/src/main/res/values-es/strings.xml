@@ -68,7 +68,9 @@
     <string name="log_out">cerrar sesión</string>
     <string name="language">idioma</string>
     <string name="reset_language">Restablecer idioma</string>
-    <string name="delete">Delete</string>
-    <string name="delete_the_plan">Delete the plan?</string>
-    <string name="action_cnt_recover">The action cannot be recovered.</string>
+    <string name="delete">Borrar</string>
+    <string name="delete_the_plan">Eliminar el plan?</string>
+    <string name="action_cnt_recover">La acción no se puede recuperar.</string>
+    <string name="confirm">Confirmar</string>
+    <string name="dismiss">Cancelar</string>
 </resources>

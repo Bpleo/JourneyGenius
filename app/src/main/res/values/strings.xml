@@ -70,4 +70,6 @@
     <string name="delete">Delete</string>
     <string name="delete_the_plan">Delete the plan?</string>
     <string name="action_cnt_recover">The action cannot be recovered.</string>
+    <string name="confirm">Confirm</string>
+    <string name="dismiss">Dismiss</string>
 </resources>

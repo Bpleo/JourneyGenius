@@ -70,7 +70,9 @@
     <string name="log_out">登出</string>
     <string name="language">语言</string>
     <string name="reset_language">重置语言</string>
-    <string name="delete">Delete</string>
-    <string name="delete_the_plan">Delete the plan?</string>
-    <string name="action_cnt_recover">The action cannot be recovered.</string>
+    <string name="delete">删除</string>
+    <string name="delete_the_plan">确定要删除计划吗?</string>
+    <string name="action_cnt_recover">该动作无法恢复。</string>
+    <string name="confirm">确认</string>
+    <string name="dismiss">取消</string>
 </resources>
