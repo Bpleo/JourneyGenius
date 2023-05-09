@@ -123,7 +123,6 @@ fun PersonalMenu(
                 OptionsItemStyle(item = OptionsData(
                     icon = Icons.Outlined.Person,
                     title = stringResource(R.string.personal_settings),
-                    subTitle = "Manage your account",
                     id = "Account"
                 ), context = context, navController = personalNavController)
             }
@@ -131,7 +130,6 @@ fun PersonalMenu(
                 OptionsItemStyle(item = OptionsData(
                     icon = Icons.Outlined.FavoriteBorder,
                     title = stringResource(R.string.my_plan_list),
-                    subTitle = "My plans",
                     id = "Plan List"
                 ), context = context, navController = personalNavController)
             }
@@ -139,7 +137,6 @@ fun PersonalMenu(
                 OptionsItemStyle(item = OptionsData(
                     icon = Icons.Outlined.Settings,
                     title = stringResource(R.string.settings),
-                    subTitle = "App settings",
                     id = "Settings"
                 ), context = context, navController = personalNavController)
             }
@@ -148,7 +145,6 @@ fun PersonalMenu(
                     item = OptionsData(
                         icon = Icons.Default.Logout,
                         title = stringResource(R.string.log_out),
-                        subTitle = "",
                         id = "Log out"
                     ), context = context, navController = navController
                 )
@@ -253,27 +249,12 @@ private fun OptionsItemStyle(
                     .weight(weight = 3f, fill = false)
                     .padding(start = 16.dp)
             ) {
-
                 // Title
                 Text(
                     text = item.title,
                     style = TextStyle(fontSize = 18.sp)
                 )
-
-                Spacer(modifier = Modifier.height(2.dp))
-
-                // Sub title
-                Text(
-                    text = item.subTitle,
-                    style = TextStyle(
-                        fontSize = 14.sp,
-                        letterSpacing = (0.8).sp,
-                        color = Color.Gray
-                    )
-                )
-
             }
-
             // Right arrow icon
             Icon(
                 modifier = Modifier
@@ -287,7 +268,7 @@ private fun OptionsItemStyle(
     }
 }
 
-data class OptionsData(val icon: ImageVector, val title: String, val subTitle: String, val id: String)
+data class OptionsData(val icon: ImageVector, val title: String, val id: String)
 
 
 
