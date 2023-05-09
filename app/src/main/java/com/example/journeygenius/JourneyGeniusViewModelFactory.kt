@@ -6,6 +6,9 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.firestore.FirebaseFirestore
 
+/**
+ * View Model factory
+ */
 class JourneyGeniusViewModelFactory(
     private val firestore: FirebaseFirestore,
     private val auth: FirebaseAuth,

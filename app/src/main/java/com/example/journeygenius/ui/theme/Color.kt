@@ -1,6 +1,9 @@
 package com.example.journeygenius.ui.theme
 import androidx.compose.ui.graphics.Color
 
+/**
+ * Defines color in this file
+ */
 val md_theme_light_primary = Color(0xFF0062A1)
 val md_theme_light_onPrimary = Color(0xFFFFFFFF)
 val md_theme_light_primaryContainer = Color(0xFFD0E4FF)

@@ -21,6 +21,9 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.delay
 
+/**
+ * Defines path for navigation between log in screen and main menu of app
+ */
 @Composable
 fun Intro(
     auth: FirebaseAuth,
@@ -54,6 +57,10 @@ fun Intro(
     }
 }
 
+/**
+ * Intro Screen
+ * Defines all the welcome page when entering the app
+ */
 @Composable
 fun IntroScreen(){
     val imagePainter = painterResource(id = R.drawable.logo)

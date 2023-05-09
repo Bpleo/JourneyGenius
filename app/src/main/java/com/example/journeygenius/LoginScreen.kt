@@ -39,6 +39,11 @@ import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.painterResource
 
+
+/**
+ * Login Screen
+ * Handles logic of user log in
+ */
 @Composable
 fun JourneyGenius(
     auth: FirebaseAuth,

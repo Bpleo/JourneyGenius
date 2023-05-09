@@ -34,8 +34,12 @@ import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
+// API key
 const val PlacesapiKey = "AIzaSyCNcLRKVJXQ8TL3WRiSujLRVD_qTLMxj8E"
 
+/**
+ * View Model of the app
+ */
 class JourneyGeniusViewModel(
     private val db: FirebaseFirestore,
     private val auth: FirebaseAuth,

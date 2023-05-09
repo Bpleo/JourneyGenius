@@ -7,6 +7,9 @@ import androidx.compose.material.icons.filled.LibraryBooks
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.ui.graphics.vector.ImageVector
 
+/**
+ * Defines path for navigation at bottom bar
+ */
 sealed class BottomBar(
     val route: String,
     @StringRes val title: Int,

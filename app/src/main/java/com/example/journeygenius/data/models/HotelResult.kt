@@ -1,5 +1,9 @@
 package com.example.journeygenius.data.models
 
+/**
+ * Data Class
+ * Used to store the information of hotel result
+ */
 data class HotelResult(
     val name: String,
     val vicinity: String,

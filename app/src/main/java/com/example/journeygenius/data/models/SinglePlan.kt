@@ -1,5 +1,10 @@
 package com.example.journeygenius.data.models
 
+/**
+ * Data Class
+ * Used to store the detail of a SinglePlan
+ * Corresponding to the data structure on Firebase
+ */
 data class SinglePlan(
     val date: String,
     val destination: String,

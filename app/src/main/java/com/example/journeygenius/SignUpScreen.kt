@@ -20,6 +20,10 @@ import com.example.journeygenius.ui.theme.JourneyGeniusTheme
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
+/**
+ * Signup Composable
+ * Handles logic of user sign up
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignUpField(

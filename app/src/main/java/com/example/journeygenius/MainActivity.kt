@@ -19,6 +19,9 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
+/**
+ * Main Activity
+ */
 class MainActivity : ComponentActivity() {
     private lateinit var auth : FirebaseAuth
     private lateinit var db : FirebaseFirestore

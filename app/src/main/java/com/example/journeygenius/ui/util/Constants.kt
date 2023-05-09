@@ -1,5 +1,8 @@
 package com.example.journeygenius.ui.util
 
+/**
+ * Defines Constants in this file
+ */
 object Constants {
     const val PERSONAL_TABLE = "users"
     const val PLAN_TABLE = "plan_table"

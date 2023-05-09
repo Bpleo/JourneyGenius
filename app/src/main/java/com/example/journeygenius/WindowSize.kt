@@ -6,6 +6,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalConfiguration
 
+/**
+ * Data class to handle difference user screen configuration
+ */
 data class WindowSize(
     val width: WindowType,
     val height: WindowType
